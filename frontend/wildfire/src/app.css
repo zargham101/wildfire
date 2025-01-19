@@ -1,0 +1,26 @@
+footer {
+    background-color: #111; /* Dark background */
+  }
+  
+  footer h6 {
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+  
+  footer ul {
+    padding-left: 0;
+  }
+  
+  footer ul li {
+    margin-bottom: 10px;
+  }
+  
+  footer ul li a {
+    color: #fff;
+    transition: color 0.2s;
+  }
+  
+  footer ul li a:hover {
+    color: #28a745; /* Green hover effect */
+  }
+  

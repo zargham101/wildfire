@@ -7,7 +7,7 @@ const validation = require('../../validator/validate')
 const router = express.Router();
 
 router.post('/register', authValidation(validation.registerValidation), userController.register); 
-router.post('/login', userController.login); 
+router.post('/login', authValidation(validation.loginValidation),userController.login); 
 router.get('/profile', authMiddleware, userController.getProfile);
 router.get('/all-users', authMiddleware, userController.getAllUsers);
 router.patch('/update', authValidation(validation.updateUserValidation),authMiddleware, userController.updateUser);

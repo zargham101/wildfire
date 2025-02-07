@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -7,8 +9,8 @@ const Login = () => {
     password: '',
     rememberMe: false,
   });
-  
-  const navigate = useNavigate(); 
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -18,13 +20,13 @@ const Login = () => {
     }));
   };
 
-  const {rememberMe, ...dataToSend} = formData
+  const { rememberMe, ...dataToSend } = formData;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch('http://localhost:5001/api/user/login', { 
+      const response = await fetch('http://localhost:5001/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),
@@ -33,7 +35,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         alert('Login successful!');
-        navigate('/');  
+        navigate('/'); // Redirect to home page after successful login
       } else {
         alert('Login failed: ' + data.message);
       }
@@ -42,6 +44,9 @@ const Login = () => {
       alert('There was an error logging in. Please try again later.');
     }
   };
+
+  // Toggle password visibility
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <div className="container py-5">
@@ -72,15 +77,26 @@ const Login = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="password" className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="input-group">
+                  <input
+                    type={showPassword ? 'text' : 'password'} // Toggle password type
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="input-group-append">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                      aria-label="toggle password visibility"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </div>
+                </div>
               </div>
               <div className="form-check mb-3">
                 <input

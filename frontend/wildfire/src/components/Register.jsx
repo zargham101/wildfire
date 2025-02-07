@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +10,8 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
   });
-
+  const [showPassword, setShowPassword] = useState(false);  // State to toggle password visibility for password field
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle password visibility for confirm password field
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -41,7 +44,6 @@ const Signup = () => {
 
       if (response.ok) {
         const data = await response.json(); 
-  
         alert('Account created successfully!');
         navigate('/login'); 
       } else {
@@ -53,6 +55,10 @@ const Signup = () => {
       setError('There was an error creating your account. Please try again later.');
     }
   };
+
+  // Toggle password visibility
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
   return (
     <div className="container py-5">
@@ -95,27 +101,49 @@ const Signup = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="password" className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="input-group">
+                  <input
+                    type={showPassword ? 'text' : 'password'} // Toggle password type
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="input-group-append">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                      aria-label="toggle password visibility"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </div>
+                </div>
               </div>
               <div className="mb-3">
                 <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="input-group">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'} // Toggle confirm password type
+                    className="form-control"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="input-group-append">
+                    <IconButton
+                      onClick={handleClickShowConfirmPassword}
+                      edge="end"
+                      aria-label="toggle password visibility"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </div>
+                </div>
               </div>
               {error && <div className="text-danger">{error}</div>}
               <button type="submit" className="btn btn-primary w-100">Create Account</button>

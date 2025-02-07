@@ -1,5 +1,6 @@
 import React from "react";
 import logo from "../assets/icon.png";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -42,10 +43,10 @@ const Navbar = () => {
                 href="/"
                 style={{
                   fontSize: "1rem",
-                  transition: "color 0.3s ease", 
+                  transition: "color 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.target.style.color = "#28a745")} 
-                onMouseLeave={(e) => (e.target.style.color = "#198754")} 
+                onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                onMouseLeave={(e) => (e.target.style.color = "#198754")}
               >
                 Home
               </a>
@@ -58,34 +59,34 @@ const Navbar = () => {
                   fontSize: "1rem",
                   transition: "color 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.target.style.color = "#FA3F0B")} 
-                onMouseLeave={(e) => (e.target.style.color = "#6c757d")} 
+                onMouseEnter={(e) => (e.target.style.color = "#FA3F0B")}
+                onMouseLeave={(e) => (e.target.style.color = "#6c757d")}
               >
                 About Us
               </a>
             </li>
             <li className="nav-item">
-              <a
+              <Link
                 className="nav-link text-muted"
-                href="/"
+                to="/contact" // This will navigate to the Contact Us page
                 style={{
                   fontSize: "1rem",
-                  transition: "color 0.3s ease", 
+                  transition: "color 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.target.style.color = "#FA3F0B")} 
+                onMouseEnter={(e) => (e.target.style.color = "#FA3F0B")}
                 onMouseLeave={(e) => (e.target.style.color = "#6c757d")}
               >
                 Contact
-              </a>
+              </Link>
             </li>
           </ul>
 
           {/* Buttons */}
           <div className="d-flex">
-            <button className="btn btn-success me-2 text-white px-4">
+            <Link to={"/login"} className="btn btn-success me-2 text-white px-4">
               Login
-            </button>
-            <button className="btn btn-outline-success px-4">Signup</button>
+            </Link>
+            <Link to={"/register"} className="btn btn-outline-success px-4">Signup</Link>
           </div>
         </div>
       </div>

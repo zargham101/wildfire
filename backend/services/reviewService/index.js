@@ -147,6 +147,15 @@ const reviewService = {
       console.error('Error sending email:', error);
       throw error;
     }
+  },
+  getAllReviews: async () => {
+    try {
+      const reviews = await Review.find();
+      const totalReviews = await Review.countDocuments();
+      return {reviews,totalReviews}
+    } catch (error) {
+      throw error
+    }
   }
 };
 

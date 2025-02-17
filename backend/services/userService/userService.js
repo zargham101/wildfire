@@ -1,20 +1,20 @@
-const User = require('../../model/user/index');
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
+const User = require("../../model/user/index");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 const userService = {
   registerUser: async ({ name, email, password }) => {
     try {
       let user = await User.findOne({ email });
-      if (user) throw new Error('User already exists');
+      if (user) throw new Error("User already exists");
 
       user = new User({ name, email, password });
 
       await user.save();
       return {
         user,
-        message: 'User registered successfully'
+        message: "User registered successfully",
       };
     } catch (error) {
       throw error;
@@ -23,9 +23,9 @@ const userService = {
 
   loginUser: async ({ email, password }) => {
     try {
-      console.log("ab iski bari::",email,password)
+      console.log("ab iski bari::", email, password);
       const user = await User.findOne({ email });
-      if (!user) throw new Error('Invalid credentials');
+      if (!user) throw new Error("Invalid credentials");
 
       if (!user.comparePassword) {
         console.error("comparePassword method is missing on user model.");
@@ -33,18 +33,18 @@ const userService = {
       }
 
       const isMatch = await user.comparePassword(password);
-      if (!isMatch) throw new Error('Invalid credentials');
+      if (!isMatch) throw new Error("Invalid credentials");
 
       const token = jwt.sign(
         { id: user._id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: "1h" }
       );
 
       return {
-        message: 'Login successful',
+        message: "Login successful",
         token,
-        user
+        user,
       };
     } catch (error) {
       console.error("Error in loginUser:", error.message);
@@ -53,8 +53,8 @@ const userService = {
   },
   getUserProfile: async (userId) => {
     try {
-      const user = await User.findById(userId).select('-password'); // Exclude password
-      if (!user) throw new Error('User not found');
+      const user = await User.findById(userId).select("-password"); // Exclude password
+      if (!user) throw new Error("User not found");
 
       return user;
     } catch (error) {
@@ -63,14 +63,13 @@ const userService = {
   },
   getAllUsers: async () => {
     try {
-      console.time("⏳ Fetching All Users");
       const users = await User.find()
-        .select('name email role createdAt')
+        .select("name email role createdAt")
         .lean();
-      console.timeEnd("⏳ Fetching All Users");
-      return users;
+      const totalUsers = await User.countDocuments();
+      return { users, totalUsers };
     } catch (error) {
-      console.error("No users available")
+      console.error("No users available");
       throw error;
     }
   },
@@ -82,13 +81,15 @@ const userService = {
       if (email) updateData.email = email;
       if (password) updateData.password = await bcrypt.hash(password, 10); // Hash password
 
-      const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+      const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+        new: true,
+      });
 
-      if (!updatedUser) throw new Error('User not found');
+      if (!updatedUser) throw new Error("User not found");
 
       return {
-        message: 'User updated successfully',
-        updatedUser
+        message: "User updated successfully",
+        updatedUser,
       };
     } catch (error) {
       throw error;
@@ -98,10 +99,10 @@ const userService = {
   deleteUser: async (userId) => {
     try {
       const deletedUser = await User.findByIdAndDelete(userId);
-      if (!deletedUser) throw new Error('User not found');
+      if (!deletedUser) throw new Error("User not found");
 
       return {
-        message: 'User deleted successfully'
+        message: "User deleted successfully",
       };
     } catch (error) {
       throw error;
@@ -110,9 +111,12 @@ const userService = {
   forgotPassword: async (email) => {
     try {
       const user = await User.findOne({ email });
-      if (!user) throw new Error('User not found');
-      const resetToken = crypto.randomBytes(32).toString('hex');
-      const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+      if (!user) throw new Error("User not found");
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      const hashedToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
 
       user.resetPasswordToken = hashedToken;
       user.resetPasswordExpires = Date.now() + 3600000;
@@ -120,8 +124,8 @@ const userService = {
       await user.save();
 
       return {
-        message: 'Password reset token generated successfully',
-        resetToken
+        message: "Password reset token generated successfully",
+        resetToken,
       };
     } catch (error) {
       throw error;
@@ -130,14 +134,17 @@ const userService = {
 
   resetPassword: async ({ resetToken, newPassword }) => {
     try {
-      const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+      const hashedToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
 
       const user = await User.findOne({
         resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() } // Ensure token is still valid
+        resetPasswordExpires: { $gt: Date.now() }, // Ensure token is still valid
       });
 
-      if (!user) throw new Error('Invalid or expired password reset token');
+      if (!user) throw new Error("Invalid or expired password reset token");
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -146,17 +153,16 @@ const userService = {
         {
           password: hashedPassword,
           resetPasswordToken: undefined,
-          resetPasswordExpires: undefined
+          resetPasswordExpires: undefined,
         },
         { new: true }
       );
 
-      return { message: 'Password reset successfully' };
+      return { message: "Password reset successfully" };
     } catch (error) {
       throw error;
     }
-  }
-
+  },
 };
 
 module.exports = userService;

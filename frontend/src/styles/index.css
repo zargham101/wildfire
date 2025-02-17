@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+.shimmering-effect {
+    position: relative;
+  display: inline-block; 
+  font-family: 'Bebas Neue', sans-serif; 
+  font-size: 10rem; 
+  color: transparent; 
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 80%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; 
+  background-clip: text;
+  animation: shimmering 2s linear infinite;
+  letter-spacing: 0.1em;
+  }
+  
+  .shimmering-effect::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    background-size: 200% 100%;
+    z-index: -1;
+    animation: shimmering 2s linear infinite;
+  }
+  
+  @keyframes shimmering {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }

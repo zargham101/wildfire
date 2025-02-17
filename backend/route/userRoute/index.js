@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/register', authValidation(validation.registerValidation), userController.register); 
 router.post('/login', authValidation(validation.loginValidation),userController.login); 
 router.get('/profile', authMiddleware, userController.getProfile);
-router.get('/all-users', authMiddleware, userController.getAllUsers);
+router.get('/all-users', userController.getAllUsers);
 router.patch('/update', authValidation(validation.updateUserValidation),authMiddleware, userController.updateUser);
 router.delete('/delete', authMiddleware, userController.deleteUser);
 router.post('/forgot-password',authValidation(validation.forgotPasswordValidation),userController.forgotPassword);

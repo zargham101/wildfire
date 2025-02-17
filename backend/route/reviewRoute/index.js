@@ -7,5 +7,6 @@ const router = express.Router();
 
 
 router.post('/submit-review', validate(validation.reviewValidation), reviewController.submitReview);
+router.get('/getAllReview', reviewController.getAllReviews);
 
 module.exports = router;

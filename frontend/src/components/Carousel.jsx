@@ -54,13 +54,13 @@ const Carousel = () => {
     } else {
       setIsScrolling(true);
     }
-    setExpandedIndex(expandedIndex === index ? null : index); // Toggle expand/collapse
+    setExpandedIndex(expandedIndex === index ? null : index); 
   };
   const handleScroll = (direction) => {
     if (direction === 'left') {
-      setScrollIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : cards.length - 4)); // Scroll left
+      setScrollIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : cards.length - 4)); 
     } else {
-      setScrollIndex((prevIndex) => (prevIndex < cards.length - 4 ? prevIndex + 1 : 0)); // Scroll right
+      setScrollIndex((prevIndex) => (prevIndex < cards.length - 4 ? prevIndex + 1 : 0)); 
     }
   };
   useEffect(() => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import GroupIcon from "@mui/icons-material/Group";
 import BatchPredictionIcon from "@mui/icons-material/BatchPrediction";
@@ -7,10 +8,7 @@ import ReviewsIcon from "@mui/icons-material/Reviews";
 import Carousel from "./Carousel";
 
 const LandingPage = () => {
-  const [text, setText] = useState("");
-  const fullText =
-    "Welcome to Wildfire, now you can predict the incidents and take the required measures for protection.";
-
+  
   const [counts, setCounts] = useState({
     reviews: 0,
     predictions: 0,
@@ -107,27 +105,28 @@ const LandingPage = () => {
             Advanced Weather Analysis."
           </p>
           <div className="flex space-x-4 mt-3 px-2 ml-2">
-            <button className="border-b-2 border-red-500 px-4 py-2 text-red-500 bg-transparent  hover:bg-white hover:text-red-500 transition-all duration-300 text-sm">
+            <Link
+              to="/login"
+              className="border-b-2 border-red-500 px-4 py-2 text-red-500 bg-transparent  hover:bg-white hover:text-red-500 transition-all duration-300 text-sm"
+            >
               Join Us
-            </button>
+            </Link>
             <button className="bg-red-500 text-white px-4 py-2  hover:bg-white hover:text-red-500 transition-all duration-300 text-sm">
               What We Do
             </button>
           </div>
         </div>
       </div>
-      <div className="bg-white w-full flex justify-center items-center h-[500px] mt-6">
-        <div className="flex items-center justify-center max-w-xl w-full">
-          <div className="flex-shrink-0 w-1/2">
+      <div className="bg-white w-full flex justify-center items-center h-[500px] mt-6 relative">
+        <div className="flex items-center justify-center max-w-5xl w-full">
+          <div className="flex-shrink-0 w-5/12 absolute top-0 right-0">
             <img
               src="/images/fire-committment.jpg"
-              alt="Your Image"
+              alt="Fire committment"
               className="w-full h-[550px] object-cover py-6 mb-3"
             />
           </div>
-
-          {/* Right side: Text content */}
-          <div className="text-center w-2/3 pl-8">
+          <div className="text-center w-7/12 pl-6 bg-gray-500 relative z-10">
             <div className="flex items-center justify-center mb-4">
               <p className="text-black text-lg font-semibold font-serif italic pr-4 leading-tight">
                 Our Commitment
@@ -143,78 +142,86 @@ const LandingPage = () => {
             </p>
           </div>
         </div>
-      </div>
-      <div className="bg-gray-100 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-black">Precautions</h2>
+        <div className="absolute inset-0 bg-cover bg-center">
+          <img src="/images/dotted.jpeg" alt="texture-bg" />
         </div>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex h-[300px] border rounded-lg overflow-hidden">
-            <div className="w-1/2 relative group">
+      </div>
+
+      <div className="bg-gray-100 py-10">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-extrabold text-center text-black">
+            Precautions
+          </h2>
+        </div>
+
+        <div className="max-w-8xl mx-auto flex flex-col gap-6">
+          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
+            <div className="md:w-1/2 relative group p-0">
+              {" "}
               <img
                 src="/images/smoke-alarm.jpeg"
-                alt="Precaution Image 1"
-                className="w-full h-full object-cover transform transition duration-300 ease-in-out"
+                alt="Precaution "
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
                 <span className="font-bold text-2xl">Protection</span>
               </div>
             </div>
-            <div className="w-1/2 flex items-center p-4">
+            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
               <p className="text-lg font-serif">
                 Install smoke alarms: Smoke alarms are essential for early fire
-                detection
+                detection.
               </p>
             </div>
           </div>
-          <div className="flex h-[300px] border rounded-lg overflow-hidden">
-            <div className="w-1/2 relative group">
+          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
+            <div className="md:w-1/2 relative group p-0">
               <img
                 src="/images/fire-escape.jpg"
-                alt="Precaution Image 2"
-                className="w-full h-full object-cover transform transition duration-300 ease-in-out"
+                alt="Precaution "
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
                 <span className="font-bold text-2xl">Preparedness</span>
               </div>
             </div>
-            <div className="w-1/2 flex items-center p-4">
+            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
               <p className="text-lg font-serif">
                 Develop a fire escape plan: Having a well-rehearsed escape plan
-                can save lives
+                can save lives.
               </p>
             </div>
           </div>
-          <div className="flex h-[300px] border rounded-lg overflow-hidden">
-            <div className="w-1/2 relative group">
+          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
+            <div className="md:w-1/2 relative group p-0">
               <img
                 src="/images/prevention.jpeg"
-                alt="Precaution Image 3"
-                className="w-full h-full object-cover transform transition duration-300 ease-in-out"
+                alt="Precaution "
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
                 <span className="font-bold text-2xl">Prevention</span>
               </div>
             </div>
-            <div className="w-1/2 flex items-center p-4">
+            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
               <p className="text-lg font-serif">
                 Store flammable materials safely: Keep flammable liquids and
-                materials away from heat sources
+                materials away from heat sources.
               </p>
             </div>
           </div>
-          <div className="flex h-[300px] border rounded-lg overflow-hidden">
-            <div className="w-1/2 relative group">
+          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
+            <div className="md:w-1/2 relative group p-0">
               <img
                 src="/images/vigilance.jpeg"
-                alt="Precaution Image 4"
-                className="w-full h-full object-cover transform transition duration-300 ease-in-out"
+                alt="Precaution "
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
                 <span className="font-bold text-2xl">Vigilance</span>
               </div>
             </div>
-            <div className="w-1/2 flex items-center p-4">
+            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
               <p className="text-lg font-serif">
                 Maintain electrical appliances: Regularly check appliances for
                 damage and avoid overloading outlets.
@@ -223,7 +230,8 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <div className="bg-gray-100 py-12">
+
+      <div className="bg-white py-12 border-2 shadow-lg p-3 rounded-md m-6">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="flex flex-col items-center">
             <GroupIcon style={{ fontSize: "4rem" }} className=" text-red-500" />
@@ -258,7 +266,7 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <div className="mr-4 ml-4 mt-3">
+      <div className="m-5">
         <Carousel />
       </div>
     </>

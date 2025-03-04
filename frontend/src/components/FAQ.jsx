@@ -41,33 +41,50 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="max-w-full mx-auto my-8 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold text-center mb-8">FAQ's</h2>
+    <div className="max-w-full mx-auto my-8 p-6 bg-white rounded-lg shadow-lg flex flex-col md:flex-row items-center justify-between">
+      {/* Image on the left */}
+      <div className="w-full md:w-1/3 mb-4 md:mb-0">
+        <img
+          src="/images/faq.jpg" // Add your image here
+          alt="Wildfire"
+          className="w-full h-[550px] object-cover rounded-lg mx-2" 
+        />
+      </div>
 
-      {faqData.map((faq, index) => (
-        <div
-          key={index}
-          className="mb-4 overflow-hidden transition-all duration-500 hover:translate-y-2 hover:shadow-xl hover:border-gray-300"
-        >
-          <div
-            onClick={() => toggleExpanded(index)}
-            className="flex justify-between items-center cursor-pointer p-4 bg-gray-100 border rounded-md"
-          >
-            <h3 className="text-xl font-semibold">{faq.question}</h3>
-            {expanded[index] ? (
-              <ChevronUp size={24} className="text-blue-500" />
-            ) : (
-              <ChevronDown size={24} className="text-blue-500" />
-            )}
-          </div>
+      <div className="w-full md:w-2/3 pl-0 md:pl-4 mt-4 md:mt-0">
+        <p className="text-xl font-bold font-serif text-left text-red-800 mb-6">
+          Our Queries
+        </p>
+        <h2 className="text-2xl font-bold font-serif text-left mb-6">
+          Frequently Asked Questions
+        </h2>
+        <div className="max-h-[500px] overflow-y-auto">
+          {faqData.map((faq, index) => (
+            <div
+              key={index}
+              className="mb-3 w-full max-w-[500px] overflow-hidden transition-all duration-500 hover:translate-y-2 hover:shadow-xl hover:border-gray-300"
+            >
+              <div
+                onClick={() => toggleExpanded(index)}
+                className="flex justify-between items-center cursor-pointer p-3 bg-gray-100 border rounded-md"
+              >
+                <h3 className="text-lg font-semibold">{faq.question}</h3>
+                {expanded[index] ? (
+                  <ChevronUp size={20} className="text-blue-500" />
+                ) : (
+                  <ChevronDown size={20} className="text-blue-500" />
+                )}
+              </div>
 
-          {expanded[index] && (
-            <p className="mt-2 p-4 bg-gray-50 rounded-md text-gray-700">
-              {faq.answer}
-            </p>
-          )}
+              {expanded[index] && (
+                <p className="mt-2 p-3 bg-gray-50 rounded-md text-gray-700">
+                  {faq.answer}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };

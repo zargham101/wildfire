@@ -8,7 +8,6 @@ import ReviewsIcon from "@mui/icons-material/Reviews";
 import Carousel from "./Carousel";
 
 const LandingPage = () => {
-  
   const [counts, setCounts] = useState({
     reviews: 0,
     predictions: 0,
@@ -117,33 +116,27 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white w-full flex justify-center items-center h-[500px] mt-6 relative">
-        <div className="flex items-center justify-center max-w-5xl w-full">
-          <div className="flex-shrink-0 w-5/12 absolute top-0 right-0">
+      <div className="bg-white w-full flex justify-center items-center h-[500px] mt-6 relative z-0">
+        <div className="flex w-full max-w-7xl mx-auto px-6">
+          {/* Left side: Image */}
+          <div className="w-1/2">
             <img
               src="/images/fire-committment.jpg"
-              alt="Fire committment"
-              className="w-full h-[550px] object-cover py-6 mb-3"
+              alt="Wildfire Watch"
+              className="w-full h-[300px] pr-3 object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl"
             />
           </div>
-          <div className="text-center w-7/12 pl-6 bg-gray-500 relative z-10">
-            <div className="flex items-center justify-center mb-4">
-              <p className="text-black text-lg font-semibold font-serif italic pr-4 leading-tight">
-                Our Commitment
-              </p>
-              <div className="flex-1 border-t-2 border-black"></div>
-            </div>
-            <h2 className="text-black text-left text-3xl font-extrabold font-serif mb-2">
-              To Community
-            </h2>
-            <p className="text-black text-left text-lg font-serif italic px-1">
-              "Wildfire Watch: Predicting and Locating Fire Hazards Through
-              Advanced Weather Analysis."
+
+          {/* Right side: Text container with red border */}
+          <div className="w-1/2 pl-6 border-l-4 border-red-500 p-6">
+            <h2 className="text-2xl font-bold font-serif text-black mb-2">To Comunity</h2>
+            <p className="text-lg font-serif text-gray-600">
+              "WildFire watch makes it easy for you to live a life with no
+              worrries and utmost safety from the unknown wild fire incidents
+              and making sure the complete use of our team availability and
+              guidance for the user to live a safe and happy life."
             </p>
           </div>
-        </div>
-        <div className="absolute inset-0 bg-cover bg-center">
-          <img src="/images/dotted.jpeg" alt="texture-bg" />
         </div>
       </div>
 
@@ -266,6 +259,28 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+      <div className="m-5 flex items-center">
+        {/* Left side: Image */}
+        <div className="w-1/2">
+          <img
+            src="/images/graph.png"
+            alt="Wildfire Watch"
+            className="w-full h-auto object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl"
+          />
+        </div>
+
+        {/* Right side: Text container with red border */}
+        <div className="w-1/2 pl-5 border-l-4 border-red-500 border-solid p-5">
+          <p className="text-xl font-sans italic">
+            "Wildfire Watch is a crucial platform for individuals and
+            communities to predict and prevent devastating wildfires. By
+            leveraging real-time data, we empower people to take the necessary
+            precautions in time, potentially saving lives and reducing
+            destruction."
+          </p>
+        </div>
+      </div>
+
       <div className="m-5">
         <Carousel />
       </div>

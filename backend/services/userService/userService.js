@@ -23,7 +23,6 @@ const userService = {
 
   loginUser: async ({ email, password }) => {
     try {
-      console.log("ab iski bari::", email, password);
       const user = await User.findOne({ email });
       if (!user) throw new Error("Invalid credentials");
 

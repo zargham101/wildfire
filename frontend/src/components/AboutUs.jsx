@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
-import FormatQuoteOutlinedIcon from '@mui/icons-material/FormatQuoteOutlined';
+import FormatQuoteOutlinedIcon from "@mui/icons-material/FormatQuoteOutlined";
+import FAQ from "./FAQ";
 
 const AboutUs = () => {
   const [expanded, setExpanded] = useState(false);
@@ -12,22 +13,28 @@ const AboutUs = () => {
 
   return (
     <>
-      <div
-        className="relative w-full h-[500px] bg-cover bg-center mt-20"
-        style={{ backgroundImage: "url(/images/aboutHero.jpeg)" }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-700 opacity-50"></div>
-        <div className="relative z-10 flex items-center justify-start h-full pl-10 text-white">
-          <div className="max-w-lg">
-            <h1 className="text-4xl font-bold">About Us</h1>
-            <p className="mt-4 text-lg">
-              We are dedicated to providing the best services for our customers
-              and making a positive impact in the world. Our team is passionate
-              about innovation and excellence.
-            </p>
-          </div>
-        </div>
-      </div>
+      <div className="relative w-full h-[500px] mt-20">
+  <video
+    className="absolute inset-0 w-full h-full object-cover"
+    autoPlay
+    muted
+    loop
+  >
+    <source src="/videos/aboutus.mp4" type="video/mp4" />
+  </video>
+  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-700 opacity-50"></div>
+  <div className="relative z-10 flex items-center justify-start h-full pl-10 text-white">
+    <div className="max-w-lg">
+      <h1 className="text-4xl font-bold">About Us</h1>
+      <p className="mt-4 text-lg">
+        We are dedicated to providing the best services for our customers
+        and making a positive impact in the world. Our team is passionate
+        about innovation and excellence.
+      </p>
+    </div>
+  </div>
+</div>
+
       <div className="flex items-center justify-between px-10 py-10">
         <div className="w-1/2">
           <img
@@ -38,7 +45,7 @@ const AboutUs = () => {
         </div>
         <div className="w-1/2 bg-black text-white p-8 m-8 h-auto relative">
           <span className="absolute top-0 left-0 text-white text-6xl mb-8">
-            <FormatQuoteOutlinedIcon sx={{fontSize: '6rem'}}/>
+            <FormatQuoteOutlinedIcon sx={{ fontSize: "6rem" }} />
           </span>
           <p className="mt-16 text-xl mb-8">
             Our vision is to build a more sustainable and inclusive future. By
@@ -232,6 +239,9 @@ const AboutUs = () => {
             )}
           </button>
         </div>
+      </div>
+      <div className="mt-10 px-10 py-10 w-full">
+        <FAQ />
       </div>
     </>
   );

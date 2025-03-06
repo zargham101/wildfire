@@ -129,7 +129,9 @@ const LandingPage = () => {
 
           {/* Right side: Text container with red border */}
           <div className="w-1/2 pl-6 border-l-4 border-red-500 p-6">
-            <h2 className="text-2xl font-bold font-serif text-black mb-2">To Comunity</h2>
+            <h2 className="text-2xl font-bold font-serif text-black mb-2">
+              To Comunity
+            </h2>
             <p className="text-lg font-serif text-gray-600">
               "WildFire watch makes it easy for you to live a life with no
               worrries and utmost safety from the unknown wild fire incidents
@@ -141,86 +143,96 @@ const LandingPage = () => {
       </div>
 
       <div className="bg-gray-100 py-10">
+        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+        </div>
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-center text-black">
+          <h2 className="text-4xl font-extrabold text-center font-serif text-black">
             Precautions
           </h2>
         </div>
 
-        <div className="max-w-8xl mx-auto flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
-            <div className="md:w-1/2 relative group p-0">
-              {" "}
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* First Card */}
+          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
+            <div className="relative group">
               <img
                 src="/images/smoke-alarm.jpeg"
-                alt="Precaution "
+                alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
                 <span className="font-bold text-2xl">Protection</span>
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Install smoke alarms: Smoke alarms are essential for early
+                  fire detection.
+                </p>
               </div>
             </div>
-            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
-              <p className="text-lg font-serif">
-                Install smoke alarms: Smoke alarms are essential for early fire
-                detection.
-              </p>
-            </div>
           </div>
-          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
-            <div className="md:w-1/2 relative group p-0">
+
+          {/* Second Card */}
+          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
+            <div className="relative group">
               <img
                 src="/images/fire-escape.jpg"
-                alt="Precaution "
+                alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
                 <span className="font-bold text-2xl">Preparedness</span>
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Develop a fire escape plan: Having a well-rehearsed escape
+                  plan can save lives.
+                </p>
               </div>
             </div>
-            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
-              <p className="text-lg font-serif">
-                Develop a fire escape plan: Having a well-rehearsed escape plan
-                can save lives.
-              </p>
-            </div>
           </div>
-          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
-            <div className="md:w-1/2 relative group p-0">
+
+          {/* Third Card */}
+          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
+            <div className="relative group">
               <img
                 src="/images/prevention.jpeg"
-                alt="Precaution "
+                alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
                 <span className="font-bold text-2xl">Prevention</span>
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Store flammable materials safely: Keep flammable liquids and
+                  materials away from heat sources.
+                </p>
               </div>
             </div>
-            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
-              <p className="text-lg font-serif">
-                Store flammable materials safely: Keep flammable liquids and
-                materials away from heat sources.
-              </p>
-            </div>
           </div>
-          <div className="flex flex-col md:flex-row h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg">
-            <div className="md:w-1/2 relative group p-0">
+
+          {/* Fourth Card */}
+          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
+            <div className="relative group">
               <img
                 src="/images/vigilance.jpeg"
-                alt="Precaution "
+                alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
                 <span className="font-bold text-2xl">Vigilance</span>
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Maintain electrical appliances: Regularly check appliances for
+                  damage and avoid overloading outlets.
+                </p>
               </div>
             </div>
-            <div className="w-full md:w-1/2 flex items-center p-6 md:pl-10 border-l-4 border-red-500">
-              <p className="text-lg font-serif">
-                Maintain electrical appliances: Regularly check appliances for
-                damage and avoid overloading outlets.
-              </p>
-            </div>
           </div>
+        </div>
+        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
         </div>
       </div>
 
@@ -259,6 +271,12 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      </div>
+
       <div className="m-5 flex items-center">
         {/* Left side: Image */}
         <div className="w-1/2">
@@ -281,7 +299,12 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="m-5">
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      </div>
+
+      <div className="mt-[30px] mx-[85px] p-5">
         <Carousel />
       </div>
     </>

@@ -65,7 +65,7 @@ const ContactUs = () => {
       )}
 
       <div className="flex items-center justify-between px-10 py-10 border-2 border-slate-200">
-        <div className="w-1/3 bg-white p-4 rounded-lg shadow-lg">
+        <div className="w-1/3 bg-slate-100 p-4 rounded-lg shadow-lg ml-[150px]">
           <h2 className="text-2xl font-bold mb-4 font-serif">Get in Touch</h2>
           <p className="text-lg  mb-4 font-serif">Please leave a review or recommendation for us to work better</p>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -130,12 +130,12 @@ const ContactUs = () => {
           </form>
         </div>
 
-        <div className="w-[500px] relative group">
+        <div className="w-[500px] relative group ml-[90px] mb-[120px] mr-[250px]">
           {/* Image */}
           <img
             src="/images/contact-side-image.jpg"
             alt="Contact Us"
-            className="w-full h-[500px] object-cover rounded-lg shadow-xl group-hover:blur-sm transition-all"
+            className="w-[415px] h-[500px] object-cover group-hover:blur-sm transition-all"
             style={{ boxShadow: "10px 0px 20px rgba(0, 0, 0, 0.3)" }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-50 text-white flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all p-4">

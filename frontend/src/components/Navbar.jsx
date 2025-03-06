@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
@@ -32,9 +32,13 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-10 p-5 border-b-2 border-white transition-colors duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 p-5 border-b-2 border-white transition-colors duration-300 ${
         isLandingPage && !isScrolled ? "bg-transparent" : "bg-white"
       }`}
+      style={{
+        pointerEvents: "auto", // Ensure the navbar is clickable at the top
+        zIndex: "1000", // Make sure navbar stays on top
+      }}
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2 text-black">
@@ -100,12 +104,17 @@ const Navbar = () => {
               Sign Up
             </Link>
           </li>
-          <li>
-            <li className="relative group">
-              <button className="focus:outline-none">More</button>
+          <li className="relative group">
+            <button
+              className="focus:outline-none"
+              onClick={toggleDropdown}
+            >
+              More
+            </button>
 
-              {/* Dropdown menu */}
-              <div className="absolute left-0 mt-2 space-y-2 bg-white shadow-lg w-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 hover:opacity-100 hover:visible">
+            {/* Dropdown menu */}
+            {isOpen && (
+              <div className="absolute left-0 mt-2 space-y-2 bg-white shadow-lg w-auto opacity-100 visible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                 <ul className="space-y-2">
                   <li>
                     <Link
@@ -133,7 +142,7 @@ const Navbar = () => {
                   </li>
                 </ul>
               </div>
-            </li>
+            )}
           </li>
         </ul>
 

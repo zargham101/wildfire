@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();  
 
-  // Auto-hide alert after 5 seconds
   useEffect(() => {
     if (message || error) {
       const timer = setTimeout(() => {
@@ -24,19 +25,27 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
+        console.log("sending respomnse to backend")
       const response = await fetch("http://localhost:5001/api/user/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
+      console.log("Response status",response.status)
       const data = await response.json();
+      console.log("data:::",data)
 
       if (!response.ok) {
         throw new Error(data.error || "Something went wrong");
       }
 
+      
       setMessage("Password reset link has been sent to your email.");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,7 +56,6 @@ const ForgotPassword = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 relative">
       
-      {/* Floating Alert Message */}
       {(message || error) && (
         <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-sm transition-all duration-300
           ${message ? "bg-green-500" : "bg-red-500"}`}>
@@ -55,7 +63,6 @@ const ForgotPassword = () => {
         </div>
       )}
 
-      {/* Forgot Password Form */}
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
         <h2 className="text-2xl font-bold text-center text-gray-700">
           Forgot Password?

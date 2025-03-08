@@ -2,6 +2,15 @@ const User = require("../../model/user/index");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail", 
+  auth: {
+    user: process.env.SMTP_USER, // Your email
+    pass: process.env.SMTP_PASS, // App password (not regular email password)
+  },
+});
 
 const userService = {
   registerUser: async ({ name, email, password }) => {
@@ -111,26 +120,39 @@ const userService = {
     try {
       const user = await User.findOne({ email });
       if (!user) throw new Error("User not found");
+
       const resetToken = crypto.randomBytes(32).toString("hex");
-      const hashedToken = crypto
-        .createHash("sha256")
-        .update(resetToken)
-        .digest("hex");
+      const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
       user.resetPasswordToken = hashedToken;
-      user.resetPasswordExpires = Date.now() + 3600000;
+      user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
 
       await user.save();
 
-      return {
-        message: "Password reset token generated successfully",
-        resetToken,
+      const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}&email=${email}`;
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: "Password Reset Request",
+        html: `
+          <h2>Password Reset Request</h2>
+          <p>Click the link below to reset your password:</p>
+          <a href="${resetUrl}" style="padding:10px 20px; background:#007bff; color:white; text-decoration:none; border-radius:5px;">
+            Reset Password
+          </a>
+          <p>If you didn't request this, please ignore this email.</p>
+        `,
       };
+
+      // Send the email
+      await transporter.sendMail(mailOptions);
+
+      return { message: "Password reset link sent successfully" };
     } catch (error) {
       throw error;
     }
   },
-
   resetPassword: async ({ resetToken, newPassword }) => {
     try {
       const hashedToken = crypto

@@ -4,6 +4,7 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import FormatQuoteOutlinedIcon from "@mui/icons-material/FormatQuoteOutlined";
 import FAQ from "./FAQ";
 import ScrollingTextWithDots from "./ScrllingText";
+import TrainingSection from "./TraainngSection";
 
 const AboutUs = () => {
   const [expanded, setExpanded] = useState([false, false, false]);
@@ -68,199 +69,17 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="px-10 py-10 bg-black opacity-90 border-b-2 border-gray-300">
-        <h2 className="font-serif text-3xl font-bold text-slate-300">Our Mission</h2>
-        <p className="font-serif text-xl mt-4 text-lg text-slate-300">
-          We strive to provide the highest quality service, create lasting
-          relationships, and foster a culture of continuous improvement.
-        </p>
-
-        <div
-          className="relative p-6 mt-6 border-2 rounded-md hover:bg-gradient-to-r from-neutral-500 via-slate-600 to-slate-700 transition-all duration-500"
-          style={{
-            borderColor: "#f0f0f0",
-          }}
-        >
-          <h1 className="mt-2 text-3xl font-serif font-semibold text-slate-300">
-            Wildfire Prediction
-          </h1>
-          <p className="text-lg font-serif mt-1 text-slate-300">
-            Serving humanity for a better and improved quality of life by making
-            sure that everyone knows the best probability to check if the
-            upcoming time is safe and secure and there are no or minor
-            possibility for natural or accidental wildfires to happen in their
-            surrounding...
-          </p>
-          <div
-            className={`mt-4 overflow-hidden transition-all duration-500 ${
-              expanded[0] ? "h-auto" : "h-0"
-            }`}
-            style={{ transition: "height 0.5s ease-out" }}
-          >
-            <ul className="list-disc pl-5">
-              <li>Promoting sustainability in all aspects of our work.</li>
-              <li>Empowering people through innovation and technology.</li>
-              <li>Ensuring a positive impact on the communities we serve.</li>
-              <li>
-                Fostering collaboration and teamwork across all departments.
-              </li>
-            </ul>
-            <a
-              href="/new-page"
-              className="bg-orange-500 text-white px-6 py-3 rounded-full inline-block mt-6"
-            >
-              Learn More
-            </a>
-          </div>
-
-          <button
-            onClick={() => toggleExpansion(0)}
-            className="bg-white text-orange-500 px-3 py-2 rounded-full w-auto flex items-center justify-center mx-auto transition-all duration-500"
-          >
-            {expanded[0] ? (
-              <>
-                Expand Less{" "}
-                <span className="ml-2 text-2xl">
-                  <KeyboardDoubleArrowUpIcon />
-                </span>
-              </>
-            ) : (
-              <>
-                Expand More{" "}
-                <span className="ml-2 text-2xl">
-                  <KeyboardDoubleArrowDownIcon />
-                </span>
-              </>
-            )}
-          </button>
-        </div>
-
-        <div
-          className="relative p-6 mt-6 border-2 rounded-md hover:bg-gradient-to-r from-neutral-500 via-slate-600 to-slate-700 transition-all duration-500"
-          style={{
-            borderColor: "#f0f0f0",
-          }}
-        >
-          <h1 className="mt-2 text-3xl font-serif font-semibold text-slate-300">
-            Resource Analysis
-          </h1>
-          <p className="text-base font-serif mt-1 text-slate-300">
-            Serving humanity for a better and improved quality of life by making
-            sure that everyone knows the best probability to check if the
-            upcoming time is safe and secure and there are no or minor
-            possibility for natural or accidental wildfires to happen in their
-            surrounding...
-          </p>
-          <div
-            className={`mt-4 overflow-hidden transition-all duration-500 ${
-              expanded[1] ? "h-auto" : "h-0"
-            }`}
-            style={{ transition: "height 0.5s ease-out" }}
-          >
-            <ul className="list-disc pl-5">
-              <li>Promoting sustainability in all aspects of our work.</li>
-              <li>Empowering people through innovation and technology.</li>
-              <li>Ensuring a positive impact on the communities we serve.</li>
-              <li>
-                Fostering collaboration and teamwork across all departments.
-              </li>
-            </ul>
-            <a
-              href="/new-page"
-              className="bg-orange-500 text-white px-6 py-3 rounded-full inline-block mt-6"
-            >
-              Learn More
-            </a>
-          </div>
-
-          <button
-            onClick={() => toggleExpansion(1)}
-            className="bg-white text-orange-500 px-3 py-2 rounded-full w-auto flex items-center justify-center mx-auto transition-all duration-500"
-          >
-            {expanded[1] ? (
-              <>
-                Expand Less{" "}
-                <span className="ml-2 text-2xl">
-                  <KeyboardDoubleArrowUpIcon />
-                </span>
-              </>
-            ) : (
-              <>
-                Expand More{" "}
-                <span className="ml-2 text-2xl">
-                  <KeyboardDoubleArrowDownIcon />
-                </span>
-              </>
-            )}
-          </button>
-        </div>
-
-        <div
-          className="relative p-6 mt-6 border-2 rounded-md hover:bg-gradient-to-r from-neutral-500 via-slate-600 to-slate-700 transition-all duration-500"
-          style={{
-            borderColor: "#f0f0f0",
-          }}
-        >
-          <h1 className="mt-2 text-3xl font-serif font-semibold text-slate-300">
-            Data Visualization
-          </h1>
-          <p className="text-base font-serif mt-1 text-slate-300">
-            Serving humanity for a better and improved quality of life by making
-            sure that everyone knows the best probability to check if the
-            upcoming time is safe and secure and there are no or minor
-            possibility for natural or accidental wildfires to happen in their
-            surrounding...
-          </p>
-          <div
-            className={`mt-4 overflow-hidden transition-all duration-500 ${
-              expanded[2] ? "h-auto" : "h-0"
-            }`}
-            style={{ transition: "height 0.5s ease-out" }}
-          >
-            <ul className="list-disc pl-5">
-              <li>Promoting sustainability in all aspects of our work.</li>
-              <li>Empowering people through innovation and technology.</li>
-              <li>Ensuring a positive impact on the communities we serve.</li>
-              <li>
-                Fostering collaboration and teamwork across all departments.
-              </li>
-            </ul>
-            <a
-              href="/new-page"
-              className="bg-orange-500 text-white px-6 py-3 rounded-full inline-block mt-6"
-            >
-              Learn More
-            </a>
-          </div>
-
-          <button
-            onClick={() => toggleExpansion(2)}
-            className="bg-white text-orange-500 px-3 py-2 rounded-full w-auto flex items-center justify-center mx-auto transition-all duration-500"
-          >
-            {expanded[2] ? (
-              <>
-                Expand Less{" "}
-                <span className="ml-2 text-2xl">
-                  <KeyboardDoubleArrowUpIcon />
-                </span>
-              </>
-            ) : (
-              <>
-                Expand More{" "}
-                <span className="ml-2 text-2xl">
-                  <KeyboardDoubleArrowDownIcon />
-                </span>
-              </>
-            )}
-          </button>
-        </div>
+      <div className="m-6 p-4">
+      <TrainingSection/>
       </div>
-      <div className="justify-center mt-4 bg-black opacity-80 ">
+
+      <div className="justify-center m-[40px] p-6 bg-black opacity-80 ">
         <ScrollingTextWithDots/>
       </div>
       <div className="mt-3 mx-[250px] w-full">
         <FAQ />
       </div>
+      
     </>
   );
 };

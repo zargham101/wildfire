@@ -7,6 +7,7 @@ import Signup from "./components/SignUp";
 import ContactUs from "./components/ContactUs"
 import AboutUs from "./components/AboutUs";
 import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ReserPassword";
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
       <Footer />
     </>

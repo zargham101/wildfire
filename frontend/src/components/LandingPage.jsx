@@ -53,7 +53,7 @@ const LandingPage = () => {
     const countUp = (target, setStateKey) => {
       let start = 0;
       const end = target;
-      const duration = 2000; // Duration of the count-up animation
+      const duration = 5000; // Duration of the count-up animation
       const stepTime = Math.abs(Math.floor(duration / end));
 
       const interval = setInterval(() => {
@@ -65,6 +65,15 @@ const LandingPage = () => {
 
         if (start === end) {
           clearInterval(interval);
+
+          // Wait for 2 seconds before restarting the count
+          setTimeout(() => {
+            setDynamicCounts((prev) => ({
+              ...prev,
+              [setStateKey]: 0,
+            }));
+            countUp(target, setStateKey); // Restart the count
+          }, 2000);
         }
       }, stepTime);
     };
@@ -143,7 +152,10 @@ const LandingPage = () => {
       </div>
 
       <div className="bg-gray-100 py-10">
-        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+          <p className="text-white font-serif  text-base ml-[15px]">
+            Your safety is our priority
+          </p>
           <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
           <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
         </div>
@@ -162,8 +174,14 @@ const LandingPage = () => {
                 alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
+              {/* Heading always visible */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">
+                  #Protection
+                </span>
+              </div>
+              {/* Line and other text hidden by default and visible on hover */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <span className="font-bold text-2xl">Protection</span>
                 <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
                 <p className="mt-2 text-sm">
                   Install smoke alarms: Smoke alarms are essential for early
@@ -181,8 +199,12 @@ const LandingPage = () => {
                 alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">
+                  #Preparedness
+                </span>
+              </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <span className="font-bold text-2xl">Preparedness</span>
                 <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
                 <p className="mt-2 text-sm">
                   Develop a fire escape plan: Having a well-rehearsed escape
@@ -200,8 +222,12 @@ const LandingPage = () => {
                 alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">
+                  #Prevention
+                </span>
+              </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <span className="font-bold text-2xl">Prevention</span>
                 <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
                 <p className="mt-2 text-sm">
                   Store flammable materials safely: Keep flammable liquids and
@@ -219,8 +245,10 @@ const LandingPage = () => {
                 alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">#Vigilance</span>
+              </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <span className="font-bold text-2xl">Vigilance</span>
                 <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
                 <p className="mt-2 text-sm">
                   Maintain electrical appliances: Regularly check appliances for
@@ -281,14 +309,15 @@ const LandingPage = () => {
         {/* Left side: Image */}
         <div className="w-1/2">
           <img
-            src="/images/graph.png"
+            src="/videos/graph.gif"
             alt="Wildfire Watch"
-            className="w-full h-auto object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl"
+            className="w-[500px] h-[400px] ml-[150px] object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl"
           />
         </div>
 
         {/* Right side: Text container with red border */}
         <div className="w-1/2 pl-5 border-l-4 border-red-500 border-solid p-5">
+        <h2 className="text-black font-serif text-4xl text-left mb-[60px]">Monitor critical events and equip your yourself to manage its effects</h2>
           <p className="text-xl font-sans italic">
             "Wildfire Watch is a crucial platform for individuals and
             communities to predict and prevent devastating wildfires. By
@@ -299,7 +328,10 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+        <p className="text-white font-serif  text-base ml-[15px]">
+          Related Content
+        </p>
         <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
         <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>

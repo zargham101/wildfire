@@ -91,19 +91,19 @@ const Carousel = () => {
             className="w-1/4 p-0 flex-shrink-0 bg-white shadow-lg m-2 transform transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-xl"
             style={{ minWidth: "250px" }}
           >
-            <div className="w-full h-48 overflow-hidden  mb-4">
+            <div className="relative w-full h-48 overflow-hidden mb-4">
               <img
                 src={card.img}
                 alt={card.title}
                 className="w-full h-full object-cover"
               />
+              <h3
+                className="absolute bottom-2 left-2  bg-opacity-60 text-white px-3 py-1 text-2xl rounded-md"
+                style={{ fontFamily: "Bebas Neue, sans-serif" }}
+              >
+                {card.title}
+              </h3>
             </div>
-            <h3
-              className="font-semibold font-seif text-xl ml-2"
-              style={{ fontFamily: "Bebas Neue, sans-serif" }}
-            >
-              {card.title}
-            </h3>
             <p className="text-lg mt-2 ml-2 font-serif">
               {expandedIndex === index
                 ? card.text

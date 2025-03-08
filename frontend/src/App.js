@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Signup from "./components/SignUp";
 import ContactUs from "./components/ContactUs"
 import AboutUs from "./components/AboutUs";
+import ForgotPassword from "./components/ForgotPassword";
 function App() {
   return (
     <>
@@ -16,6 +17,7 @@ function App() {
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
       <Footer />
     </>

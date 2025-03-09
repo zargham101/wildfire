@@ -1,31 +1,11 @@
-import React, { useState } from "react";
-import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import React from "react";
 import FormatQuoteOutlinedIcon from "@mui/icons-material/FormatQuoteOutlined";
 import FAQ from "./FAQ";
 import ScrollingTextWithDots from "./ScrllingText";
 import TrainingSection from "./TraainngSection";
-import ChatbotIcon from "./ChatbotIcon"; // Import ChatbotIcon
-import ChatModal from "./ChatModal"; // Import ChatModal
 
 const AboutUs = () => {
-  const [expanded, setExpanded] = useState([false, false, false]);
-  const [isChatOpen, setChatOpen] = useState(false); // State to control chat modal
-
-  const toggleExpansion = (index) => {
-    setExpanded((prev) =>
-      prev.map((item, idx) => (idx === index ? !item : item))
-    );
-  };
-
-  const handleOpenChat = () => {
-    setChatOpen(true);
-  };
-
-  const handleCloseChat = () => {
-    setChatOpen(false);
-  };
-
+  
   return (
     <div
       style={{

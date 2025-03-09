@@ -41,7 +41,7 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="max-w-full mx-auto my-8 p-6 bg-white rounded-lg shadow-lg flex flex-col md:flex-row items-center justify-between">
+    <div className="max-w-full mx-auto my-8 p-6  flex flex-col md:flex-row items-center justify-between">
       {/* Image on the left */}
       <div className="w-full md:w-1/3 mb-4 md:mb-0">
         <img

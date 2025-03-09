@@ -36,8 +36,8 @@ const Navbar = () => {
         isLandingPage && !isScrolled ? "bg-transparent" : "bg-white"
       }`}
       style={{
-        pointerEvents: "auto", // Ensure the navbar is clickable at the top
-        zIndex: "1000", // Make sure navbar stays on top
+        pointerEvents: "auto",
+        zIndex: "1000", 
       }}
     >
       <div className="flex justify-between items-center">

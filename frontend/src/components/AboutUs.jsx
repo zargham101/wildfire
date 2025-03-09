@@ -5,9 +5,12 @@ import FormatQuoteOutlinedIcon from "@mui/icons-material/FormatQuoteOutlined";
 import FAQ from "./FAQ";
 import ScrollingTextWithDots from "./ScrllingText";
 import TrainingSection from "./TraainngSection";
+import ChatbotIcon from "./ChatbotIcon"; // Import ChatbotIcon
+import ChatModal from "./ChatModal"; // Import ChatModal
 
 const AboutUs = () => {
   const [expanded, setExpanded] = useState([false, false, false]);
+  const [isChatOpen, setChatOpen] = useState(false); // State to control chat modal
 
   const toggleExpansion = (index) => {
     setExpanded((prev) =>
@@ -15,8 +18,21 @@ const AboutUs = () => {
     );
   };
 
+  const handleOpenChat = () => {
+    setChatOpen(true);
+  };
+
+  const handleCloseChat = () => {
+    setChatOpen(false);
+  };
+
   return (
-    <>
+    <div
+      style={{
+        backgroundImage: `url('images/texture.jpg')`,
+        backgroundRepeat: "repeat",
+      }}
+    >
       <div className="relative w-full h-[500px] mt-20">
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -28,8 +44,10 @@ const AboutUs = () => {
         </video>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-700 opacity-50"></div>
         <div className="relative z-10 flex items-center justify-start h-full pl-10 text-white">
-          <div className="max-w-lg bg-black opacity-80 p-5 rounded-lg mx-[350px]">
-            <h1 className="text-4xl font-serif font-bold text-white">About Us</h1>
+          <div className="max-w-lg bg-black opacity-80 p-5 rounded-lg mx-auto">
+            <h1 className="text-4xl font-serif font-bold text-white">
+              About Us
+            </h1>
             <p className="mt-4 text-lg font-serif text-white">
               We are dedicated to providing the best services for our customers
               and making a positive impact in the world. Our team is passionate
@@ -39,8 +57,8 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-10 py-10">
-        <div className="w-1/2 relative">
+      <div className="flex flex-wrap items-center justify-between px-4 py-10 w-full">
+        <div className="w-full md:w-1/2 relative mb-6 md:mb-0">
           <img
             src="/images/vision.jpg"
             alt="Our Vision"
@@ -57,30 +75,47 @@ const AboutUs = () => {
             </p>
           </div>
         </div>
-        <div className="w-1/2 h-[330px] ml-4 border-l-2 border-red-700">
-          <p className="font-serif text-left text-lg mt-[15%] p-4">
+        <div className="w-full md:w-1/2 h-[330px] border-l-2 border-red-700 p-4">
+          <p className="font-serif text-left text-lg mt-[15%]">
             "Making this world a safe more predictable and secure place for the
-            people living in it.Enhancing user experience to take precautions
+            people living in it. Enhancing user experience to take precautions
             and make themselves feel safe with everything done before damage is
-            something done amazinf and for this our team ad models help the
-            world to make their living more safe more happy and worth every
-            moment."
+            something amazing, and for this, our team and models help the world
+            make their living safer, happier, and worth every moment."
           </p>
         </div>
       </div>
 
-      <div className="m-6 p-4">
-      <TrainingSection/>
+      <div className="bg-red-700 w-[1200px] ml-[80px] p-3 relative my-6 ">
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
 
-      <div className="justify-center m-[40px] p-6 bg-black opacity-80 ">
-        <ScrollingTextWithDots/>
+      <div className="m-6 p-4">
+        <TrainingSection />
       </div>
-      <div className="mt-3 mx-[250px] w-full">
+
+      <div className="bg-red-700 w-[1200px] ml-[80px] p-3 relative my-6 ">
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      </div>
+
+      <div className="justify-center m-[40px] p-6 bg-black opacity-80">
+        <ScrollingTextWithDots />
+      </div>
+
+      <div className="bg-red-700  w-[1200px] ml-[80px] p-1 relative my-6">
+        <p className="text-white font-serif text-base ml-[15px]">
+          What You Need To Know
+        </p>
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      </div>
+
+      <div className="mt-3 mx-auto w-full max-w-screen-lg">
         <FAQ />
       </div>
-      
-    </>
+    </div>
   );
 };
 

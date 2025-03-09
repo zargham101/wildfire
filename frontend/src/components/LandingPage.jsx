@@ -85,7 +85,12 @@ const LandingPage = () => {
   }, [counts]);
 
   return (
-    <>
+    <div
+      style={{
+        backgroundImage: `url('images/texture.jpg')`,
+        backgroundRepeat: "repeat",
+      }}
+    >
       <div className="relative w-full h-screen">
         <div className="absolute top-0 left-0 w-full h-full">
           <video
@@ -125,7 +130,7 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white w-full flex justify-center items-center h-[500px] mt-6 relative z-0">
+      <div className=" w-full flex justify-center items-center h-[500px] mt-6 relative z-0">
         <div className="flex w-full max-w-7xl mx-auto px-6">
           {/* Left side: Image */}
           <div className="w-1/2">
@@ -159,8 +164,8 @@ const LandingPage = () => {
           <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
           <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
         </div>
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-center font-serif text-black">
+        <div className="text-center mb-12 mt-6">
+          <h2 className="text-4xl font-extrabold text-center font-serif text-black ">
             Precautions
           </h2>
         </div>
@@ -264,7 +269,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="bg-white py-12 border-2 shadow-lg p-3 rounded-md m-6">
+      <div className=" py-12 border-2 shadow-lg p-3 rounded-md m-6">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="flex flex-col items-center">
             <GroupIcon style={{ fontSize: "4rem" }} className=" text-red-500" />
@@ -300,7 +305,10 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+        <p className="text-white font-serif  text-base ml-[15px]">
+          Our Mission
+        </p>
         <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
         <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
@@ -317,7 +325,10 @@ const LandingPage = () => {
 
         {/* Right side: Text container with red border */}
         <div className="w-1/2 pl-5 border-l-4 border-red-500 border-solid p-5">
-        <h2 className="text-black font-serif text-4xl text-left mb-[60px]">Monitor critical events and equip your yourself to manage its effects</h2>
+          <h2 className="text-black font-serif text-4xl text-left mb-[60px]">
+            Monitor critical events and equip your yourself to
+            manage its effects
+          </h2>
           <p className="text-xl font-sans italic">
             "Wildfire Watch is a crucial platform for individuals and
             communities to predict and prevent devastating wildfires. By
@@ -339,7 +350,7 @@ const LandingPage = () => {
       <div className="mt-[30px] mx-[85px] p-5">
         <Carousel />
       </div>
-    </>
+    </div>
   );
 };
 

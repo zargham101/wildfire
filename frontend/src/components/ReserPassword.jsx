@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { HiEye, HiEyeOff } from "react-icons/hi"; 
+import { HiEye, HiEyeOff } from "react-icons/hi";
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -41,13 +41,16 @@ const ResetPassword = () => {
 
     try {
       console.log("sending response to backend");
-      const response = await fetch("http://localhost:5001/api/user/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ resetToken, newPassword }),
-      });
+      const response = await fetch(
+        "http://localhost:5001/api/user/reset-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ resetToken, newPassword }),
+        }
+      );
 
       const data = await response.json();
 
@@ -69,8 +72,13 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 relative">
-      
+    <div
+      className="flex items-center justify-center min-h-screen px-4 relative"
+      style={{
+        backgroundImage: `url('images/texture.jpg')`,
+        backgroundRepeat: "repeat",
+      }}
+    >
       {(message || error) && (
         <div
           className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-sm transition-all duration-300
@@ -80,43 +88,46 @@ const ResetPassword = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-2xl font-bold text-center text-gray-700">Reset Your Password</h2>
-        <p className="text-gray-500 text-center mt-2">
+      <div className=" p-8 max-w-md w-full">
+        <p className="text-black text-center mt-2 font-serif font-bold text-2xl">
           Enter a new password to reset your account password.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6">
-          <label className="block text-gray-700 text-sm font-medium">New Password</label>
+          <label className="block text-gray-700 text-sm font-semibold font-serif">
+            New Password
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
-              className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-2 border-2 border-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
             />
             <span
-              className="absolute right-3 top-3 cursor-pointer"
+              className="absolute right-3 mt-[15px] top-3 cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <HiEyeOff /> : <HiEye />}
             </span>
           </div>
 
-          <label className="block text-gray-700 text-sm font-medium mt-4">Confirm Password</label>
+          <label className="block text-gray-700 text-sm font-medium mt-4 font-semibold font-serif">
+            Confirm Password
+          </label>
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
-              className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-2 border-2 border-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Confirm your new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <span
-              className="absolute right-3 top-3 cursor-pointer"
+              className="absolute right-3 top-3 mt-[15px] cursor-pointer"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <HiEyeOff /> : <HiEye />}
@@ -125,7 +136,7 @@ const ResetPassword = () => {
 
           <button
             type="submit"
-            className="w-full mt-4 bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-all duration-300 disabled:bg-gray-400"
+            className="w-full bg-red-700 text-white py-2 mt-4 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
             disabled={loading}
           >
             {loading ? "Resetting..." : "Reset Password"}

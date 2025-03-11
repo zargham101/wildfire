@@ -6,5 +6,5 @@ const chat = require("./chatRoute/chatRoute");
 module.exports = {
   user,
   review,
-  chat
+  chat,
 }

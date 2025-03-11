@@ -9,11 +9,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [user, setUser] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post(
         "http://localhost:5001/api/user/login",
@@ -22,12 +23,16 @@ const Login = () => {
           password,
         }
       );
+      const loggedInUser = response.data.user;
+
+      localStorage.setItem("user", JSON.stringify(loggedInUser));
+
 
       localStorage.setItem("token", response.data.token);
+
       setSuccessMessage(response.data.message);
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
+      setUser(loggedInUser);
+      navigate("/predictionHomePage");
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed");
     }

@@ -8,6 +8,7 @@ import ContactUs from "./components/ContactUs"
 import AboutUs from "./components/AboutUs";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ReserPassword";
+import PredictionHomePage from "./components/PredictionHome"
 function App() {
   return (
     <>
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/predictionHomePage" element={<PredictionHomePage />} />
       </Routes>
       <Footer />
     </>

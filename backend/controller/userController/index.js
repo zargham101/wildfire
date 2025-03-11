@@ -3,16 +3,25 @@ const userService = require('../../services/userService/userService');
 const userController = {
   register: async (req, res) => {
     try {
-      const response = await userService.registerUser(req.body);
+      const imageUrl = await userService.uploadImageToS3(req.file)
+
+      const { name, email, password } = req.body;
+      
+      if (!name || !email || !password) {
+        return res.status(400).json({ message: "Name, email, and password are required" });
+      }
+
+      const response = await userService.registerUser({ name, email, password, image: imageUrl });
+      
       res.status(201).json(response);
     } catch (error) {
+      console.log("error:::",error)
       res.status(400).json({ message: error.message });
     }
   },
 
   login: async (req, res) => {
     try {
-      console.log("ye kiia hai::",req.body)
       const response = await userService.loginUser(req.body);
       res.status(200).json(response);
     } catch (error) {

@@ -1,11 +1,12 @@
 const User = require("../../model/user/index");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const {s3} = require("../../config/multerConfig")
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: "gmail", 
+  service: "gmail",
   auth: {
     user: process.env.SMTP_USER, // Your email
     pass: process.env.SMTP_PASS, // App password (not regular email password)
@@ -13,12 +14,27 @@ const transporter = nodemailer.createTransport({
 });
 
 const userService = {
-  registerUser: async ({ name, email, password }) => {
+  uploadImageToS3: async (file) => {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `user_images/${Date.now()}_${file.originalname}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+
+    try {
+      const uploadResult = await s3.upload(params).promise();
+      return uploadResult.Location;
+    } catch (error) {
+      throw new Error("Failed to upload the image to S3", error.message);
+    }
+  },
+  registerUser: async ({ name, email, password, image }) => {
     try {
       let user = await User.findOne({ email });
       if (user) throw new Error("User already exists");
 
-      user = new User({ name, email, password });
+      user = new User({ name, email, password, image });
 
       await user.save();
       return {
@@ -61,7 +77,7 @@ const userService = {
   },
   getUserProfile: async (userId) => {
     try {
-      const user = await User.findById(userId).select("-password"); // Exclude password
+      const user = await User.findById(userId).select("-password"); 
       if (!user) throw new Error("User not found");
 
       return user;
@@ -122,7 +138,10 @@ const userService = {
       if (!user) throw new Error("User not found");
 
       const resetToken = crypto.randomBytes(32).toString("hex");
-      const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+      const hashedToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
 
       user.resetPasswordToken = hashedToken;
       user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour

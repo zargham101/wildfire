@@ -1,17 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Avatar from "./Avatar";  
+import UserProfileDropdown from "./UserProfileDropdown";  
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState(null);  // This will store the logged-in user
+  const [isOpen, setIsOpen] = useState(false)
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);  
+    navigate("/login");  
   };
 
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedInUser) {
+      setUser(loggedInUser);  
+    }
+  }, []); 
+
+ 
+ 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -28,17 +44,22 @@ const Navbar = () => {
     };
   }, []);
 
-  const isLandingPage = location.pathname === "/";
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedInUser) {
+      setUser(loggedInUser);
+    }
+  }, [location]);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 p-5 border-b-2 border-white transition-colors duration-300 ${
-        isLandingPage && !isScrolled ? "bg-transparent" : "bg-white"
+        location.pathname === "/" && !isScrolled ? "bg-transparent" : "bg-white"
       }`}
-      style={{
-        pointerEvents: "auto",
-        zIndex: "1000", 
-      }}
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2 text-black">
@@ -53,7 +74,7 @@ const Navbar = () => {
           </h1>
         </div>
 
-        <ul className="flex space-x-5 text-gray-500 font-bold">
+        <ul className="flex space-x-5 text-gray-500 font-bold mx-auto">
           <li>
             <Link
               to="/"
@@ -84,7 +105,10 @@ const Navbar = () => {
               Contact Us
             </Link>
           </li>
-          <li>
+        </ul>
+
+        {!user && (
+          <div className="flex items-center space-x-5 text-gray-500 font-bold">
             <Link
               to="/login"
               className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
@@ -93,8 +117,6 @@ const Navbar = () => {
             >
               Login
             </Link>
-          </li>
-          <li>
             <Link
               to="/signup"
               className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
@@ -103,52 +125,16 @@ const Navbar = () => {
             >
               Sign Up
             </Link>
-          </li>
-          <li className="relative group">
-            <button
-              className="focus:outline-none"
-              onClick={toggleDropdown}
-            >
-              More
-            </button>
+          </div>
+        )}
 
-            {/* Dropdown menu */}
-            {isOpen && (
-              <div className="absolute left-0 mt-2 space-y-2 bg-white shadow-lg w-auto opacity-100 visible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                <ul className="space-y-2">
-                  <li>
-                    <Link
-                      to="#"
-                      className="block px-4 py-2 transition-all duration-300 hover:bg-gray-100"
-                    >
-                      Wildfire prediction
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="#"
-                      className="block px-4 py-2 transition-all duration-300 hover:bg-gray-100"
-                    >
-                      Resource analysis
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="#"
-                      className="block px-4 py-2 transition-all duration-300 hover:bg-gray-100"
-                    >
-                      Data visualization
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </li>
-        </ul>
+        {user && (
+          <div className="flex items-center space-x-3 mr-4 mt-1">
+            <Avatar user={user} />
 
-        <div className="flex items-center space-x-5 text-black">
-          <input className="border p-2" type="text" placeholder="Search" />
-        </div>
+            <UserProfileDropdown user={user} handleLogout={handleLogout} />
+          </div>
+        )}
       </div>
     </nav>
   );

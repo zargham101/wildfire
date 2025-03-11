@@ -1,6 +1,6 @@
-// components/ChatModal.js
+
 import React, { useState } from "react";
-import { HiX } from "react-icons/hi"; // Icon to close the modal
+import { HiX } from "react-icons/hi"; 
 
 const ChatModal = ({ onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -10,11 +10,9 @@ const ChatModal = ({ onClose }) => {
     e.preventDefault();
     if (!input) return;
 
-    // Add user message
     setMessages((prev) => [...prev, { sender: "user", text: input }]);
     setInput("");
 
-    // Send user message to the backend (GPT)
     const response = await fetch("http://localhost:5001/api/chat/send-message", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

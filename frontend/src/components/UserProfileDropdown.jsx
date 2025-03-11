@@ -3,28 +3,28 @@ import { Link } from "react-router-dom";
 
 const UserProfileDropdown = ({ user, handleLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null); // Reference to the dropdown container
+  const dropdownRef = useRef(null); 
 
   const toggleDropdown = () => {
     setIsOpen((prevState) => !prevState);
   };
 
-  // Close the dropdown when clicking outside of it
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false); // Close the dropdown if clicked outside
+        setIsOpen(false); 
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside); // Listen for click outside
+    document.addEventListener("mousedown", handleClickOutside); 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside); // Cleanup the event listener on unmount
+      document.removeEventListener("mousedown", handleClickOutside); 
     };
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}> {/* Add ref here */}
+    <div className="relative" ref={dropdownRef}> 
       <button
         className="flex items-center space-x-2"
         onClick={toggleDropdown}

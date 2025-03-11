@@ -53,7 +53,7 @@ const LandingPage = () => {
     const countUp = (target, setStateKey) => {
       let start = 0;
       const end = target;
-      const duration = 5000; // Duration of the count-up animation
+      const duration = 5000; 
       const stepTime = Math.abs(Math.floor(duration / end));
 
       const interval = setInterval(() => {
@@ -66,13 +66,12 @@ const LandingPage = () => {
         if (start === end) {
           clearInterval(interval);
 
-          // Wait for 2 seconds before restarting the count
           setTimeout(() => {
             setDynamicCounts((prev) => ({
               ...prev,
               [setStateKey]: 0,
             }));
-            countUp(target, setStateKey); // Restart the count
+            countUp(target, setStateKey); 
           }, 2000);
         }
       }, stepTime);

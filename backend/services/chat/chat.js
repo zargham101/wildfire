@@ -9,7 +9,7 @@ const deepseek = new OpenAI({
 const chatService = async (message) => {
   try {
     const response = await deepseek.chat.completions.create({
-      model: "deepseek-chat",  // Replace with the actual model name provided by DeepSeek
+      model: "deepseek-chat", 
       messages: [
         {
             role: 'system',

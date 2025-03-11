@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react"; // You can use these icons or other icons
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const FAQ = () => {
-  // State to manage the expanded/collapsed state of each FAQ
   const [expanded, setExpanded] = useState([false, false, false, false, false]);
 
-  // Toggle the expanded state of the clicked FAQ
   const toggleExpanded = (index) => {
     setExpanded((prev) =>
       prev.map((item, idx) => (idx === index ? !item : item))
@@ -42,10 +40,9 @@ const FAQ = () => {
 
   return (
     <div className="max-w-full mx-auto my-8 p-6  flex flex-col md:flex-row items-center justify-between">
-      {/* Image on the left */}
       <div className="w-full md:w-1/3 mb-4 md:mb-0">
         <img
-          src="/images/faq.jpg" // Add your image here
+          src="/images/faq.jpg"
           alt="Wildfire"
           className="w-full h-[550px] object-cover rounded-lg mx-2" 
         />

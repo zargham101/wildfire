@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const Carousel = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [scrollIndex, setScrollIndex] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(true); // State to control auto-scrolling
+  const [isScrolling, setIsScrolling] = useState(true); 
 
   const cards = [
     {

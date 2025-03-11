@@ -1,6 +1,5 @@
-// components/ChatbotIcon.js
 import React from "react";
-import { HiChat } from "react-icons/hi"; // Chat bubble icon
+import { HiChat } from "react-icons/hi"; 
 
 const ChatbotIcon = ({ onOpen }) => {
   return (

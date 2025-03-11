@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { CheckCircle } from "lucide-react"; // Success icon
+import { CheckCircle } from "lucide-react"; 
 
 const ContactUs = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [country, setCountry] = useState("");
   const [description, setDescription] = useState("");
-  const [showAlert, setShowAlert] = useState(false); // To manage the success alert visibility
+  const [showAlert, setShowAlert] = useState(false); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,13 +24,12 @@ const ContactUs = () => {
       );
 
       if (response.status === 200) {
-        setShowAlert(true); // Show success alert
+        setShowAlert(true); 
         setTimeout(() => {
-          setShowAlert(false); // Hide success alert after 3 seconds
-          window.location.reload(); // Reload the page after form submission
+          setShowAlert(false);
+          window.location.reload(); 
         }, 3000);
 
-        // Reset form fields after successful submission
         setName("");
         setEmail("");
         setCountry("");
@@ -63,7 +62,6 @@ const ContactUs = () => {
         </div>
       </div>
 
-      {/* Success alert */}
       {showAlert && (
         <div className="absolute inset-0 flex justify-center items-center z-50">
           <div className=" text-green-500 p-10 rounded-xl shadow-lg flex flex-col items-center space-y-4 w-80 h-80 border border-green-500">

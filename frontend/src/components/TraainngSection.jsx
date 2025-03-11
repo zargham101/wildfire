@@ -1,8 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import navigation hook
+import { useNavigate } from "react-router-dom"; 
 
 const TrainingSection = ({ isAuthenticated, isUser }) => {
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate(); 
 
   const cards = [
     {
@@ -22,14 +22,13 @@ const TrainingSection = ({ isAuthenticated, isUser }) => {
     },
   ];
 
-  // Fixed function with closing bracket
   const handleRedirect = () => {
     if (isAuthenticated) {
-      navigate("/training-details"); // Redirect to training details page
+      navigate("/training-details"); 
     } else if (isUser === false) {
-      navigate("/register"); // Redirect to register page for new users
+      navigate("/register"); 
     } else {
-      navigate("/login"); // Redirect to login page if not authenticated
+      navigate("/login");
     }
   };
 
@@ -38,16 +37,15 @@ const TrainingSection = ({ isAuthenticated, isUser }) => {
       className="relative flex items-center justify-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: "url('/images/aboutBG.jpg')" }}
     >
-      {/* Dark overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-60"></div>
 
       <div className="relative z-10 text-center max-w-4xl px-6">
-        {/* Section Heading */}
+        
         <h2 className="text-white text-4xl font-bold uppercase mb-6">
           How We Work
         </h2>
 
-        {/* Cards Container */}
+        
         <div className="flex flex-wrap justify-center gap-5">
           {cards.map((card, index) => (
             <div
@@ -57,7 +55,6 @@ const TrainingSection = ({ isAuthenticated, isUser }) => {
               <h3 className="text-lg font-bold mb-2">{card.title}</h3>
               <p className="text-sm">{card.description}</p>
 
-              {/* Clickable Arrow for Redirection */}
               <div
                 className="absolute bottom-4 right-4 text-white text-xl cursor-pointer hover:text-gray-300"
                 onClick={handleRedirect}

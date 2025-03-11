@@ -8,16 +8,15 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState(null); // State to hold selected image
+  const [image, setImage] = useState(null); 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
-  // Handle file selection and image preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file); // Set image state to the selected file
+      setImage(file); 
     }
   };
 
@@ -28,12 +27,12 @@ const Signup = () => {
     formData.append("name", name);
     formData.append("email", email);
     formData.append("password", password);
-    if (image) formData.append("image", image); // Append image if selected
+    if (image) formData.append("image", image); 
 
     try {
       const response = await axios.post("http://localhost:5001/api/user/register", formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Important for file uploads
+          "Content-Type": "multipart/form-data", 
         },
       });
 

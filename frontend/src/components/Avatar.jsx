@@ -1,7 +1,5 @@
 const Avatar = ({ user }) => {
     const { image, name } = user;
-    console.log("image:::",image)
-    console.log("name:::",name)
   
     const getInitials = (name) => {
       const nameParts = name.split(" ");

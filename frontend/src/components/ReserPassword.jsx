@@ -8,8 +8,8 @@ const ResetPassword = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle confirm password visibility
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,7 +60,7 @@ const ResetPassword = () => {
 
       setMessage("Password reset successfully!");
 
-      // Redirect to login after 3 seconds
+     
       setTimeout(() => {
         navigate("/login");
       }, 3000);

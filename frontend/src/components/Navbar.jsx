@@ -5,7 +5,7 @@ import UserProfileDropdown from "./UserProfileDropdown";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [user, setUser] = useState(null);  // This will store the logged-in user
+  const [user, setUser] = useState(null);  
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation();
   const navigate = useNavigate();

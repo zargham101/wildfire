@@ -3,7 +3,7 @@ const Joi = require('joi');
 const passwordValidation = Joi.string()
     .min(6)
     .max(12)
-    .pattern(new RegExp("^(?=.*[A-Z])(?=.*[!@#$%^&*])")) // At least 1 uppercase, 1 special character
+    .pattern(new RegExp("^(?=.*[A-Z])(?=.*[!@#$%^&*])")) 
     .message('Password must be 6-12 characters long, contain at least one uppercase letter and one special character.');
 
 const registerValidation = Joi.object({

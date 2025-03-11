@@ -57,7 +57,7 @@ const userController = {
 
   deleteUser: async (req, res) => {
     try {
-      const userId = req.query.id; // Get ID from query params
+      const userId = req.query.id; 
       if (!userId) return res.status(400).json({ message: "User ID is required" });
 
       const response = await userService.deleteUser(userId);

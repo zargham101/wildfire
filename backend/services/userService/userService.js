@@ -8,8 +8,8 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.SMTP_USER, // Your email
-    pass: process.env.SMTP_PASS, // App password (not regular email password)
+    user: process.env.SMTP_USER, 
+    pass: process.env.SMTP_PASS, 
   },
 });
 
@@ -103,7 +103,7 @@ const userService = {
 
       if (name) updateData.name = name;
       if (email) updateData.email = email;
-      if (password) updateData.password = await bcrypt.hash(password, 10); // Hash password
+      if (password) updateData.password = await bcrypt.hash(password, 10);
 
       const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
         new: true,
@@ -144,7 +144,7 @@ const userService = {
         .digest("hex");
 
       user.resetPasswordToken = hashedToken;
-      user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
+      user.resetPasswordExpires = Date.now() + 3600000; 
 
       await user.save();
 
@@ -164,7 +164,7 @@ const userService = {
         `,
       };
 
-      // Send the email
+      
       await transporter.sendMail(mailOptions);
 
       return { message: "Password reset link sent successfully" };
@@ -181,7 +181,7 @@ const userService = {
 
       const user = await User.findOne({
         resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }, // Ensure token is still valid
+        resetPasswordExpires: { $gt: Date.now() }, 
       });
 
       if (!user) throw new Error("Invalid or expired password reset token");

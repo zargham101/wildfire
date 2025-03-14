@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Avatar from "./Avatar";  
-import UserProfileDropdown from "./UserProfileDropdown";  
+import Avatar from "./Avatar";
+import UserProfileDropdown from "./UserProfileDropdown";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [user, setUser] = useState(null);  
-  const [isOpen, setIsOpen] = useState(false)
+  const [user, setUser] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,19 +15,17 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    setUser(null);  
-    navigate("/login");  
+    setUser(null);
+    navigate("/login");
   };
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (loggedInUser) {
-      setUser(loggedInUser);  
+      setUser(loggedInUser);
     }
-  }, []); 
+  }, []);
 
- 
- 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -105,6 +103,46 @@ const Navbar = () => {
               Contact Us
             </Link>
           </li>
+          {user && (
+            <>
+              <li>
+                <Link
+                  to="/prediction-home"
+                  className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+                    isActive("/prediction-home")
+                      ? "border-b-2 border-red-500"
+                      : ""
+                  }`}
+                >
+                  Prediction Home Page
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/weather-prediction"
+                  className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+                    isActive("/weather-prediction")
+                      ? "border-b-2 border-red-500"
+                      : ""
+                  }`}
+                >
+                  Weather Prediction
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/generate-reports"
+                  className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+                    isActive("/generate-reports")
+                      ? "border-b-2 border-red-500"
+                      : ""
+                  }`}
+                >
+                  Generate Reports
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
 
         {!user && (

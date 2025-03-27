@@ -107,9 +107,9 @@ const Navbar = () => {
             <>
               <li>
                 <Link
-                  to="/prediction-home"
+                  to="/predictionHomePage"
                   className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
-                    isActive("/prediction-home")
+                    isActive("/predictionHomePage")
                       ? "border-b-2 border-red-500"
                       : ""
                   }`}

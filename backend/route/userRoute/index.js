@@ -7,7 +7,7 @@ const {upload} = require("../../config/multerConfig");
 
 const router = express.Router();
 
-router.post('/register', upload, userController.register); 
+router.post('/register', upload, userController.register);
 router.post('/login', authValidation(validation.loginValidation),userController.login); 
 router.get('/profile', authMiddleware, userController.getProfile);
 router.get('/all-users', userController.getAllUsers);

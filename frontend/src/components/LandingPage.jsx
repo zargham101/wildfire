@@ -22,16 +22,24 @@ const LandingPage = () => {
           "http://localhost:5001/api/user/all-users"
         );
         const totalUsers = usersResponse.data.totalUsers;
+        console.log("total users::",totalUsers)
 
         const reviewsResponse = await axios.get(
           "http://localhost:5001/api/review/getAllReview"
         );
         const totalReviews = reviewsResponse.data.totalReviews;
+        console.log("total reviews::",totalReviews)
+
+        // const predictionResponse = await axios.get(
+        //   "http://localhost:5001/api/prediction/prediction-count"
+        // );
+        // const totalPredictions = predictionResponse.data.totalPredictions 
+        // console.log("total predictions::",totalPredictions)
 
         setCounts({
           users: totalUsers,
           reviews: totalReviews,
-          predictions: 200,
+          predictions: 100,
           reports: 200,
         });
       } catch (error) {

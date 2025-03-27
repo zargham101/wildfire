@@ -14,6 +14,7 @@ connectDb();
 app.use("/api/user", routes.user)
 app.use("/api/review", routes.review)
 app.use("/api/chat", routes.chat)
+app.use("/api/prediction", routes.prediction)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

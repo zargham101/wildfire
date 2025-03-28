@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import PredictionHistoryTable from "./PredictionHistoryTable";
 
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
@@ -115,6 +116,9 @@ const PredictionHomePage = () => {
       )}
 
       {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
+      <div className="mt-6">
+        <PredictionHistoryTable />
+      </div>
     </div>
   );
 };

@@ -8,16 +8,13 @@ from typing import Dict, Any
 app = Flask(__name__)
 CORS(app)
 
-# Model location
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "../wildfireModel")
 MODEL_FILE = "wildfire_regression.joblib"
 MODEL_PATH = os.path.join(MODEL_DIR, MODEL_FILE)
 
-# Keys required by the model
 INPUT_FEATURES = ['Temp.', 'RH', 'Wind Dir.', 'Adj. Wind Speed',
                   '24hr. Rain', 'FFMC', 'DMC', 'DC', 'ISI']
 
-# Mapping from Node.js request keys → model keys
 KEY_MAP = {
     "Temp": "Temp.",
     "RH": "RH",
@@ -37,13 +34,12 @@ def load_model():
         if os.path.getsize(MODEL_PATH) == 0:
             raise ValueError("Model file is empty")
         model = joblib.load(MODEL_PATH)
-        print("✓ Model loaded successfully")
+        print("Model loaded successfully")
         return model
     except Exception as e:
-        print(f"✗ Failed to load model: {str(e)}")
+        print(f"Failed to load model: {str(e)}")
         return None
 
-# Load model
 wildfire_model = load_model()
 
 @app.route("/wildfire/predict", methods=["POST"])
@@ -53,13 +49,12 @@ def predict_fire_index():
 
     try:
         data = request.get_json()
+        print("Received data from backend:", data)
         if not data:
             return jsonify({"error": "Invalid JSON"}), 400
 
-        # Map input keys to expected model keys
         mapped_data = {KEY_MAP[k]: v for k, v in data.items() if k in KEY_MAP}
 
-        # Check for missing keys
         missing = [k for k in INPUT_FEATURES if k not in mapped_data]
         if missing:
             return jsonify({

@@ -4,11 +4,11 @@ import PredictionHistoryTable from "./PredictionHistoryTable";
 
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
-    "Temp.": "",
+    Temp: "",
     RH: "",
-    "Wind Dir.": "",
-    "Adj. Wind Speed": "",
-    "24hr. Rain": "",
+    WindDir: "",
+    AdjWindSpeed: "",
+    Rain: "",
     FFMC: "",
     DMC: "",
     DC: "",
@@ -34,9 +34,16 @@ const PredictionHomePage = () => {
     setError("");
 
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.post(
         "http://localhost:5001/api/prediction/predict-fwi",
-        formData
+        formData,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
       );
       setPredictionResult(res.data.fwi);
     } catch (err) {

@@ -105,8 +105,8 @@ const PredictionHistoryTable = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 mt-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+    <div className="max-w-7xl mx-auto px-4 py-8 mt-8 w-full">
+      <h2 className="text-2xl font-bold font-serif text-gray-800 mb-6 text-center">
         Prediction History
       </h2>
 
@@ -128,8 +128,8 @@ const PredictionHistoryTable = () => {
 
       {error && <div className="text-red-600 font-medium mb-4">{error}</div>}
 
-      <div className="overflow-x-auto shadow border border-gray-300 rounded">
-        <table className="w-[1000px] divide-y divide-gray-200 bg-white">
+      <div className="overflow-x-auto shadow border border-gray-300 rounded w-full">
+        <table className="w-full divide-y divide-gray-200 bg-white">
           <thead className="bg-gray-100">
             <tr className="bg-red-700">
               <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">Inputs</th>
@@ -140,7 +140,7 @@ const PredictionHistoryTable = () => {
           <tbody className="divide-y divide-gray-200">
             {filteredPredictions.length > 0 ? (
               filteredPredictions.map((pred, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+                <tr key={index} className="hover:-translate-y-1 hover:shadow-md">
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       {Object.entries(pred.input).map(([key, value], idx) => {
@@ -151,17 +151,17 @@ const PredictionHistoryTable = () => {
                         }
                         return (
                           <div key={idx} className="flex justify-between">
-                            <span className="font-semibold text-indigo-700 ml-2">{key}:</span>
+                            <span className="font-semibold text-red-700 ml-2">{key}:</span>
                             <span className="text-gray-800 mr-6">{displayValue}</span>
                           </div>
                         );
                       })}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-blue-700">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
                     {pred.fwi.toFixed(4)}
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-blue-700">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
                     {new Date(pred.createdAt).toLocaleDateString()}
                   </td>
                 </tr>

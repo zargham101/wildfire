@@ -118,7 +118,7 @@ const PredictionHomePage = () => {
         <div className="flex flex-col items-center justify-center w-full mt-8 lg:mt-0 lg:ml-8">
           {predictionResult === null ? (
             <img
-              src="/path-to-your-image.jpg" // Replace with your image path
+              src="/images/fire5.jpg"
               alt="Fire prediction illustration"
               className="max-w-full h-auto rounded-lg"
             />

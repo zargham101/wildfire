@@ -119,14 +119,14 @@ const Navbar = () => {
               </li>
               <li>
                 <Link
-                  to="/weather-prediction"
+                  to="/feature-visualization"
                   className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
-                    isActive("/weather-prediction")
+                    isActive("/feature-visualization")
                       ? "border-b-2 border-red-500"
                       : ""
                   }`}
                 >
-                  Weather Prediction
+                  Prediction Data
                 </Link>
               </li>
               <li>

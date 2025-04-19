@@ -89,7 +89,7 @@ const PredictionHistoryTable = () => {
       Object.entries(pred.input)
         .map(([key, value]) => `${key}: ${typeof value === "object" && value !== null ? Object.values(value)[0] : value}`)
         .join("\n"),
-      pred.fwi.toFixed(4),
+      pred.fwi.toFixed(6),
       new Date(pred.createdAt).toLocaleDateString(),
     ]);
 
@@ -159,7 +159,7 @@ const PredictionHistoryTable = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
-                    {pred.fwi.toFixed(4)}
+                    {pred.fwi.toFixed(6)}
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
                     {new Date(pred.createdAt).toLocaleDateString()}

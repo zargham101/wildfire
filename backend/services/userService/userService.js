@@ -15,6 +15,8 @@ const transporter = nodemailer.createTransport({
 
 const userService = {
   uploadImageToS3: async (file) => {
+    if(!file) return null;
+    
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `user_images/${Date.now()}_${file.originalname}`,

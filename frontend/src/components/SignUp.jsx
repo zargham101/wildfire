@@ -11,6 +11,8 @@ const Signup = () => {
   const [image, setImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
@@ -51,6 +53,9 @@ const Signup = () => {
     }
   };
 
+  const isPasswordMismatch =
+    confirmPassword.length > 0 && confirmPassword !== password;
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-white mt-24">
       <div className="p-8">
@@ -70,7 +75,7 @@ const Signup = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
+              placeholder="John Doe"
               className="w-full p-2 border-2 border-black"
             />
           </div>
@@ -83,7 +88,7 @@ const Signup = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="johndoe@example.com"
               className="w-full p-2 border-2 border-black"
             />
           </div>
@@ -99,6 +104,27 @@ const Signup = () => {
               placeholder="Enter your password"
               className="w-full p-2 border-2 border-black pr-10"
             />
+
+            <div className="mb-4 relative">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Confirm Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                className={`w-full p-2 border-2 ${
+                  isPasswordMismatch ? "border-red-500" : "border-black"
+                }`}
+              />
+            </div>
+            {isPasswordMismatch && (
+              <p className="text-red-500 text-sm mt-1">
+                Passwords do not match.
+              </p>
+            )}
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}

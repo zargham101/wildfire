@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import axios from "axios";
 
 const Signup = () => {
@@ -47,6 +47,7 @@ const Signup = () => {
       }, 2000);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Registration failed");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -118,16 +119,25 @@ const Signup = () => {
               id="file-upload"
               type="file"
               onChange={handleImageChange}
-              className="hidden" 
+              className="hidden"
             />
 
             {image && (
-              <div className="mt-4">
+              <div className="mt-4 relative w-32 h-32">
                 <img
                   src={URL.createObjectURL(image)}
+                  onClick={() => setImage(null)}
                   alt="Selected Image"
                   className="w-32 h-32 object-cover"
+                  title="Click to remove"
                 />
+                <button
+                  type="button"
+                  onClick={() => setImage(null)}
+                  className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 shadow hover:bg-red-500 hover:text-white transition"
+                >
+                  <X size={16} />
+                </button>
               </div>
             )}
           </div>
@@ -139,6 +149,20 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
+
+        {errorMessage && (
+          <div className="mt-4 rounded-md bg-red-100 border border-red-400 text-red-700 px-4 py-3">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{errorMessage}</span>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mt-4 rounded-md bg-green-100 border border-green-400 text-green-700 px-4 py-3">
+            <strong className="font-bold">Success: </strong>
+            <span className="block sm:inline">{successMessage}</span>
+          </div>
+        )}
 
         <div className="mt-4 text-center">
           <p className="text-gray-700 font-serif font-semibold">

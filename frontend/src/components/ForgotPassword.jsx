@@ -25,7 +25,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      console.log("sending respomnse to backend");
+      console.log("sending response to backend");
       const response = await fetch(
         "http://localhost:5001/api/user/forgot-password",
         {
@@ -35,21 +35,28 @@ const ForgotPassword = () => {
         }
       );
 
+      console.log("response::", response);
       console.log("Response status", response.status);
-      const data = await response.json();
-      console.log("data:::", data);
+
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (jsonErr) {
+        console.warn("Could not parse JSON:", jsonErr);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
+        const errorMsg = data.message || data.error || "Something went wrong";
+        throw new Error(errorMsg);
       }
 
       setMessage("Password reset link has been sent to your email.");
-
       setTimeout(() => {
         navigate("/login");
       }, 3000);
     } catch (err) {
-      setError(err.message);
+      console.error("Error in forgot password:", err);
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -65,10 +72,19 @@ const ForgotPassword = () => {
     >
       {(message || error) && (
         <div
-          className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-sm transition-all duration-300
-          ${message ? "bg-green-500" : "bg-red-500"}`}
+          className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-sm z-50 flex items-center justify-between gap-4
+    ${message ? "bg-green-500" : "bg-red-500"}`}
         >
-          {message || error}
+          <span>{message || error}</span>
+          <button
+            onClick={() => {
+              setMessage("");
+              setError("");
+            }}
+            className="ml-2 text-white font-bold"
+          >
+            &times;
+          </button>
         </div>
       )}
 

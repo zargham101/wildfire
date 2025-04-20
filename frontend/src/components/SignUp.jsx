@@ -48,6 +48,7 @@ const Signup = () => {
         navigate("/login");
       }, 2000);
     } catch (error) {
+      console.log("isko b dekho:::",error.response.data.message)
       setErrorMessage(error.response?.data?.message || "Registration failed");
       setTimeout(() => setErrorMessage(""), 3000);
     }
@@ -68,8 +69,11 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Name
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+              title="Enter full name"
+            >
+              Name *
             </label>
             <input
               type="text"
@@ -81,8 +85,11 @@ const Signup = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Email
+            <label 
+            className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+            title="Enter complete email"
+            >
+              Email *
             </label>
             <input
               type="email"
@@ -94,8 +101,11 @@ const Signup = () => {
           </div>
 
           <div className="mb-4 relative">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Password
+            <label 
+            className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+            title="Enter Password"
+            >
+              Password *
             </label>
             <input
               type={showPassword ? "text" : "password"}
@@ -105,9 +115,12 @@ const Signup = () => {
               className="w-full p-2 border-2 border-black pr-10"
             />
 
-            <div className="mb-4 relative">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Confirm Password
+            <div className="mb-4 mt-4 relative">
+              <label 
+              className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+              title="Confirm your password"
+              >
+                Confirm Password *
               </label>
               <input
                 type={showPassword ? "text" : "password"}
@@ -137,7 +150,8 @@ const Signup = () => {
           <div className="mb-4">
             <label
               htmlFor="file-upload"
-              className="w-full p-2 bg-red-700 text-white text-center cursor-pointer rounded-md hover:bg-red-800"
+              className="w-full p-2 bg-red-700 text-white text-center cursor-pointer rounded-md hover:bg-red-800 cursor-help"
+              title="Upload your profile picture"
             >
               Upload Image
             </label>

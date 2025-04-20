@@ -1,22 +1,22 @@
 const User = require("../../model/user/index");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const {s3} = require("../../config/multerConfig")
+const { s3 } = require("../../config/multerConfig");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.SMTP_USER, 
-    pass: process.env.SMTP_PASS, 
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
 const userService = {
   uploadImageToS3: async (file) => {
-    if(!file) return null;
-    
+    if (!file) return null;
+
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `user_images/${Date.now()}_${file.originalname}`,
@@ -33,25 +33,26 @@ const userService = {
   },
   registerUser: async ({ name, email, password, image }) => {
     try {
-      let user = await User.findOne({ email });
-      if (user) throw new Error("User already exists");
 
-      user = new User({ name, email, password, image });
+    let user = await User.findOne({ email });
+    if (user) throw new Error("User already exists");
 
-      await user.save();
-      return {
-        user,
-        message: "User registered successfully",
-      };
+    user = new User({ name, email, password, image });
+
+    await user.save();
+    return {
+      user,
+      message: "User registered successfully",
+    };
     } catch (error) {
-      throw error;
+      throw error
     }
   },
 
   loginUser: async ({ email, password }) => {
     try {
       const user = await User.findOne({ email });
-      if (!user) throw new Error("Invalid credentials");
+      if (!user) throw new Error("User not registered");
 
       if (!user.comparePassword) {
         console.error("comparePassword method is missing on user model.");
@@ -79,7 +80,7 @@ const userService = {
   },
   getUserProfile: async (userId) => {
     try {
-      const user = await User.findById(userId).select("-password"); 
+      const user = await User.findById(userId).select("-password");
       if (!user) throw new Error("User not found");
 
       return user;
@@ -137,7 +138,10 @@ const userService = {
   forgotPassword: async (email) => {
     try {
       const user = await User.findOne({ email });
-      if (!user) throw new Error("User not found");
+      if (!user) {
+        console.log("error::", user);
+        throw new Error("User not found")
+      }
 
       const resetToken = crypto.randomBytes(32).toString("hex");
       const hashedToken = crypto
@@ -146,7 +150,7 @@ const userService = {
         .digest("hex");
 
       user.resetPasswordToken = hashedToken;
-      user.resetPasswordExpires = Date.now() + 3600000; 
+      user.resetPasswordExpires = Date.now() + 3600000;
 
       await user.save();
 
@@ -166,12 +170,13 @@ const userService = {
         `,
       };
 
-      
       await transporter.sendMail(mailOptions);
 
       return { message: "Password reset link sent successfully" };
     } catch (error) {
-      throw error;
+      console.error("Error in forgot password:", error.message);
+
+      throw new Error(error)
     }
   },
   resetPassword: async ({ resetToken, newPassword }) => {
@@ -183,7 +188,7 @@ const userService = {
 
       const user = await User.findOne({
         resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() }, 
+        resetPasswordExpires: { $gt: Date.now() },
       });
 
       if (!user) throw new Error("Invalid or expired password reset token");

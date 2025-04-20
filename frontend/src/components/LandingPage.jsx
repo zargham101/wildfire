@@ -139,7 +139,7 @@ const LandingPage = () => {
       </div>
       <div className=" w-full flex justify-center items-center h-[500px] mt-6 relative z-0">
         <div className="flex w-full max-w-7xl mx-auto px-6">
-          {/* Left side: Image */}
+        
           <div className="w-1/2">
             <img
               src="/images/fire-committment.jpg"
@@ -148,7 +148,6 @@ const LandingPage = () => {
             />
           </div>
 
-          {/* Right side: Text container with red border */}
           <div className="w-1/2 pl-6 border-l-4 border-red-500 p-6">
             <h2 className="text-2xl font-bold font-serif text-black mb-2">
               To Comunity
@@ -178,7 +177,7 @@ const LandingPage = () => {
         </div>
 
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* First Card */}
+          
           <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
             <div className="relative group">
               <img
@@ -186,13 +185,11 @@ const LandingPage = () => {
                 alt="Precaution"
                 className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
               />
-              {/* Heading always visible */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
                 <span className="font-bold text-2xl mb-[80px]">
                   #Protection
                 </span>
               </div>
-              {/* Line and other text hidden by default and visible on hover */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
                 <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
                 <p className="mt-2 text-sm">
@@ -203,7 +200,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Second Card */}
           <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
             <div className="relative group">
               <img
@@ -226,7 +222,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Third Card */}
           <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
             <div className="relative group">
               <img
@@ -249,7 +244,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Fourth Card */}
           <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
             <div className="relative group">
               <img

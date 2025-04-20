@@ -8,8 +8,8 @@ const ResetPassword = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); 
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,7 +40,7 @@ const ResetPassword = () => {
     }
 
     try {
-      console.log("sending response to backend");
+      console.log("sending data to backend.")
       const response = await fetch(
         "http://localhost:5001/api/user/reset-password",
         {
@@ -52,20 +52,21 @@ const ResetPassword = () => {
         }
       );
 
+      console.log("Response::",response)
       const data = await response.json();
+      console.log("Data::",data)
 
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
+        throw new Error(data.message || data.error || "Something went wrong");
       }
 
       setMessage("Password reset successfully!");
-
-     
       setTimeout(() => {
         navigate("/login");
       }, 3000);
     } catch (err) {
-      setError(err.message);
+      console.error("Error in reset password:", err);
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -81,14 +82,14 @@ const ResetPassword = () => {
     >
       {(message || error) && (
         <div
-          className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-sm transition-all duration-300
+          className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-sm z-50 transition-all duration-300
           ${message ? "bg-green-500" : "bg-red-500"}`}
         >
           {message || error}
         </div>
       )}
 
-      <div className=" p-8 max-w-md w-full">
+      <div className="p-8 max-w-md w-full">
         <p className="text-black text-center mt-2 font-serif font-bold text-2xl">
           Enter a new password to reset your account password.
         </p>
@@ -100,7 +101,7 @@ const ResetPassword = () => {
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
-              className="w-full p-3 mt-2 border-2 border-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -120,7 +121,7 @@ const ResetPassword = () => {
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
-              className="w-full p-3 mt-2 border-2 border-black  focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Confirm your new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

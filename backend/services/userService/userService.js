@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const { s3 } = require("../../config/multerConfig");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const passport = require("passport");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -210,6 +211,14 @@ const userService = {
       throw error;
     }
   },
+  googleLogin: passport.authenticate("google", {
+    scope: ["profile", "email"]
+  }),
+  
+  googleCallback: passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false
+  }),
 };
 
 module.exports = userService;

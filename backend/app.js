@@ -1,13 +1,29 @@
 const express = require('express');
 const cors = require('cors');
+const passport = require("passport");
 const connectDb = require ('./db/db')
 const routes = require('./route/index')
+const session = require("express-session");
 require('dotenv').config();
+
+const passportConfig = require("./config/passport");
+passportConfig(passport);
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } 
+  }));
+
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 connectDb();
 

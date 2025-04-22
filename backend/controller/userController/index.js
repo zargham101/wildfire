@@ -1,4 +1,5 @@
 const userService = require('../../services/userService/userService');
+const jwt = require("jsonwebtoken");
 
 const userController = {
   register: async (req, res) => {
@@ -82,6 +83,25 @@ const userController = {
       res.status(200).json(response);
     } catch (error) {
       res.status(400).json({ message: error.message });
+    }
+  },
+  googleLoginSuccess: async (req,res) => {
+    try {
+      const user = req.user;
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+        expiresIn: "6h"
+      });
+  
+      res.redirect(`http://localhost:3000/google-auth-success?token=${token}`);
+      // return res.status(200).json({
+      //   user,
+      //   token
+      // })
+    } catch (error) {
+      return res.status(500).json({
+        error:error,
+        message:error.message
+      })
     }
   }
 };

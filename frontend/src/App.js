@@ -11,6 +11,7 @@ import ResetPassword from "./components/ReserPassword";
 import PredictionHomePage from "./components/PredictionHome";
 import UserProfile from "./components/UserProfile";
 import FeatureVisualizationPage from "./components/FeaturedVisualization";
+import GoogleAuthSuccess from "./routes/GoogleAuthSuccess";
 function App() {
   return (
     <>
@@ -26,6 +27,8 @@ function App() {
         <Route path="/predictionHomePage" element={<PredictionHomePage />} />
         <Route path="/feature-visualization" element={<FeatureVisualizationPage />} />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/google-auth-success" element={<GoogleAuthSuccess />} />
+
       </Routes>
       <Footer />
     </>

@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('../../controller/userController/index');
+const userService = require("../../services/userService/userService")
 const authMiddleware = require('../../middleware/auth');
 const authValidation = require('../../middleware/validate')
 const validation = require('../../validator/validate')
@@ -15,5 +16,7 @@ router.patch('/update', authValidation(validation.updateUserValidation),authMidd
 router.delete('/delete', authMiddleware, userController.deleteUser);
 router.post('/forgot-password',authValidation(validation.forgotPasswordValidation),userController.forgotPassword);
 router.post('/reset-password', authValidation(validation.resetPasswordValidation),userController.resetPassword);
+router.get('/google', userService.googleLogin);
+router.get('/google/callback', userService.googleCallback, userController.googleLoginSuccess);
 
 module.exports = router;

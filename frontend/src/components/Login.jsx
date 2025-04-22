@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 const Login = () => {
@@ -27,7 +28,6 @@ const Login = () => {
 
       localStorage.setItem("user", JSON.stringify(loggedInUser));
 
-
       localStorage.setItem("token", response.data.token);
 
       setSuccessMessage(response.data.message);
@@ -36,6 +36,10 @@ const Login = () => {
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed");
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5001/api/user/google";
   };
 
   return (
@@ -103,6 +107,19 @@ const Login = () => {
             className="w-full bg-red-700 text-white py-2  hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
           >
             Sign in
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="flex items-center justify-center w-full mt-4 bg-white text-black border border-gray-300 py-2 rounded hover:bg-gray-100 transition"
+          >
+            <img
+              src="/images/gLogo.png"
+              alt="Google Logo"
+              className="w-5 h-5 mr-3"
+            />
+            Continue with Google
           </button>
         </form>
 

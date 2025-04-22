@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import { Eye, EyeOff, X } from "lucide-react";
 import axios from "axios";
 
@@ -48,10 +49,14 @@ const Signup = () => {
         navigate("/login");
       }, 2000);
     } catch (error) {
-      console.log("isko b dekho:::",error.response.data.message)
+      console.log("isko b dekho:::", error.response.data.message);
       setErrorMessage(error.response?.data?.message || "Registration failed");
       setTimeout(() => setErrorMessage(""), 3000);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5001/api/user/google";
   };
 
   const isPasswordMismatch =
@@ -85,9 +90,9 @@ const Signup = () => {
           </div>
 
           <div className="mb-4">
-            <label 
-            className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
-            title="Enter complete email"
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+              title="Enter complete email"
             >
               Email *
             </label>
@@ -101,9 +106,9 @@ const Signup = () => {
           </div>
 
           <div className="mb-4 relative">
-            <label 
-            className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
-            title="Enter Password"
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+              title="Enter Password"
             >
               Password *
             </label>
@@ -116,9 +121,9 @@ const Signup = () => {
             />
 
             <div className="mb-4 mt-4 relative">
-              <label 
-              className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
-              title="Confirm your password"
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 cursor-help"
+                title="Confirm your password"
               >
                 Confirm Password *
               </label>
@@ -187,6 +192,19 @@ const Signup = () => {
             className="w-full bg-red-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
           >
             Sign Up
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="flex items-center justify-center w-full mt-4 bg-white text-black border border-gray-300 py-2 rounded hover:bg-gray-100 transition"
+          >
+            <img
+              src="/images/gLogo.png"
+              alt="Google Logo"
+              className="w-5 h-5 mr-3"
+            />
+            Continue with Google
           </button>
         </form>
 

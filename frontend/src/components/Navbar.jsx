@@ -66,13 +66,13 @@ const Navbar = () => {
             alt="WildfireWatch Logo"
             className="h-8"
           />
-          <h1 className="text-xl font-bold">
+          <h1 className="text-xl font-bold font-serif">
             <span className="text-red-500">Wildfire</span>
             <span className="text-green-500">Watch</span>
           </h1>
         </div>
 
-        <ul className="flex space-x-5 text-gray-500 font-bold mx-auto">
+        <ul className="flex space-x-5 text-gray-500 font-serif font-bold mx-auto">
           <li>
             <Link
               to="/"
@@ -149,7 +149,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-5 text-gray-500 font-bold">
             <Link
               to="/login"
-              className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+              className={`px-3 py-2 font-serif transition-all duration-300 hover:text-red-500 ${
                 isActive("/login") ? "border-b-2 border-red-500" : ""
               }`}
             >
@@ -157,7 +157,7 @@ const Navbar = () => {
             </Link>
             <Link
               to="/signup"
-              className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+              className={`px-3 py-2 font-serif transition-all duration-300 hover:text-red-500 ${
                 isActive("/signup") ? "border-b-2 border-red-500" : ""
               }`}
             >

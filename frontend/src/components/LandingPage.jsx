@@ -6,6 +6,8 @@ import BatchPredictionIcon from "@mui/icons-material/BatchPrediction";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import ReviewsIcon from "@mui/icons-material/Reviews";
 import Carousel from "./Carousel";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChartLine,faUser, faBrain, faStar } from "@fortawesome/free-solid-svg-icons";
 
 const LandingPage = () => {
   const [counts, setCounts] = useState({
@@ -272,37 +274,30 @@ const LandingPage = () => {
 
       <div className=" py-12 border-2 shadow-lg p-3 rounded-md m-6">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="flex flex-col items-center">
+  <FontAwesomeIcon icon={faUser} className="text-yellow-500 text-6xl mb-2" />
+  <p className="text-3xl font-semibold">{dynamicCounts.users}</p>
+  <p className="text-xl text-gray-600">Users</p>
+</div>
+
+
+<div className="flex flex-col items-center">
+  <FontAwesomeIcon icon={faStar} className="text-red-500 text-6xl mb-2" />
+  <p className="text-3xl font-semibold">{dynamicCounts.reviews}</p>
+  <p className="text-xl text-gray-600">Reviews</p>
+</div>
+
           <div className="flex flex-col items-center">
-            <GroupIcon style={{ fontSize: "4rem" }} className=" text-red-500" />
-            <p className="text-3xl font-semibold">{dynamicCounts.users}</p>
-            <p className="text-xl text-gray-600">Users</p>
-          </div>
+  <FontAwesomeIcon icon={faBrain} className="text-red-500 text-6xl mb-2" />
+  <p className="text-3xl font-semibold">{dynamicCounts.predictions}</p>
+  <p className="text-xl text-gray-600">Predictions</p>
+</div>
+
           <div className="flex flex-col items-center">
-            <ReviewsIcon
-              style={{ fontSize: "4rem" }}
-              className="text-green-500"
-            />
-            <p className="text-3xl font-semibold">{dynamicCounts.reviews}</p>
-            <p className="text-xl text-gray-600">Reviews</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <BatchPredictionIcon
-              style={{ fontSize: "4rem" }}
-              className=" text-blue-500"
-            />
-            <p className="text-3xl font-semibold">
-              {dynamicCounts.predictions}
-            </p>
-            <p className="text-xl text-gray-600">Predictions</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <AssessmentIcon
-              style={{ fontSize: "4rem" }}
-              className="text-yellow-500"
-            />
-            <p className="text-3xl font-semibold">{dynamicCounts.reports}</p>
-            <p className="text-xl text-gray-600">Reports</p>
-          </div>
+  <FontAwesomeIcon icon={faChartLine} className="text-yellow-500 text-6xl mb-2" />
+  <p className="text-3xl font-semibold">{dynamicCounts.reports}</p>
+  <p className="text-xl text-gray-600">Reports</p>
+</div>
         </div>
       </div>
 

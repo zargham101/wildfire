@@ -1,52 +1,29 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // for navigation to the detail page
+import axios from "axios";
 
 const Carousel = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [scrollIndex, setScrollIndex] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(true); 
+  const [isScrolling, setIsScrolling] = useState(true);
+  const [news, setNews] = useState([]);
 
-  const cards = [
-    {
-      img: "/images/smoke-alarm.jpeg",
-      title: "Smoke Alarm",
-      text: "Install smoke alarms: Smoke alarms are essential for early fire detection. They help in detecting smoke and fire, giving you an early warning to evacuate and save lives.",
-    },
-    {
-      img: "/images/fire-escape.jpg",
-      title: "Fire Escape",
-      text: "Develop a fire escape plan: Having a well-rehearsed escape plan can save lives in case of an emergency. Make sure everyone knows the exits and how to escape safely.",
-    },
-    {
-      img: "/images/prevention.jpeg",
-      title: "Prevention",
-      text: "Store flammable materials safely: Keep flammable liquids and materials away from heat sources. Store them in proper containers and areas to reduce fire risk.",
-    },
-    {
-      img: "/images/vigilance.jpeg",
-      title: "Vigilance",
-      text: "Maintain electrical appliances: Regularly check appliances for damage and avoid overloading outlets. Also, ensure electrical wiring is in good condition to avoid fires.",
-    },
-    {
-      img: "/images/smoke-alarm.jpeg",
-      title: "Smoke Alarm",
-      text: "Install smoke alarms: Smoke alarms are essential for early fire detection. They help in detecting smoke and fire, giving you an early warning to evacuate and save lives.",
-    },
-    {
-      img: "/images/fire-escape.jpg",
-      title: "Fire Escape",
-      text: "Develop a fire escape plan: Having a well-rehearsed escape plan can save lives in case of an emergency. Make sure everyone knows the exits and how to escape safely.",
-    },
-    {
-      img: "/images/prevention.jpeg",
-      title: "Prevention",
-      text: "Store flammable materials safely: Keep flammable liquids and materials away from heat sources. Store them in proper containers and areas to reduce fire risk.",
-    },
-    {
-      img: "/images/vigilance.jpeg",
-      title: "Vigilance",
-      text: "Maintain electrical appliances: Regularly check appliances for damage and avoid overloading outlets. Also, ensure electrical wiring is in good condition to avoid fires.",
-    },
-  ];
+  const NEWS_API_KEY = "2e7991dbdd07498791097d5b0c925624"; // Your API Key
+  const navigate = useNavigate(); // Use the navigate hook for routing
+
+  // Fetch news data directly from NewsAPI with a search query for fire, disaster, emergency-related topics
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get(`https://newsapi.org/v2/everything?q=fire+emergency+natural+disaster+emergency+services&apiKey=${NEWS_API_KEY}`);
+        setNews(response.data.articles || []);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
   const toggleExpand = (index) => {
     if (expandedIndex === null || expandedIndex !== index) {
@@ -56,26 +33,33 @@ const Carousel = () => {
     }
     setExpandedIndex(expandedIndex === index ? null : index);
   };
+
   const handleScroll = (direction) => {
     if (direction === "left") {
       setScrollIndex((prevIndex) =>
-        prevIndex > 0 ? prevIndex - 1 : cards.length - 4
+        prevIndex > 0 ? prevIndex - 1 : news.length - 4
       );
     } else {
       setScrollIndex((prevIndex) =>
-        prevIndex < cards.length - 4 ? prevIndex + 1 : 0
+        prevIndex < news.length - 4 ? prevIndex + 1 : 0
       );
     }
   };
+
   useEffect(() => {
     if (isScrolling) {
       const interval = setInterval(() => {
-        setScrollIndex((prevIndex) => (prevIndex + 1) % (cards.length - 3));
+        setScrollIndex((prevIndex) => (prevIndex + 1) % (news.length - 3));
       }, 3000);
 
       return () => clearInterval(interval);
     }
-  }, [isScrolling]);
+  }, [isScrolling, news.length]);
+
+  // Handle news card click to navigate to the news detail page
+  const handleCardClick = (id) => {
+    navigate(`/news/${id}`);
+  };
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -85,29 +69,30 @@ const Carousel = () => {
           transform: `translateX(-${(scrollIndex * 100) / 4}%)`,
         }}
       >
-        {cards.map((card, index) => (
+        {news.map((item, index) => (
           <div
             key={index}
             className="w-1/4 p-0 flex-shrink-0 bg-white shadow-lg m-2 transform transition-all ease-in-out duration-300 hover:scale-105 hover:shadow-xl"
             style={{ minWidth: "250px" }}
+            onClick={() => handleCardClick(index)} // Add onClick to each card
           >
             <div className="relative w-full h-48 overflow-hidden mb-4">
               <img
-                src={card.img}
-                alt={card.title}
+                src={item.urlToImage || "/images/placeholder.jpg"}  // Fallback to a placeholder if no image is found
+                alt={item.title}
                 className="w-full h-full object-cover"
               />
               <h3
-                className="absolute bottom-2 left-2  bg-opacity-60 text-white px-3 py-1 text-2xl rounded-md"
+                className="absolute bottom-2 left-2 bg-opacity-60 text-white px-3 py-1 text-2xl rounded-md"
                 style={{ fontFamily: "Bebas Neue, sans-serif" }}
               >
-                {card.title}
+                {item.title}
               </h3>
             </div>
             <p className="text-lg mt-2 ml-2 font-serif">
               {expandedIndex === index
-                ? card.text
-                : `${card.text.slice(0, 100)}...`}
+                ? item.description
+                : `${item.description?.slice(0, 100)}...`}  {/* Optional chaining for description */}
             </p>
             <button
               className="text-red-500 mt-2 ml-2 underline"

@@ -1,23 +1,31 @@
+import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
-import {  Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Signup from "./components/SignUp";
-import ContactUs from "./components/ContactUs"
+import ContactUs from "./components/ContactUs";
 import AboutUs from "./components/AboutUs";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ReserPassword";
 import PredictionHomePage from "./components/PredictionHome";
 import UserProfile from "./components/UserProfile";
 import FeatureVisualizationPage from "./components/FeaturedVisualization";
-import GoogleAuthSuccess from "./routes/GoogleAuthSuccess";
+import NewsDetail from "./components/NewsDetail";
+import axios from "axios";
+
 function App() {
+  const [news, setNews] = useState([]);
+
+
+ 
+
   return (
     <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage news={news} />} />
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
@@ -27,8 +35,7 @@ function App() {
         <Route path="/predictionHomePage" element={<PredictionHomePage />} />
         <Route path="/feature-visualization" element={<FeatureVisualizationPage />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/google-auth-success" element={<GoogleAuthSuccess />} />
-
+        <Route path="/news/:id" element={<NewsDetail news={news} />} />
       </Routes>
       <Footer />
     </>

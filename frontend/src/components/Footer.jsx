@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className="bg-black text-white py-8">
+    <div className="bg-black text-white py-8 bg-center bg-no-repeat bg-cover" style={{ backgroundImage: "url('/images/world.gif')" }}>
       <div className="max-w-screen-xl mx-auto flex flex-col items-center text-center">
         <div className="flex items-center space-x-2 mb-4">
           <img src="/images/logo.png" alt="FireZon Logo" className="h-10" />

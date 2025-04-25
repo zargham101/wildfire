@@ -18,11 +18,14 @@ const PredictionHistoryTable = () => {
     }
 
     try {
-      const res = await axios.get("http://localhost:5001/api/prediction/user/me/predictions", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        "http://localhost:5001/api/prediction/user/me/predictions",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setPredictions(res.data.predictions);
       setFilteredPredictions(res.data.predictions);
     } catch (err) {
@@ -87,7 +90,14 @@ const PredictionHistoryTable = () => {
 
     const tableData = filteredPredictions.map((pred) => [
       Object.entries(pred.input)
-        .map(([key, value]) => `${key}: ${typeof value === "object" && value !== null ? Object.values(value)[0] : value}`)
+        .map(
+          ([key, value]) =>
+            `${key}: ${
+              typeof value === "object" && value !== null
+                ? Object.values(value)[0]
+                : value
+            }`
+        )
         .join("\n"),
       pred.fwi.toFixed(6),
       new Date(pred.createdAt).toLocaleDateString(),
@@ -103,6 +113,7 @@ const PredictionHistoryTable = () => {
 
     pdf.save("predictions.pdf");
   };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 mt-8 w-full">
@@ -132,34 +143,48 @@ const PredictionHistoryTable = () => {
         <table className="w-full divide-y divide-gray-200 bg-white">
           <thead className="bg-gray-100">
             <tr className="bg-red-700">
-              <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">Inputs</th>
-              <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">FWI Result</th>
-              <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">Predicted On</th>
+              <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">
+                Inputs
+              </th>
+              <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">
+                FWI Result
+              </th>
+              <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">
+                Predicted On
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {filteredPredictions.length > 0 ? (
               filteredPredictions.map((pred, index) => (
-                <tr key={index} className="hover:-translate-y-1 hover:shadow-md">
+                <tr
+                  key={index}
+                  className="hover:-translate-y-1 hover:shadow-md"
+                >
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                      {Object.entries(pred.input).map(([key, value], idx) => {
-                        let displayValue = value;
-                        if (typeof value === "object" && value !== null) {
-                          const innerKey = Object.keys(value)[0];
-                          displayValue = value[innerKey];
-                        }
-                        return (
-                          <div key={idx} className="flex justify-between">
-                            <span className="font-semibold text-red-700 ml-2">{key}:</span>
-                            <span className="text-gray-800 mr-6">{displayValue}</span>
-                          </div>
-                        );
-                      })}
+                      {pred.input &&
+                        Object.entries(pred.input).map(([key, value], idx) => {
+                          let displayValue = value;
+                          if (typeof value === "object" && value !== null) {
+                            const innerKey = Object.keys(value)[0];
+                            displayValue = value[innerKey];
+                          }
+                          return (
+                            <div key={idx} className="flex justify-between">
+                              <span className="font-semibold text-red-700 ml-2">
+                                {key}:
+                              </span>
+                              <span className="text-gray-800 mr-6">
+                                {displayValue}
+                              </span>
+                            </div>
+                          );
+                        })}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
-                    {pred.fwi.toFixed(6)}
+                    {typeof pred.fwi === "number" ? pred.fwi.toFixed(6) : "N/A"}
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
                     {new Date(pred.createdAt).toLocaleDateString()}

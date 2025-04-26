@@ -1,65 +1,95 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const TrainingSection = ({ isAuthenticated, isUser }) => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const cards = [
     {
       title: "Wildfire Prediction",
-      description:
-        "Serving humanity for a better and improved quality of life by making sure that everyone knows the best probability to check if the upcoming time is safe and secure and there are no or minor possibility for natural or accidental wildfires to happen in their surrounding...",
-    },
-    {
-      title: "Resource Analysis",
-      description:
-        "Serving humanity for a better and improved quality of life by making sure that everyone knows the best probability to check if the upcoming time is safe and secure and there are no or minor possibility for natural or accidental wildfires to happen in their surrounding...",
+      description:"Helping you stay ahead of danger",
+      detail:
+        "Helping you stay ahead of danger. We predict the probability and size of upcoming wildfires based on weather and vegetation data — making sure you and your community can stay safe, alert, and prepared for whatever lies ahead.",
+      image: "/images/wildfire-prediction.jpg", // Replace with your image path
     },
     {
       title: "Data Visualization",
-      description:
-        "Serving humanity for a better and improved quality of life by making sure that everyone knows the best probability to check if the upcoming time is safe and secure and there are no or minor possibility for natural or accidental wildfires to happen in their surrounding...",
+      description:"Making Complex data simple",
+      detail:
+        "Making complex data simple. We transform wildfire trends, risks, and patterns into clear, interactive visuals. So you can quickly see, understand, and act — because knowledge should never be complicated in a crisis.",
+      image: "/images/data-visualization.jpg", // Replace with your image path
+    },
+    {
+      title: "Resource Analysis",
+      description:"Empowering smarter actions",
+      detail:
+        "Empowering smarter action. We analyze crucial resources — from firefighting teams to equipment — ensuring that when the threat arises, every second and every move counts toward protecting life and nature.",
+      image: "/images/resource-analysis.jpg", // Replace with your image path
+    },
+    {
+      title: "Wildfire Detection",
+      description:"Spotting Wildfires before they spread",
+      detail:
+        "Spotting wildfires before they spread, saving lives and protecting communities. We detect and assess wildfires in real time using satellite imagery and AI — ensuring you and your community can stay ahead of the danger, stay informed, and take action before it's too late.",
+      image: "/images/wildfire-detection.jpg", // Replace with your image path
     },
   ];
-
+  
   const handleRedirect = () => {
     if (isAuthenticated) {
-      navigate("/training-details"); 
+      navigate("/training-details");
     } else if (isUser === false) {
-      navigate("/register"); 
+      navigate("/register");
     } else {
       navigate("/login");
     }
   };
 
   return (
-    <div
-      className="relative flex items-center justify-center min-h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/images/aboutBG.jpg')" }}
-    >
-      <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-
-      <div className="relative z-10 text-center max-w-4xl px-6">
-        
-        <h2 className="text-white text-4xl font-bold uppercase mb-6">
-          How We Work
+    <div className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-6">
+        <h2 className="text-red-600 text-4xl font-bold uppercase mb-12 text-center">
+          How We Make a Difference
         </h2>
 
-        
-        <div className="flex flex-wrap justify-center gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {cards.map((card, index) => (
             <div
               key={index}
-              className="relative w-[260px] p-6 bg-white bg-opacity-10 backdrop-blur-md text-white text-left transition-all duration-300 hover:bg-opacity-20 hover:border-white border border-transparent"
+              className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border-t-4 border-red-500 transform hover:-translate-y-2 hover:scale-105 cursor-pointer"
+              onClick={handleRedirect}
             >
-              <h3 className="text-lg font-bold mb-2">{card.title}</h3>
-              <p className="text-sm">{card.description}</p>
+              {/* Card Image */}
+              <div className="h-48 overflow-hidden">
+                <img 
+                  src={card.image} 
+                  alt={card.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
 
-              <div
-                className="absolute bottom-4 right-4 text-white text-xl cursor-pointer hover:text-gray-300"
-                onClick={handleRedirect}
-              >
-                ➜
+              {/* Card Content */}
+              <div className="p-6 text-centre">
+                <h3 className="text-xl font-bold mb-4 text-gray-800 text-centre">{card.title}</h3>
+                <p className="text-red-600 font-bold mb-6 text-centre">{card.description}</p>
+                <p className="text-gray-600 mb-6">{card.detail}</p>
+                <div className="flex justify-end">
+                  <button 
+                    className="text-red-600 hover:text-red-800 font-bold py-2 px-4 rounded-full transition-colors duration-300 flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRedirect();
+                    }}
+                  >
+                    Learn More 
+                    <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Glow Effect on Hover */}
+              <div className="absolute inset-0 rounded-xl pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-red-100 opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
               </div>
             </div>
           ))}

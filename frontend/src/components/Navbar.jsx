@@ -60,17 +60,19 @@ const Navbar = () => {
       }`}
     >
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2 text-black">
-          <img
-            src="/images/logo.png"
-            alt="WildfireWatch Logo"
-            className="h-8"
-          />
-          <h1 className="text-xl font-bold font-serif">
-            <span className="text-red-500">Wildfire</span>
-            <span className="text-green-500">Watch</span>
-          </h1>
-        </div>
+      <div className="flex items-center text-black space-x-2">
+  <div className="flex items-center h-10 mb-3">
+    <img
+      src="/images/logo.png"
+      alt="WildfireWatch Logo"
+      className="h-full object-contain"
+    />
+  </div>
+  <h1 className="text-2xl font-bold font-serif leading-tight">
+    <span className="text-red-500">Wildfire</span>
+    <span className="text-green-500">Watch</span>
+  </h1>
+</div>
 
         <ul className="flex space-x-5 text-gray-500 font-serif font-bold mx-auto">
           <li>

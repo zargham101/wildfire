@@ -13,6 +13,7 @@ import PredictionHomePage from "./components/PredictionHome";
 import UserProfile from "./components/UserProfile";
 import FeatureVisualizationPage from "./components/FeaturedVisualization";
 import NewsDetail from "./components/NewsDetail";
+import InstructionPage from "./components/InstructionPage";
 import axios from "axios";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/feature-visualization" element={<FeatureVisualizationPage />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/news/:id" element={<NewsDetail news={news} />} />
+        <Route path="/instructions/:type" element={<InstructionPage />} />
       </Routes>
       <Footer />
     </>

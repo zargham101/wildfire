@@ -48,19 +48,9 @@ const ContactUs = () => {
         backgroundRepeat: "repeat",
       }}
     >
-      <div className="relative w-full h-[250px] bg-cover bg-center">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-700 opacity-50"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-6 py-12">
-          <div className="max-w-2xl text-center">
-            <h1 className="text-4xl font-bold text-black">Why Contact Us?</h1>
-            <p className="mt-4 text-lg text-black">
-              We are here to assist you with any inquiries you may have. Whether
-              it’s for support, feedback, or any other questions, we are just a
-              message away!
-            </p>
-          </div>
-        </div>
-      </div>
+ 
+
+
 
       {showAlert && (
         <div className="absolute inset-0 flex justify-center items-center z-50">
@@ -72,8 +62,28 @@ const ContactUs = () => {
           </div>
         </div>
       )}
+<div className=" py-8">
+  <div className="text-center">
+    <h1 className="text-4xl font-bold text-red-600 mb-4">
+      Contact us.
+    </h1>
+    <p className="text-lg text-gray-600">
+      This is the place to let us know about things that are not an emergency.
+    </p>
+  </div>
+</div>
+<h2 className="t-h4 p-6 keyline-heading font-bold text-white" style={{ backgroundColor: '#d52b1e' }}>
+  <span>
+    In an emergency you should always call 999. This is an administrative mailbox which is only monitored during office hours, Monday to Friday, 09.00 – 17.00.
+  </span>
+</h2>
+
+
+      
 
       <div className="flex items-center justify-between px-10 py-10 border-2 ">
+        
+        
         <div className="w-1/2  p-4  ml-[150px]">
           <h2 className="text-2xl font-bold mb-4 font-serif">Get in Touch</h2>
           <p className="text-lg mb-4 font-serif">
@@ -143,7 +153,7 @@ const ContactUs = () => {
         <div className="border-l-4 border-red-700 h-[500px] mx-4 ml-[60px]"></div>{" "}
         <div className="w-1/2 relative group ml-[90px] mb-[120px] mr-[250px] mt-[90px]">
           <img
-            src="/images/contact-side-image.jpg"
+            src="/images/fire12.jpg"
             alt="Contact Us"
             className="w-[415px] h-[500px] object-cover group-hover:blur-sm transition-all"
             style={{ boxShadow: "10px 0px 20px rgba(0, 0, 0, 0.3)" }}
@@ -156,7 +166,60 @@ const ContactUs = () => {
             </p>
           </div>
         </div>
+        
       </div>
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
+  {/* Heading */}
+  <h2 className="text-3xl font-bold text-center mb-8 border-b pb-4">
+    General Enquiries and Non-Emergency Assistance
+  </h2>
+
+  {/* Contact Box */}
+  <div className="p-8">
+    {/* Content */}
+    <div className="space-y-6">
+
+      {/* Office Timings */}
+      <p className="text-lg text-gray-700">
+        Our switchboard service is available Monday to Friday, 8:30 AM – 5:00 PM.
+      </p>
+
+      {/* Phone Number */}
+      <div className="flex items-center space-x-2 text-2xl font-bold text-red-700">
+        <span>📞</span>
+        <span>020 8555 1200</span>
+      </div>
+
+      {/* Divider */}
+      <hr className="border-gray-400" />
+
+      {/* Office Address */}
+      <h3 className="text-2xl font-semibold text-gray-900">
+        Fire Brigade Head Office
+      </h3>
+      <div className="flex items-center space-x-2 text-lg font-bold text-gray-700">
+        <span>📍</span>
+        <span>169 Union Street, SE1 0LL</span>
+      </div>
+
+      {/* Google Maps Link */}
+      <p>
+        <a
+          href="https://goo.gl/maps/YTUmPhRMEk62"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline flex items-center space-x-1"
+        >
+          <span>View in Google Maps</span> ➔
+        </a>
+      </p>
+
+    </div>
+  </div>
+  
+</div>
+
+
     </div>
   );
 };

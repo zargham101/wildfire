@@ -8,6 +8,7 @@ import ReviewsIcon from "@mui/icons-material/Reviews";
 import Carousel from "./Carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine,faUser, faBrain, faStar } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
   const [counts, setCounts] = useState({
@@ -16,6 +17,11 @@ const LandingPage = () => {
     reports: 0,
     users: 0,
   });
+  
+  const navigate = useNavigate();
+  const handleCardClick = (type) => {
+    navigate(`/instructions/${type}`);
+  };
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -165,107 +171,118 @@ const LandingPage = () => {
       </div>
 
       <div className="bg-gray-100 py-10">
-        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
-          <p className="text-white font-serif  text-base ml-[15px]">
-            Your safety is our priority
-          </p>
-          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
-        </div>
-        <div className="text-center mb-12 mt-6">
-          <h2 className="text-4xl font-extrabold text-center font-serif text-black ">
-            Precautions
-          </h2>
-        </div>
+      {/* Header Line */}
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+        <p className="text-white font-serif text-base ml-[15px]">
+          Your safety is our priority
+        </p>
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      </div>
 
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
-            <div className="relative group">
-              <img
-                src="/images/smoke-alarm.jpeg"
-                alt="Precaution"
-                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
-                <span className="font-bold text-2xl mb-[80px]">
-                  #Protection
-                </span>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-                <p className="mt-2 text-sm">
-                  Install smoke alarms: Smoke alarms are essential for early
-                  fire detection.
-                </p>
-              </div>
+      {/* Section Title */}
+      <div className="text-center mb-12 mt-6">
+        <h2 className="text-4xl font-extrabold font-serif text-black">
+          Precautions
+        </h2>
+      </div>
+
+      {/* Cards Grid */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* Card 1 - Protection */}
+        <div
+          onClick={() => handleCardClick("protection")}
+          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+        >
+          <div className="relative group">
+            <img
+              src="/images/fire9.jpg"
+              alt="Protection"
+              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+              <span className="font-bold text-2xl mb-[80px]">#Protection</span>
             </div>
-          </div>
-
-          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
-            <div className="relative group">
-              <img
-                src="/images/fire-escape.jpg"
-                alt="Precaution"
-                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
-                <span className="font-bold text-2xl mb-[80px]">
-                  #Preparedness
-                </span>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-                <p className="mt-2 text-sm">
-                  Develop a fire escape plan: Having a well-rehearsed escape
-                  plan can save lives.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
-            <div className="relative group">
-              <img
-                src="/images/prevention.jpeg"
-                alt="Precaution"
-                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
-                <span className="font-bold text-2xl mb-[80px]">
-                  #Prevention
-                </span>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-                <p className="mt-2 text-sm">
-                  Store flammable materials safely: Keep flammable liquids and
-                  materials away from heat sources.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group">
-            <div className="relative group">
-              <img
-                src="/images/vigilance.jpeg"
-                alt="Precaution"
-                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300  bg-opacity-100 p-4 text-center">
-                <span className="font-bold text-2xl mb-[80px]">#Vigilance</span>
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-                <p className="mt-2 text-sm">
-                  Maintain electrical appliances: Regularly check appliances for
-                  damage and avoid overloading outlets.
-                </p>
-              </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+              <p className="mt-2 text-sm">
+                Install smoke alarms: Essential for early fire detection.
+              </p>
             </div>
           </div>
         </div>
+
+        {/* Card 2 - Preparedness */}
+        <div
+          onClick={() => handleCardClick("preparedness")}
+          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+        >
+          <div className="relative group">
+            <img
+              src="/images/fire10.jpg"
+              alt="Preparedness"
+              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+              <span className="font-bold text-2xl mb-[80px]">#Preparedness</span>
+            </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+              <p className="mt-2 text-sm">
+                Develop a fire escape plan and practice it regularly.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3 - Prevention */}
+        <div
+          onClick={() => handleCardClick("prevention")}
+          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+        >
+          <div className="relative group">
+            <img
+              src="/images/fire11.jpg"
+              alt="Prevention"
+              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+              <span className="font-bold text-2xl mb-[80px]">#Prevention</span>
+            </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+              <p className="mt-2 text-sm">
+                Avoid overloading sockets and monitor electrical appliances.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4 - Emergency */}
+        <div
+          onClick={() => handleCardClick("emergency")}
+          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+        >
+          <div className="relative group">
+            <img
+              src="/images/fire12.jpg"
+              alt="Emergency"
+              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+              <span className="font-bold text-2xl mb-[80px]">#Emergency</span>
+            </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+              <p className="mt-2 text-sm">
+                Call emergency services immediately if you spot a fire.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
         <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
           <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
           <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>

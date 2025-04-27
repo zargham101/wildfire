@@ -13,11 +13,9 @@ import PredictionHomePage from "./components/PredictionHome";
 import UserProfile from "./components/UserProfile";
 import FeatureVisualizationPage from "./components/FeaturedVisualization";
 import NewsDetail from "./components/NewsDetail";
-<<<<<<< Updated upstream
 import InstructionPage from "./components/InstructionPage";
 import axios from "axios";
-=======
->>>>>>> Stashed changes
+
 
 function App() {
   const [news, setNews] = useState([]);

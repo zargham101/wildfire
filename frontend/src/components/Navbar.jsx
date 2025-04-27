@@ -28,37 +28,26 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    if (loggedInUser) {
-      setUser(loggedInUser);
-    }
+    if (loggedInUser) setUser(loggedInUser);
   }, [location]);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 p-5 border-b-2 border-white transition-colors duration-300 ${
-        location.pathname === "/" && !isScrolled ? "bg-transparent" : "bg-white"
+      className={`fixed top-0 left-0 w-full z-50 px-6 py-4 transition-all duration-300 ${
+        isScrolled || location.pathname !== "/"
+          ? "bg-white/80 backdrop-blur-md shadow-md border-b border-gray-200"
+          : "bg-transparent"
       }`}
     >
+
       <div className="flex justify-between items-center">
       <div className="flex items-center text-black space-x-2">
   <div className="flex items-center h-10 mb-3">
@@ -74,12 +63,14 @@ const Navbar = () => {
   </h1>
 </div>
 
-        <ul className="flex space-x-5 text-gray-500 font-serif font-bold mx-auto">
+
+        {/* Nav Links */}
+        <ul className="hidden md:flex space-x-6 text-md font-medium font-serif text-gray-600">
           <li>
             <Link
               to="/"
-              className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
-                isActive("/") ? "border-b-2 border-red-500" : ""
+              className={`hover:text-red-500 transition-all ${
+                isActive("/") ? "text-red-500 border-b-2 border-red-500 pb-1" : ""
               }`}
             >
               Home
@@ -88,8 +79,8 @@ const Navbar = () => {
           <li>
             <Link
               to="/aboutus"
-              className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
-                isActive("/aboutus") ? "border-b-2 border-red-500" : ""
+              className={`hover:text-red-500 transition-all ${
+                isActive("/aboutus") ? "text-red-500 border-b-2 border-red-500 pb-1" : ""
               }`}
             >
               About Us
@@ -98,80 +89,79 @@ const Navbar = () => {
           <li>
             <Link
               to="/contactus"
-              className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
-                isActive("/contactus") ? "border-b-2 border-red-500" : ""
+              className={`hover:text-red-500 transition-all ${
+                isActive("/contactus") ? "text-red-500 border-b-2 border-red-500 pb-1" : ""
               }`}
             >
               Contact Us
             </Link>
           </li>
+
           {user && (
             <>
               <li>
                 <Link
                   to="/predictionHomePage"
-                  className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+                  className={`hover:text-red-500 transition-all ${
                     isActive("/predictionHomePage")
-                      ? "border-b-2 border-red-500"
+                      ? "text-red-500 border-b-2 border-red-500 pb-1"
                       : ""
                   }`}
                 >
-                  Prediction Home Page
+                  Prediction
                 </Link>
               </li>
               <li>
                 <Link
                   to="/feature-visualization"
-                  className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+                  className={`hover:text-red-500 transition-all ${
                     isActive("/feature-visualization")
-                      ? "border-b-2 border-red-500"
+                      ? "text-red-500 border-b-2 border-red-500 pb-1"
                       : ""
                   }`}
                 >
-                  Prediction Data
+                  Data
                 </Link>
               </li>
               <li>
                 <Link
                   to="/generate-reports"
-                  className={`px-3 py-2 transition-all duration-300 hover:text-red-500 ${
+                  className={`hover:text-red-500 transition-all ${
                     isActive("/generate-reports")
-                      ? "border-b-2 border-red-500"
+                      ? "text-red-500 border-b-2 border-red-500 pb-1"
                       : ""
                   }`}
                 >
-                  Generate Reports
+                  Reports
                 </Link>
               </li>
             </>
           )}
         </ul>
 
-        {!user && (
-          <div className="flex items-center space-x-5 text-gray-500 font-bold">
+        {/* Auth Buttons or Avatar */}
+        {!user ? (
+          <div className="flex items-center space-x-4 text-sm font-serif text-gray-700">
             <Link
               to="/login"
-              className={`px-3 py-2 font-serif transition-all duration-300 hover:text-red-500 ${
-                isActive("/login") ? "border-b-2 border-red-500" : ""
+              className={`hover:text-red-500 transition-all ${
+                isActive("/login") ? "text-red-500 underline" : ""
               }`}
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className={`px-3 py-2 font-serif transition-all duration-300 hover:text-red-500 ${
-                isActive("/signup") ? "border-b-2 border-red-500" : ""
+              className={`hover:text-red-500 transition-all ${
+                isActive("/signup") ? "text-red-500 underline" : ""
               }`}
             >
               Sign Up
             </Link>
           </div>
-        )}
-
-        {user && (
-          <div className="flex items-center space-x-3 mr-4 mt-1">
+        ) : (
+          <div className="flex items-center space-x-3">
             <Avatar user={user} />
-
             <UserProfileDropdown user={user} handleLogout={handleLogout} />
           </div>
         )}

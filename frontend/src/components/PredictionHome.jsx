@@ -4,15 +4,17 @@ import PredictionHistoryTable from "./PredictionHistoryTable";
 
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
-    Temp: "",
-    RH: "",
-    WindDir: "",
-    AdjWindSpeed: "",
-    Rain: "",
-    FFMC: "",
-    DMC: "",
-    DC: "",
-    ISI: "",
+    fire_location_latitude: "",
+    fire_location_longitude: "",
+    fire_start_date: "",
+    fire_type: "",
+    fire_position_on_slope: "",
+    weather_conditions_over_fire: "",
+    temperature: "",
+    relative_humidity: "",
+    wind_direction: "",
+    wind_speed: "",
+    fuel_type: "",
   });
 
   const [predictionResult, setPredictionResult] = useState(null);
@@ -21,10 +23,18 @@ const PredictionHomePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: parseFloat(value),
-    }));
+    // For number fields, we parse, for text/date fields, we keep string
+    if (["fire_location_latitude", "fire_location_longitude", "temperature", "relative_humidity", "wind_speed"].includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: parseFloat(value),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -36,7 +46,7 @@ const PredictionHomePage = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5001/api/prediction/predict-fwi",
+        "http://localhost:5001/api/prediction/predict-fire",
         formData,
         {
           headers: {
@@ -45,7 +55,7 @@ const PredictionHomePage = () => {
           },
         }
       );
-      setPredictionResult(res.data.fwi);
+      setPredictionResult(res.data.data.prediction);
     } catch (err) {
       setError("Prediction failed. Please check your input and try again.");
     } finally {
@@ -54,7 +64,8 @@ const PredictionHomePage = () => {
   };
 
   return (
-    <div className="bg-white  min-h-screen flex flex-col items-center justify-start p-4 mt-[100px] shadow-xl">
+    <div className="bg-white min-h-screen flex flex-col items-center justify-start p-4 mt-[100px] shadow-xl">
+      {/* Banner */}
       <div
         className="relative w-full h-[80vh] flex items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: 'url("/images/predictHome.jpg")' }}
@@ -71,11 +82,13 @@ const PredictionHomePage = () => {
         </div>
       </div>
 
+      {/* Section Separator */}
       <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
-        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
 
+      {/* Form and Prediction Output */}
       <div className="w-full mt-9 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <div className="flex justify-center items-center col-span-full">
           <p className="text-black text-4xl font-serif font-bold text-center">
@@ -83,38 +96,54 @@ const PredictionHomePage = () => {
           </p>
         </div>
 
+        {/* Form Section */}
         <div className="col-span-full lg:col-span-1">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
           >
-            {Object.keys(formData).map((key) => (
-              <div key={key} className="flex flex-col">
+            {/* All fields */}
+            {[
+              { label: "Fire Location Latitude", name: "fire_location_latitude", type: "number" },
+              { label: "Fire Location Longitude", name: "fire_location_longitude", type: "number" },
+              { label: "Fire Start Date", name: "fire_start_date", type: "date" },
+              { label: "Fire Type", name: "fire_type", type: "text" },
+              { label: "Fire Position on Slope", name: "fire_position_on_slope", type: "text" },
+              { label: "Weather Conditions Over Fire", name: "weather_conditions_over_fire", type: "text" },
+              { label: "Temperature (°C)", name: "temperature", type: "number" },
+              { label: "Relative Humidity (%)", name: "relative_humidity", type: "number" },
+              { label: "Wind Direction", name: "wind_direction", type: "text" },
+              { label: "Wind Speed (km/h)", name: "wind_speed", type: "number" },
+              { label: "Fuel Type", name: "fuel_type", type: "text" },
+            ].map(({ label, name, type }) => (
+              <div key={name} className="flex flex-col">
                 <label className="font-semibold text-sm text-gray-700 mb-1">
-                  {key}
+                  {label}
                 </label>
                 <input
-                  type="number"
-                  step="any"
-                  name={key}
-                  value={formData[key]}
+                  type={type}
+                  name={name}
+                  value={formData[name]}
                   onChange={handleChange}
                   required
                   className="p-2 border border-gray-300 rounded"
                 />
               </div>
             ))}
+
+            {/* Submit Button */}
             <div className="col-span-full text-center mt-4">
               <button
                 type="submit"
-                className="w-[150px] bg-red-700 text-white py-2  hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
+                className="w-[150px] bg-red-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
               >
-                {loading ? "Predicting..." : "Predict FWI"}
+                {loading ? "Predicting..." : "Predict Fire"}
               </button>
             </div>
           </form>
         </div>
 
+        {/* Result Section */}
         <div className="flex flex-col items-center justify-center w-full mt-8 lg:mt-0 lg:ml-8">
           {predictionResult === null ? (
             <img
@@ -138,20 +167,24 @@ const PredictionHomePage = () => {
                 : "border-4 border-red-500 text-red-700 bg-red-100"
             }`}
               >
-                {predictionResult.toFixed(4)}
+                  {typeof predictionResult === "number" ? predictionResult.toFixed(4) : ""}
               </div>
             </>
           )}
         </div>
       </div>
 
-      {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
+      {error && (
+        <div className="mt-4 text-red-600 font-medium">{error}</div>
+      )}
 
+      {/* Bottom Divider */}
       <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
-        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
 
+      {/* Prediction History Table */}
       <div className="mt-6 w-full">
         <PredictionHistoryTable />
       </div>

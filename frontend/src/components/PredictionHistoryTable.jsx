@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -8,6 +8,7 @@ const PredictionHistoryTable = () => {
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
+  const [showAll, setShowAll] = useState(false); // NEW: control how many rows to show
 
   const fetchPredictions = async () => {
     const token = localStorage.getItem("token");
@@ -18,16 +19,14 @@ const PredictionHistoryTable = () => {
     }
 
     try {
-      const res = await axios.get(
-        "http://localhost:5001/api/prediction/user/me/predictions",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setPredictions(res.data.predictions);
-      setFilteredPredictions(res.data.predictions);
+      const res = await axios.get("http://localhost:5001/api/prediction/my/fire/prediction", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("response:::", res.data.data);
+      setPredictions(res.data.data);
+      setFilteredPredictions(res.data.data);
     } catch (err) {
       console.error("Failed to fetch predictions:", err);
       setError("Failed to load prediction history.");
@@ -90,6 +89,7 @@ const PredictionHistoryTable = () => {
 
     const tableData = filteredPredictions.map((pred) => [
       Object.entries(pred.input)
+        .filter(([key]) => key !== "_id") // Skip _id
         .map(
           ([key, value]) =>
             `${key}: ${
@@ -99,7 +99,7 @@ const PredictionHistoryTable = () => {
             }`
         )
         .join("\n"),
-      pred.fwi.toFixed(6),
+      typeof pred.prediction === "number" ? pred.prediction.toFixed(6) : "N/A",
       new Date(pred.createdAt).toLocaleDateString(),
     ]);
 
@@ -113,7 +113,6 @@ const PredictionHistoryTable = () => {
 
     pdf.save("predictions.pdf");
   };
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 mt-8 w-full">
@@ -156,35 +155,34 @@ const PredictionHistoryTable = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {filteredPredictions.length > 0 ? (
-              filteredPredictions.map((pred, index) => (
-                <tr
-                  key={index}
-                  className="hover:-translate-y-1 hover:shadow-md"
-                >
+              (showAll ? filteredPredictions : filteredPredictions.slice(0, 5)).map((pred, index) => (
+                <tr key={index} className="hover:-translate-y-1 hover:shadow-md">
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       {pred.input &&
-                        Object.entries(pred.input).map(([key, value], idx) => {
-                          let displayValue = value;
-                          if (typeof value === "object" && value !== null) {
-                            const innerKey = Object.keys(value)[0];
-                            displayValue = value[innerKey];
-                          }
-                          return (
-                            <div key={idx} className="flex justify-between">
-                              <span className="font-semibold text-red-700 ml-2">
-                                {key}:
-                              </span>
-                              <span className="text-gray-800 mr-6">
-                                {displayValue}
-                              </span>
-                            </div>
-                          );
-                        })}
+                        Object.entries(pred.input)
+                          .filter(([key]) => key !== "_id")
+                          .map(([key, value], idx) => {
+                            let displayValue = value;
+                            if (typeof value === "object" && value !== null) {
+                              const innerKey = Object.keys(value)[0];
+                              displayValue = value[innerKey];
+                            }
+                            return (
+                              <div key={idx} className="flex justify-between">
+                                <span className="font-semibold text-red-700 ml-2">
+                                  {key}:
+                                </span>
+                                <span className="text-gray-800 mr-6">
+                                  {displayValue}
+                                </span>
+                              </div>
+                            );
+                          })}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
-                    {typeof pred.fwi === "number" ? pred.fwi.toFixed(6) : "N/A"}
+                    {typeof pred.prediction === "number" ? pred.prediction.toFixed(6) : "N/A"}
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
                     {new Date(pred.createdAt).toLocaleDateString()}
@@ -202,10 +200,23 @@ const PredictionHistoryTable = () => {
         </table>
       </div>
 
+      {/* Show More / Show Less Button */}
+      {filteredPredictions.length > 5 && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="w-[150px] bg-red-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
+          >
+            {showAll ? "Show Less" : "Show More"}
+          </button>
+        </div>
+      )}
+
+      {/* Download PDF */}
       <div className="flex justify-center mt-6">
         <button
           onClick={downloadPDF}
-          className="w-[150px] bg-red-700 text-white py-2  hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
+          className="w-[150px] bg-red-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
         >
           Download PDF
         </button>

@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
 import UserProfileDropdown from "./UserProfileDropdown";
-import {useAuth} from '../routes/AuthContext'
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -21,11 +19,12 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    if (loggedInUser) {
-      setUser(loggedInUser);
+    // Load user from localStorage when navbar mounts
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
     }
-  }, []);
+  }, [location]); // Watch location change too, in case login happens on another page
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,11 +34,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    if (loggedInUser) setUser(loggedInUser);
-  }, [location]);
-
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 px-6 py-4 transition-all duration-300 ${
@@ -48,24 +42,23 @@ const Navbar = () => {
           : "bg-transparent"
       }`}
     >
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        {/* Logo */}
+        <div className="flex items-center text-black space-x-2">
+          <div className="flex items-center h-10 mb-3">
+            <img
+              src="/images/logo.png"
+              alt="WildfireWatch Logo"
+              className="h-full object-contain"
+            />
+          </div>
+          <h1 className="text-2xl font-bold font-serif leading-tight">
+            <span className="text-red-500">Wildfire</span>
+            <span className="text-green-500">Watch</span>
+          </h1>
+        </div>
 
-      <div className="flex justify-between items-center">
-      <div className="flex items-center text-black space-x-2">
-  <div className="flex items-center h-10 mb-3">
-    <img
-      src="/images/logo.png"
-      alt="WildfireWatch Logo"
-      className="h-full object-contain"
-    />
-  </div>
-  <h1 className="text-2xl font-bold font-serif leading-tight">
-    <span className="text-red-500">Wildfire</span>
-    <span className="text-green-500">Watch</span>
-  </h1>
-</div>
-
-
-        {/* Nav Links */}
+        {/* Navigation Links */}
         <ul className="hidden md:flex space-x-6 text-md font-medium font-serif text-gray-600">
           <li>
             <Link

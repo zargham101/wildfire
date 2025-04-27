@@ -10,5 +10,7 @@ router.post('/predict-fwi',verifyToken, controller.getFireWeatherIndex);
 router.get('/prediction-count', controller.getPredictionCount);
 router.get("/user/me/predictions",verifyToken, controller.getMyPredictions);
 router.post("/predict-fire", verifyToken, prepocessorController.predictFire);
+router.get("/my/fire/prediction", verifyToken, prepocessorController.fetchAll);
+
 
 module.exports = router;

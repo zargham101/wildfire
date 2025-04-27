@@ -3,8 +3,10 @@ const FirePrediction = require("../../model/allFeaturePrediction/index");
 
 exports.processAndPredict = async (inputData, userId) => {
   try {
-    const response = await axios.post("http://localhost:5002/predict", inputData);
-    console.log("python script result::", response);
+    const response = await axios.post(
+      "http://localhost:5002/predict",
+      inputData
+    );
 
     if (response.data.status !== "success") {
       throw new Error(response.data.message || "Model prediction failed");
@@ -19,5 +21,17 @@ exports.processAndPredict = async (inputData, userId) => {
     return saved;
   } catch (err) {
     throw err;
+  }
+};
+
+exports.getAllPredictions = async (userId) => {
+  try {
+    const predictions = await FirePrediction.find({ userId }).sort({
+      createdAt: -1,
+    });
+    return predictions;
+  } catch (error) {
+    console.log("error::",error)
+    throw error;
   }
 };

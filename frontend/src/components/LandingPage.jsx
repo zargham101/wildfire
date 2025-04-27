@@ -330,24 +330,20 @@ const LandingPage = () => {
         {/* Left side: Image */}
         <div className="w-1/2">
           <img
-            src="/videos/graph.gif"
+            src="/videos/graph.webp"
             alt="Wildfire Watch"
-            className="w-[500px] h-[400px] ml-[150px] object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl"
+            className="w-[500px] h-[400px] ml-[190px] object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl mt-5"
           />
         </div>
 
         {/* Right side: Text container with red border */}
-        <div className="w-1/2 pl-5 border-l-4 border-red-500 border-solid p-5">
-          <h2 className="text-black font-serif text-4xl text-left mb-[60px]">
-            Monitor critical events and equip your yourself to
-            manage its effects
+        <div className="w-1/2 pl-3 border-l-4 border-red-500 border-solid p-3">
+          <h2 className="text-black font-serif text-4xl text-left  mb-[60px]">
+          Transform Satellite Images Into Life-Saving Predictions
+
           </h2>
           <p className="text-xl font-sans italic">
-            "Wildfire Watch is a crucial platform for individuals and
-            communities to predict and prevent devastating wildfires. By
-            leveraging real-time data, we empower people to take the necessary
-            precautions in time, potentially saving lives and reducing
-            destruction."
+          "Our platform analyzes real-time satellite images and highlights at-risk areas using deep learning. Empower yourself with powerful predictions and protect what matters most — before it’s too late."
           </p>
         </div>
       </div>

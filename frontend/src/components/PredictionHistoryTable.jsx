@@ -8,7 +8,7 @@ const PredictionHistoryTable = () => {
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
-  const [showAll, setShowAll] = useState(false); // NEW: control how many rows to show
+  const [showAll, setShowAll] = useState(false); 
 
   const fetchPredictions = async () => {
     const token = localStorage.getItem("token");
@@ -200,7 +200,6 @@ const PredictionHistoryTable = () => {
         </table>
       </div>
 
-      {/* Show More / Show Less Button */}
       {filteredPredictions.length > 5 && (
         <div className="flex justify-center mt-6">
           <button
@@ -212,7 +211,6 @@ const PredictionHistoryTable = () => {
         </div>
       )}
 
-      {/* Download PDF */}
       <div className="flex justify-center mt-6">
         <button
           onClick={downloadPDF}

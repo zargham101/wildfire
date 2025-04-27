@@ -82,13 +82,11 @@ const PredictionHomePage = () => {
         </div>
       </div>
 
-      {/* Section Separator */}
       <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
         <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
         <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
 
-      {/* Form and Prediction Output */}
       <div className="w-full mt-9 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <div className="flex justify-center items-center col-span-full">
           <p className="text-black text-4xl font-serif font-bold text-center">
@@ -96,13 +94,11 @@ const PredictionHomePage = () => {
           </p>
         </div>
 
-        {/* Form Section */}
         <div className="col-span-full lg:col-span-1">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
           >
-            {/* All fields */}
             {[
               { label: "Fire Location Latitude", name: "fire_location_latitude", type: "number" },
               { label: "Fire Location Longitude", name: "fire_location_longitude", type: "number" },
@@ -131,7 +127,6 @@ const PredictionHomePage = () => {
               </div>
             ))}
 
-            {/* Submit Button */}
             <div className="col-span-full text-center mt-4">
               <button
                 type="submit"
@@ -143,7 +138,6 @@ const PredictionHomePage = () => {
           </form>
         </div>
 
-        {/* Result Section */}
         <div className="flex flex-col items-center justify-center w-full mt-8 lg:mt-0 lg:ml-8">
           {predictionResult === null ? (
             <img
@@ -178,13 +172,11 @@ const PredictionHomePage = () => {
         <div className="mt-4 text-red-600 font-medium">{error}</div>
       )}
 
-      {/* Bottom Divider */}
       <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
         <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
         <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
 
-      {/* Prediction History Table */}
       <div className="mt-6 w-full">
         <PredictionHistoryTable />
       </div>

@@ -47,15 +47,22 @@ const Navbar = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3">
-          <img src="/images/logo.png" alt="Logo" className="h-8" />
-          <h1 className="text-2xl font-semibold font-serif text-gray-800">
-            <span className="text-red-500">Wildfire</span>
-            <span className="text-green-600">Watch</span>
-          </h1>
-        </Link>
+
+      <div className="flex justify-between items-center">
+      <div className="flex items-center text-black space-x-2">
+  <div className="flex items-center h-10 mb-3">
+    <img
+      src="/images/logo.png"
+      alt="WildfireWatch Logo"
+      className="h-full object-contain"
+    />
+  </div>
+  <h1 className="text-2xl font-bold font-serif leading-tight">
+    <span className="text-red-500">Wildfire</span>
+    <span className="text-green-500">Watch</span>
+  </h1>
+</div>
+
 
         {/* Nav Links */}
         <ul className="hidden md:flex space-x-6 text-md font-medium font-serif text-gray-600">

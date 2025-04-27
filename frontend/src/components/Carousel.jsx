@@ -62,7 +62,7 @@ const Carousel = () => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="mb-10 relative w-full overflow-hidden">
       <div
         className="flex transition-all ease-in-out duration-500"
         style={{

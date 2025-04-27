@@ -14,7 +14,7 @@ const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (fireSize === null) return null; // move AFTER all hooks
+  if (fireSize === null) return null; 
 
   const {
     fireSeverity,
@@ -86,7 +86,6 @@ const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
             </ul>
           </div>
 
-          {/* Special Adjustments */}
           <div>
             <h3 className="text-xl font-semibold text-gray-700 mb-4">Special Adjustments</h3>
             <ul className="space-y-2 text-gray-600">
@@ -94,7 +93,6 @@ const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
             </ul>
           </div>
 
-          {/* Inspection */}
           <div>
             <h3 className="text-xl font-semibold text-gray-700 mb-4">Post Fire Inspection</h3>
             <ul className="space-y-2 text-gray-600">
@@ -103,7 +101,6 @@ const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
           </div>
         </div>
 
-        {/* Download Button */}
         <div className="flex justify-center mt-8">
           <button
             onClick={handleDownloadReport}

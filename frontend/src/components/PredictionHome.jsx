@@ -82,7 +82,6 @@ const PredictionHomePage = () => {
     }
   };
 
-  // 🧠 Fire Severity Calculation
   function getFireSeverity(fireSize) {
     if (fireSize <= 1) return "Very Small";
     if (fireSize <= 10) return "Small";
@@ -115,10 +114,8 @@ const PredictionHomePage = () => {
       setFireSeverity(severity);
       setShowFireAlert(true);
   
-      // Hide alert after 5 seconds
       setTimeout(() => setShowFireAlert(false), 5000);
   
-      // Reset only the form (NOT the page)
       setFormData({
         fire_location_latitude: "",
         fire_location_longitude: "",
@@ -162,7 +159,6 @@ const PredictionHomePage = () => {
         </div>
       )}
 
-      {/* Banner */}
       <div
         className="relative w-full h-[80vh] flex items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: 'url("/images/predictHome.jpg")' }}
@@ -191,13 +187,11 @@ const PredictionHomePage = () => {
           </p>
         </div>
 
-        {/* Form */}
         <div className="col-span-full lg:col-span-1">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
           >
-            {/* Custom input fields */}
             <div className="flex flex-col">
               <label className="font-semibold text-sm text-gray-700 mb-1">
                 Fire Location Latitude

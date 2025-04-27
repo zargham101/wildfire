@@ -1,0 +1,109 @@
+export function getFireSeverity(fireSize) {
+    if (fireSize <= 1) return 'Very Small';
+    if (fireSize <= 10) return 'Small';
+    if (fireSize <= 100) return 'Moderate';
+    if (fireSize <= 500) return 'Large';
+    return 'Very Large';
+  }
+  
+  export function getInitialResources(fireSeverity) {
+    let resources = {
+      firefighters: 0,
+      firetrucks: 0,
+      helicopters: 0,
+      commanders: 0
+    };
+  
+    if (fireSeverity === 'Very Small') {
+      resources.firefighters = 3;
+      resources.firetrucks = 1;
+    } else if (fireSeverity === 'Small') {
+      resources.firefighters = 5;
+      resources.firetrucks = 1;
+      resources.commanders = 1;
+    } else if (fireSeverity === 'Moderate') {
+      resources.firefighters = 10;
+      resources.firetrucks = 3;
+      resources.helicopters = 1;
+      resources.commanders = 2;
+    } else if (fireSeverity === 'Large') {
+      resources.firefighters = 20;
+      resources.firetrucks = 5;
+      resources.helicopters = 2;
+      resources.commanders = 3;
+    } else if (fireSeverity === 'Very Large') {
+      resources.firefighters = 50;
+      resources.firetrucks = 10;
+      resources.helicopters = 5;
+      resources.commanders = 5;
+    }
+  
+    return resources;
+  }
+  
+  export function getLongTermResources(fireSeverity) {
+    let longTermResources = {
+      dailyFirefighters: 0,
+      fireStationsNeeded: 0,
+      heavyEquipment: []
+    };
+  
+    if (fireSeverity === 'Moderate') {
+      longTermResources.dailyFirefighters = 10;
+      longTermResources.heavyEquipment = ['Bulldozer'];
+    } else if (fireSeverity === 'Large') {
+      longTermResources.dailyFirefighters = 20;
+      longTermResources.fireStationsNeeded = 1;
+      longTermResources.heavyEquipment = ['Bulldozer', 'Air Tanker'];
+    } else if (fireSeverity === 'Very Large') {
+      longTermResources.dailyFirefighters = 50;
+      longTermResources.fireStationsNeeded = 2;
+      longTermResources.heavyEquipment = ['Air Tanker', 'Helicopters', 'Bulldozers'];
+    }
+  
+    return longTermResources;
+  }
+  
+  export function applySpecialAdjustments(windSpeed, humidity) {
+    let adjustments = {
+      additionalFirefighters: 0,
+      additionalHelicopters: 0,
+      backupFireStation: false
+    };
+  
+    if (windSpeed > 30) {
+      adjustments.additionalFirefighters += 0.2;
+      adjustments.additionalHelicopters += 0.2;
+    }
+    if (humidity < 20) {
+      adjustments.additionalHelicopters *= 2;
+    }
+  
+    return adjustments;
+  }
+  
+  export function getPostFireInspection(fireSize) {
+    if (fireSize > 100) return 3;
+    if (fireSize > 10) return 1;
+    return 0;
+  }
+  
+  export function calculateResources(fireSize, windSpeed, humidity) {
+    const fireSeverity = getFireSeverity(fireSize);
+    const initialResources = getInitialResources(fireSeverity);
+    const longTermResources = getLongTermResources(fireSeverity);
+    const specialAdjustments = applySpecialAdjustments(windSpeed, humidity);
+    const inspectorsNeeded = getPostFireInspection(fireSize);
+  
+    initialResources.firefighters += initialResources.firefighters * specialAdjustments.additionalFirefighters;
+    initialResources.helicopters += initialResources.helicopters * specialAdjustments.additionalHelicopters;
+  
+    return {
+      fireSeverity,
+      initialResources,
+      longTermResources,
+      specialAdjustments,
+      inspectorsNeeded
+    };
+  }
+  

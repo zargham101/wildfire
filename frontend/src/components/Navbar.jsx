@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
 import UserProfileDropdown from "./UserProfileDropdown";
+import {useAuth} from '../routes/AuthContext'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);

@@ -28,7 +28,7 @@ const reviewService = {
       
       const mailOptions = {
         from: email,  
-        to: 'khanzargham434@gmail.com',  
+        to: 'hassnainahmadcheema@gmail.com',  
         subject: `New Review from ${name}`,
         replyTo: email,  
         text: `You received a new review from ${name} (${email}, ${country}):\n\n${description}`,

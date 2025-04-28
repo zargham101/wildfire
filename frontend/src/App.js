@@ -15,6 +15,7 @@ import FeatureVisualizationPage from "./components/FeaturedVisualization";
 import NewsDetail from "./components/NewsDetail";
 import InstructionPage from "./components/InstructionPage";
 import GoogleAuthSuccess from './routes/GoogleAuthSuccess'
+import FirePredictionUpload from "./components/FirePredictionUpload";
 import axios from "axios";
 
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/news/:id" element={<NewsDetail news={news} />} />
         <Route path="/instructions/:type" element={<InstructionPage />} />
+        <Route path="/predict/cam/result" element={<FirePredictionUpload />} />
       </Routes>
       <Footer />
     </>

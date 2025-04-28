@@ -28,16 +28,17 @@ exports.processAndPredict = async (inputData, userId) => {
 
 exports.getAllPredictions = async (userId) => {
   try {
+    console.log("id in service:::",userId)
     const predictions = await FirePrediction.find({ userId }).sort({
       createdAt: -1,
     });
+    console.log("predictions::",predictions)
     return predictions;
   } catch (error) {
     console.log("error::",error)
     throw error;
   }
 };
-
 const uploadImageToS3 = async (file) => {
   if (!file) return null;
   const params = {
@@ -50,20 +51,26 @@ const uploadImageToS3 = async (file) => {
   return uploadResult.Location;
 };
 
-const predictImage = async (file, userId) => {
+exports.predictImage = async (file, userId) => {
   const imageUrl = await uploadImageToS3(file);
 
-  const res = await axios.post("http://localhost:5002/predict", { imageUrl });
+  const res = await axios.post("http://localhost:5003/predict", {
+    imageUrl,
+  });
 
-  const predictionResult = res.data.prediction; // Assume Flask returns {prediction: "Severe Fire"}
+  const { prediction, noWildfireConfidence, wildfireConfidence, camImageUrl } = res.data;
 
   const savedPrediction = await Prediction.create({
     userId,
     imageUrl,
-    predictionResult
+    predictionResult: prediction,
+    noWildfireConfidence,
+    wildfireConfidence,
+    camImageUrl,
   });
 
   return savedPrediction;
 };
 
-module.exports = { predictImage };
+
+

@@ -16,8 +16,12 @@ exports.predictFire = async (req, res) => {
 
 exports.fetchAll = async (req,res) => {
   try {
+    console.log("useris:::" ,req.user._id)
     const userId = req.user._id; 
+
     const result = await fireService.getAllPredictions(userId);
+
+    console.log("result::", result);
 
     res.status(200).json({
       message:"Prediction successfully found",
@@ -25,6 +29,7 @@ exports.fetchAll = async (req,res) => {
   });
 
   } catch (error) {
+    console.log("error message::",error.message)
     return res.status(402).json({
       message: "Prediciton not found",
       error: error.message
@@ -34,7 +39,7 @@ exports.fetchAll = async (req,res) => {
 
 exports.handleFirePrediction = async (req, res) => {
   try {
-    const userId = req.user?.id; // if using auth
+    const userId = req.user?._id;
     const prediction = await fireService.predictImage(req.file, userId);
     res.status(200).json({ message: "Prediction successful", data: prediction });
   } catch (error) {

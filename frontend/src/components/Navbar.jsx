@@ -105,6 +105,19 @@ const Navbar = () => {
                   Prediction
                 </Link>
               </li>
+              
+              <li>
+                <Link
+                  to="/predict/cam/result"
+                  className={`hover:text-red-500 transition-all ${
+                    isActive("/predict/cam/result")
+                      ? "text-red-500 border-b-2 border-red-500 pb-1"
+                      : ""
+                  }`}
+                >
+                  Detection
+                </Link>
+              </li>
               <li>
                 <Link
                   to="/feature-visualization"
@@ -114,19 +127,7 @@ const Navbar = () => {
                       : ""
                   }`}
                 >
-                  Data
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/generate-reports"
-                  className={`hover:text-red-500 transition-all ${
-                    isActive("/generate-reports")
-                      ? "text-red-500 border-b-2 border-red-500 pb-1"
-                      : ""
-                  }`}
-                >
-                  Reports
+                  Visualization
                 </Link>
               </li>
             </>

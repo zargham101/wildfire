@@ -22,13 +22,13 @@ const PredictionHomePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 🆕 Alert-related states
   const [showFireAlert, setShowFireAlert] = useState(false);
   const [fireSeverity, setFireSeverity] = useState("");
 
   const fireTypeOptions = ["Ground", "Surface", "Crown"];
   const firePositionOptions = [
-    "Bottom Flat",
+    "Bottom",
+    "Flat",
     "Lower 1/3",
     "Middle 1/3",
     "Upper 1/3",

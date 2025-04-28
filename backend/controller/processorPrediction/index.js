@@ -31,3 +31,14 @@ exports.fetchAll = async (req,res) => {
     })
   }
 }
+
+exports.handleFirePrediction = async (req, res) => {
+  try {
+    const userId = req.user?.id; // if using auth
+    const prediction = await fireService.predictImage(req.file, userId);
+    res.status(200).json({ message: "Prediction successful", data: prediction });
+  } catch (error) {
+    res.status(500).json({ message: "Prediction failed", error: error.message });
+  }
+};
+

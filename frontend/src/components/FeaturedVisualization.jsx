@@ -113,7 +113,6 @@ const WildfireDashboard = () => {
           Wildfire Analytics Dashboard
         </h1>
 
-        {/* Top Summary Cards */}
         {loading ? (
           <Skeleton height={150} count={2} />
         ) : (
@@ -143,8 +142,7 @@ const WildfireDashboard = () => {
           </div>
         )}
 
-        {/* 🔥 Wildfire Trends */}
-        <div className="bg-white p-6 rounded shadow mb-12">
+        <div className=" p-6 rounded shadow mb-12">
           <div className="flex justify-between mb-4">
             <h2 className="text-2xl font-bold">Wildfire Trends</h2>
             <div className="flex gap-4">
@@ -169,7 +167,6 @@ const WildfireDashboard = () => {
             </div>
           </div>
 
-          {/* Chart with Background */}
           <div className="p-4 rounded-lg bg-rose-50">
             <ResponsiveContainer width="100%" height={300}>
               {mainChartType === "line" ? (
@@ -191,10 +188,9 @@ const WildfireDashboard = () => {
           </div>
         </div>
 
-        {/* Categorical and Numeric Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* 🔵 Wildfire Count by Category */}
-          <div className="bg-white p-6 rounded shadow">
+          <div className=" p-6 rounded shadow">
             <div className="flex justify-between mb-4">
               <h3 className="font-bold text-lg">Wildfire Count by Category</h3>
               <select
@@ -219,35 +215,57 @@ const WildfireDashboard = () => {
             </div>
 
             <div className="p-4 rounded-lg bg-yellow-50">
-              <ResponsiveContainer width="100%" height={250}>
-                {categoricalChartType === "bar" ? (
+              {categoricalChartType === "bar" ? (
+                <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={prepareCategoricalData()}>
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="value" fill="#34d399" />
                   </BarChart>
-                ) : (
-                  <PieChart>
-                    <Pie
-                      data={prepareCategoricalData()}
-                      dataKey="value"
-                      nameKey="name"
-                      outerRadius={80}
-                    >
-                      {prepareCategoricalData().map((_, i) => (
-                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex flex-col md:flex-row">
+                  <div className="w-full md:w-1/2">
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart>
+                        <Pie
+                          data={prepareCategoricalData()}
+                          dataKey="value"
+                          nameKey="name"
+                          outerRadius={80}
+                        >
+                          {prepareCategoricalData().map((_, i) => (
+                            <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="w-full md:w-1/2 flex flex-col justify-center pl-4">
+                    <div className="space-y-2">
+                      {prepareCategoricalData().map((entry, i) => (
+                        <div key={`legend-${i}`} className="flex items-center">
+                          <div
+                            className="w-4 h-4 mr-2 rounded-full"
+                            style={{
+                              backgroundColor: COLORS[i % COLORS.length],
+                            }}
+                          />
+                          <span className="text-sm">
+                            {entry.name}: {entry.value}
+                          </span>
+                        </div>
                       ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                )}
-              </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* 🔵 Fire Size vs Numeric (ScatterChart) */}
-          <div className="bg-white p-6 rounded shadow">
+          <div className=" p-6 rounded shadow">
             <div className="flex justify-between mb-4">
               <h3 className="font-bold text-lg">Fire Size vs Numeric</h3>
               <select
@@ -276,7 +294,7 @@ const WildfireDashboard = () => {
         </div>
 
         {/* 🔥 Wildfire Prediction Heatmap */}
-        <div className="bg-white p-6 rounded shadow">
+        <div className=" p-6 rounded shadow">
           {loading ? (
             <Skeleton height={300} />
           ) : (

@@ -1,46 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-
 import { calculateResources } from "../condition/resourceCalculator";
 
-const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
+const FireResponseReport = ({
+  fireSize,
+  windSpeed,
+  humidity,
+  predictionDate,
+}) => {
   const [showAlert, setShowAlert] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (fireSize === null) return null; 
+  if (fireSize === null) return null;
 
   const {
     fireSeverity,
     initialResources,
     longTermResources,
     specialAdjustments,
-    inspectorsNeeded
+    inspectorsNeeded,
   } = calculateResources(fireSize, windSpeed, humidity);
 
   const handleDownloadReport = () => {
     const doc = new jsPDF();
-    doc.text(" Fire Response Report", 20, 20);
+    doc.text("Fire Response Report", 20, 20);
+
+    const formattedDate = predictionDate
+      ? new Date(Date.parse(predictionDate)).toLocaleDateString() // Ensure it’s a valid date format
+      : "Date Not Available";
 
     autoTable(doc, {
       startY: 30,
       head: [["Category", "Details"]],
       body: [
         ["Fire Severity", fireSeverity],
+        ["Prediction Date", formattedDate],
         ["Initial Firefighters", initialResources.firefighters.toFixed(0)],
         ["Initial Firetrucks", initialResources.firetrucks],
         ["Initial Helicopters", initialResources.helicopters.toFixed(0)],
         ["Commanders", initialResources.commanders],
         ["Daily Firefighters (Long-Term)", longTermResources.dailyFirefighters],
         ["Fire Stations Needed", longTermResources.fireStationsNeeded],
-        ["Heavy Equipment", longTermResources.heavyEquipment.join(", ") || "None"],
-        ["Backup Fire Station Needed", specialAdjustments.backupFireStation ? "Yes" : "No"],
+        [
+          "Heavy Equipment",
+          longTermResources.heavyEquipment.join(", ") || "None",
+        ],
+        [
+          "Backup Fire Station Needed",
+          specialAdjustments.backupFireStation ? "Yes" : "No",
+        ],
         ["Post Fire Inspectors Needed", inspectorsNeeded],
       ],
     });
@@ -49,14 +57,20 @@ const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-8">
+    <div className="w-full max-w-6xl mx-auto py-8">
       {showAlert && (
-        <div className={`text-center mb-8 p-4 rounded-md font-semibold shadow-lg
-          ${fireSeverity === "Very Small" ? "bg-green-100 text-green-700"
-            : fireSeverity === "Small" ? "bg-yellow-100 text-yellow-700"
-            : fireSeverity === "Moderate" ? "bg-orange-100 text-orange-700"
-            : "bg-red-100 text-red-700"}
-        `}>
+        <div
+          className={`text-center mb-8 p-4 rounded-md font-semibold shadow-lg
+          ${
+            fireSeverity === "Very Small"
+              ? "bg-green-100 text-green-700"
+              : fireSeverity === "Small"
+              ? "bg-yellow-100 text-yellow-700"
+              : fireSeverity === "Moderate"
+              ? "bg-orange-100 text-orange-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
           ALERT: {fireSeverity} Fire Detected!
         </div>
       )}
@@ -68,35 +82,71 @@ const FireResponseReport = ({ fireSize, windSpeed, humidity }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Initial Response</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Initial Response
+            </h3>
             <ul className="space-y-2 text-gray-600">
-              <li>👩‍🚒 Firefighters: <strong>{initialResources.firefighters.toFixed(0)}</strong></li>
-              <li>🚒 Firetrucks: <strong>{initialResources.firetrucks}</strong></li>
-              <li>🚁 Helicopters: <strong>{initialResources.helicopters.toFixed(0)}</strong></li>
-              <li>👨‍✈️ Commanders: <strong>{initialResources.commanders}</strong></li>
+              <li>
+                👩‍🚒 Firefighters:{" "}
+                <strong>{initialResources.firefighters.toFixed(0)}</strong>
+              </li>
+              <li>
+                🚒 Firetrucks: <strong>{initialResources.firetrucks}</strong>
+              </li>
+              <li>
+                🚁 Helicopters:{" "}
+                <strong>{initialResources.helicopters.toFixed(0)}</strong>
+              </li>
+              <li>
+                👨‍✈️ Commanders: <strong>{initialResources.commanders}</strong>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Long-Term Planning</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Long-Term Planning
+            </h3>
             <ul className="space-y-2 text-gray-600">
-              <li>🧑‍🚒 Daily Firefighters: <strong>{longTermResources.dailyFirefighters}</strong></li>
-              <li>🏢 Fire Stations Needed: <strong>{longTermResources.fireStationsNeeded}</strong></li>
-              <li>🛠️ Heavy Equipment: <strong>{longTermResources.heavyEquipment.join(", ") || "None"}</strong></li>
+              <li>
+                🧑‍🚒 Daily Firefighters:{" "}
+                <strong>{longTermResources.dailyFirefighters}</strong>
+              </li>
+              <li>
+                🏢 Fire Stations Needed:{" "}
+                <strong>{longTermResources.fireStationsNeeded}</strong>
+              </li>
+              <li>
+                🛠️ Heavy Equipment:{" "}
+                <strong>
+                  {longTermResources.heavyEquipment.join(", ") || "None"}
+                </strong>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Special Adjustments</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Special Adjustments
+            </h3>
             <ul className="space-y-2 text-gray-600">
-              <li>🏢 Backup Fire Station: <strong>{specialAdjustments.backupFireStation ? "Yes" : "No"}</strong></li>
+              <li>
+                🏢 Backup Fire Station:{" "}
+                <strong>
+                  {specialAdjustments.backupFireStation ? "Yes" : "No"}
+                </strong>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Post Fire Inspection</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Post Fire Inspection
+            </h3>
             <ul className="space-y-2 text-gray-600">
-              <li>🕵️‍♂️ Inspectors Needed: <strong>{inspectorsNeeded}</strong></li>
+              <li>
+                🕵️‍♂️ Inspectors Needed: <strong>{inspectorsNeeded}</strong>
+              </li>
             </ul>
           </div>
         </div>

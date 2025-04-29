@@ -18,13 +18,19 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const handleProtectedRouteClick = (e, path) => {
+    if (!user) {
+      e.preventDefault();
+      navigate("/login");
+    }
+  };
+
   useEffect(() => {
-    // Load user from localStorage when navbar mounts
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
       setUser(storedUser);
     }
-  }, [location]); // Watch location change too, in case login happens on another page
+  }, [location]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,7 +64,7 @@ const Navbar = () => {
           </h1>
         </div>
 
-        {/* Navigation Links */}
+        {/* Navigation Links - Always shown */}
         <ul className="hidden md:flex space-x-6 text-md font-medium font-serif text-gray-600">
           <li>
             <Link
@@ -90,48 +96,45 @@ const Navbar = () => {
               Contact Us
             </Link>
           </li>
-
-          {user && (
-            <>
-              <li>
-                <Link
-                  to="/predictionHomePage"
-                  className={`hover:text-red-500 transition-all ${
-                    isActive("/predictionHomePage")
-                      ? "text-red-500 border-b-2 border-red-500 pb-1"
-                      : ""
-                  }`}
-                >
-                  Prediction
-                </Link>
-              </li>
-              
-              <li>
-                <Link
-                  to="/predict/cam/result"
-                  className={`hover:text-red-500 transition-all ${
-                    isActive("/predict/cam/result")
-                      ? "text-red-500 border-b-2 border-red-500 pb-1"
-                      : ""
-                  }`}
-                >
-                  Detection
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/feature-visualization"
-                  className={`hover:text-red-500 transition-all ${
-                    isActive("/feature-visualization")
-                      ? "text-red-500 border-b-2 border-red-500 pb-1"
-                      : ""
-                  }`}
-                >
-                  Visualization
-                </Link>
-              </li>
-            </>
-          )}
+          <li>
+            <Link
+              to={user ? "/predictionHomePage" : "#"}
+              onClick={(e) => handleProtectedRouteClick(e, "/predictionHomePage")}
+              className={`hover:text-red-500 transition-all ${
+                isActive("/predictionHomePage")
+                  ? "text-red-500 border-b-2 border-red-500 pb-1"
+                  : ""
+              }`}
+            >
+              Prediction
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={user ? "/predict/cam/result" : "#"}
+              onClick={(e) => handleProtectedRouteClick(e, "/predict/cam/result")}
+              className={`hover:text-red-500 transition-all ${
+                isActive("/predict/cam/result")
+                  ? "text-red-500 border-b-2 border-red-500 pb-1"
+                  : ""
+              }`}
+            >
+              Detection
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={user ? "/feature-visualization" : "#"}
+              onClick={(e) => handleProtectedRouteClick(e, "/feature-visualization")}
+              className={`hover:text-red-500 transition-all ${
+                isActive("/feature-visualization")
+                  ? "text-red-500 border-b-2 border-red-500 pb-1"
+                  : ""
+              }`}
+            >
+              Visualization
+            </Link>
+          </li>
         </ul>
 
         {/* Auth Buttons or Avatar */}

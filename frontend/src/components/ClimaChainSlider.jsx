@@ -18,7 +18,7 @@ const ClimaChainSlider = () => {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center bg-black min-h-screen w-full py-14">
+    <div className="flex flex-col md:flex-row items-center justify-center  min-h-screen  p-14">
       <div className="relative w-[500px] h-[350px] md:w-[700px] md:h-[450px] overflow-hidden rounded-lg shadow-lg transition-all duration-500">
         {images.map((src, index) => (
           <img
@@ -44,26 +44,26 @@ const ClimaChainSlider = () => {
       </div>
 
       <div className="text-center md:text-left mt-10 md:mt-0 md:ml-16 max-w-xl">
-        <h2 className="text-2xl font-semibold mb-6 text-white">
+        <h2 className="text-2xl font-semibold mb-6 font-serif text-black">
           What you can achieve with <span className="font-bold">ClimaChain*</span>
         </h2>
 
         <div className="flex justify-center md:justify-start space-x-8 text-left">
           <div>
-            <p className="text-4xl font-bold text-white">40%</p>
-            <p className="text-sm text-white">Uplift in forecast accuracy</p>
+            <p className="text-4xl font-bold text-red-600">40%</p>
+            <p className="text-sm text-red-600">Uplift in forecast accuracy</p>
           </div>
           <div>
-            <p className="text-4xl font-bold text-white">30%</p>
-            <p className="text-sm text-white">Fewer stockouts</p>
+            <p className="text-4xl font-bold text-red-600">30%</p>
+            <p className="text-sm text-red-600">Fewer stockouts</p>
           </div>
           <div>
-            <p className="text-4xl font-bold text-white">16x</p>
-            <p className="text-sm text-white">Return on investment (ROI)</p>
+            <p className="text-4xl font-bold text-red-600">16x</p>
+            <p className="text-sm text-red-600">Return on investment (ROI)</p>
           </div>
         </div>
 
-        <div className="mt-6 text-xs text-white italic leading-snug">
+        <div className="mt-6 text-xs text-black italic leading-snug">
           <p>1: Based on preliminary results</p>
           <p>2: Projected based on improved forecasting accuracy</p>
           <p>

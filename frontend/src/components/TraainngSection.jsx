@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const TrainingSection = ({ isAuthenticated, isUser }) => {
+const TrainingSection = () => {
   const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem('token') !== null;
 
   const cards = [
     {
@@ -37,10 +38,8 @@ const TrainingSection = ({ isAuthenticated, isUser }) => {
   
   const handleRedirect = () => {
     if (isAuthenticated) {
-      navigate("/training-details");
-    } else if (isUser === false) {
-      navigate("/register");
-    } else {
+      navigate("/predictionHomePage");
+    }else {
       navigate("/login");
     }
   };

@@ -8,7 +8,7 @@ const PredictionHistoryTable = () => {
   const [filteredPredictions, setFilteredPredictions] = useState([]);
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
-  const [showAll, setShowAll] = useState(false); 
+  const [showAll, setShowAll] = useState(false);
 
   const fetchPredictions = async () => {
     const token = localStorage.getItem("token");
@@ -19,11 +19,14 @@ const PredictionHistoryTable = () => {
     }
 
     try {
-      const res = await axios.get("http://localhost:5001/api/prediction/my/fire/prediction", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        "http://localhost:5001/api/prediction/my/fire/prediction",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log("response:::", res.data.data);
       setPredictions(res.data.data);
       setFilteredPredictions(res.data.data);
@@ -114,6 +117,13 @@ const PredictionHistoryTable = () => {
     pdf.save("predictions.pdf");
   };
 
+  const formatFieldName = (key) => {
+    return key
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+      .trim();
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 mt-8 w-full">
       <h2 className="text-2xl font-bold font-serif text-gray-800 mb-6 text-center">
@@ -146,7 +156,7 @@ const PredictionHistoryTable = () => {
                 Inputs
               </th>
               <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">
-                FWI Result
+                WildFire Size
               </th>
               <th className="px-6 py-3 text-center font-serif text-md font-semibold text-white">
                 Predicted On
@@ -155,8 +165,14 @@ const PredictionHistoryTable = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {filteredPredictions.length > 0 ? (
-              (showAll ? filteredPredictions : filteredPredictions.slice(0, 5)).map((pred, index) => (
-                <tr key={index} className="hover:-translate-y-1 hover:shadow-md">
+              (showAll
+                ? filteredPredictions
+                : filteredPredictions.slice(0, 5)
+              ).map((pred, index) => (
+                <tr
+                  key={index}
+                  className="hover:-translate-y-1 hover:shadow-md hover:bg-neutral-200"
+                >
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       {pred.input &&
@@ -171,7 +187,7 @@ const PredictionHistoryTable = () => {
                             return (
                               <div key={idx} className="flex justify-between">
                                 <span className="font-semibold text-red-700 ml-2">
-                                  {key}:
+                                  {formatFieldName(key)}:
                                 </span>
                                 <span className="text-gray-800 mr-6">
                                   {displayValue}
@@ -182,7 +198,9 @@ const PredictionHistoryTable = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
-                    {typeof pred.prediction === "number" ? pred.prediction.toFixed(6) : "N/A"}
+                    {typeof pred.prediction === "number"
+                      ? pred.prediction.toFixed(6)
+                      : "N/A"}
                   </td>
                   <td className="px-6 py-4 text-center text-sm font-bold text-red-700">
                     {new Date(pred.createdAt).toLocaleDateString()}

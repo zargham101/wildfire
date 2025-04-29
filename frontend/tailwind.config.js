@@ -4,10 +4,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        "big-shoulders": ['"Big Shoulders Stencil"', "sans-serif"], // Add your custom font here
+        "big-shoulders": ['"Big Shoulders Stencil"', "sans-serif"], 
       },
       animation: {
         shimmering: "shimmering 3s linear infinite",
+        drawCircle: 'drawCircle 5s ease-out forwards',
       },
       keyframes: {
         shimmering: {
@@ -16,6 +17,16 @@ module.exports = {
           },
           "100%": {
             backgroundPosition: "200% 0",
+          },
+        },
+        drawCircle: {
+          '0%': {
+            transform: 'scale(0)',  // Circle starts small
+            opacity: 0.2,            // Initially very transparent
+          },
+          '100%': {
+            transform: 'scale(1)',  // Circle grows to full size
+            opacity: 1,              // Fully visible
           },
         },
       },

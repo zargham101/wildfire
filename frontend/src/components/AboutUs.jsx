@@ -58,7 +58,7 @@ const AboutUs = () => {
 </div>
 
 
-      <div className="bg-red-700 w-[1200px] ml-[80px] p-3 relative my-6 ">
+      <div className="bg-red-700 w-[1200px] ml-[150px] p-3 relative my-6 ">
         <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
         <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
@@ -67,7 +67,7 @@ const AboutUs = () => {
         <TrainingSection />
       </div>
 
-      <div className="bg-red-700 w-[1200px] ml-[80px] p-3 relative my-6 ">
+      <div className="bg-red-700 w-[1200px] ml-[150px] p-3 relative my-6 ">
         <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
         <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
       </div>
@@ -76,7 +76,7 @@ const AboutUs = () => {
         <ScrollingTextWithDots />
       </div>
 
-      <div className="bg-red-700  w-[1200px] ml-[80px] p-1 relative my-6">
+      <div className="bg-red-700  w-[1200px] ml-[150px] p-1 relative my-6">
         <p className="text-white font-serif text-base ml-[15px]">
           What You Need To Know
         </p>

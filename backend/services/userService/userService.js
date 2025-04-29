@@ -211,12 +211,20 @@ const userService = {
       throw error;
     }
   },
-  googleLogin: passport.authenticate("google", {
-    scope: ["profile", "email"]
-  }),
+  googleLogin: (req, res, next) => {
+    const mode = req.query.mode || "login";  
+    req.session = req.session || {};         
+    req.session.googleMode = mode;            
+  
+    
+    passport.authenticate("google", {
+      scope: ["profile", "email"]
+    })(req, res, next);
+  },
   
   googleCallback: passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: "http://localhost:3000/login?google_error=true",
+    failureMessage: true,
     session: false
   }),
 };

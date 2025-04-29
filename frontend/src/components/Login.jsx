@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 const Login = () => {
@@ -13,21 +12,18 @@ const Login = () => {
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
         "http://localhost:5001/api/user/login",
-        {
-          email,
-          password,
-        }
+        { email, password }
       );
       const loggedInUser = response.data.user;
 
       localStorage.setItem("user", JSON.stringify(loggedInUser));
-
       localStorage.setItem("token", response.data.token);
 
       setSuccessMessage(response.data.message);
@@ -39,12 +35,36 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5001/api/user/google";
+    window.location.href = "http://localhost:5001/api/user/google?mode=login";
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const googleError = params.get("google_error");
+
+    if (googleError) {
+      setErrorMessage(
+        "An account with this email already exists. Please log in using your credentials."
+      );
+
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 100);
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
 
   return (
     <div
-      className="flex justify-center items-center min-h-screen bg-white"
+      className="flex justify-center items-center min-h-screen bg-white mt-8"
       style={{
         backgroundImage: `url('/images/texture.jpg')`,
         backgroundRepeat: "repeat",
@@ -52,19 +72,20 @@ const Login = () => {
     >
       <div className="w-full fixed top-0 left-0 z-50">
         {successMessage && (
-          <div className="bg-green-500 text-white p-2 text-center">
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center mx-6 mt-4">
             {successMessage}
           </div>
         )}
         {errorMessage && (
-          <div className="bg-red-500 text-white p-2 text-center">
-            {errorMessage}
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center mx-6 mt-4 transition-opacity duration-300">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{errorMessage}</span>
           </div>
         )}
       </div>
 
       <div className="p-8">
-        <p className="text-4xl w-full font-bold font-serif  mb-6">
+        <p className="text-4xl w-full font-bold font-serif mb-6">
           Your username is your Email
         </p>
 
@@ -78,7 +99,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full p-2 border-2 border-black p-3"
+              className="w-full p-3 border-2 border-black"
             />
           </div>
 
@@ -91,7 +112,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-2 border-2 border-black  pr-10 p-3"
+              className="w-full p-3 border-2 border-black pr-10"
             />
             <button
               type="button"
@@ -104,7 +125,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-red-700 text-white py-2  hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
+            className="w-full bg-red-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
           >
             Sign in
           </button>
@@ -126,12 +147,12 @@ const Login = () => {
         <div className="mt-[60px] text-center">
           <p className="text-gray-700 font-serif font-semibold">
             Not a member?{" "}
-            <Link to="/signup" className="text-blue-400  hover:underline">
+            <Link to="/signup" className="text-blue-400 hover:underline">
               Sign Up
             </Link>
           </p>
           <p className="text-gray-700 font-serif font-semibold">
-            I dont know my&nbsp;
+            I don't know my&nbsp;
             <Link
               to="/forgot-password"
               className="text-blue-400 hover:underline"

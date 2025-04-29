@@ -22,8 +22,7 @@ const PredictionHomePage = () => {
 
   const [predictionResult, setPredictionResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
+  const [error, setError] = useState({ message: "", field: "" });
   const [showFireAlert, setShowFireAlert] = useState(false);
   const [fireSeverity, setFireSeverity] = useState("");
   const [createdAt, setCreatedAt] = useState("");
@@ -70,6 +69,14 @@ const PredictionHomePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "wind_speed" && parseFloat(value) < 0) {
+      setError({ message: "Wind speed cannot be negative", field: name });
+      return;
+    } else {
+      setError({ message: "", field: "" });
+    }
+
     if (
       [
         "fire_location_latitude",
@@ -95,8 +102,13 @@ const PredictionHomePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.wind_speed < 0) {
+      setError({ message: "Wind speed cannot be negative", field: "wind_speed" });
+      return;
+    }
+  
     setLoading(true);
-    setError("");
+    setError({ message: "", field: "" });
 
     try {
       const token = localStorage.getItem("token");
@@ -134,7 +146,7 @@ const PredictionHomePage = () => {
         fuel_type: "",
       });
     } catch (err) {
-      setError("Prediction failed. Please check your input and try again.");
+      setError({ message: "Prediction failed. Please check your input and try again.", field: "" });
     } finally {
       setLoading(false);
     }
@@ -152,20 +164,21 @@ const PredictionHomePage = () => {
         {showFireAlert && (
           <div
             className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-md font-semibold text-lg shadow-xl
-      ${
-        fireSeverity === "Very Small"
-          ? "bg-green-100 text-green-700"
-          : fireSeverity === "Small"
-          ? "bg-yellow-100 text-yellow-700"
-          : fireSeverity === "Moderate"
-          ? "bg-orange-100 text-orange-700"
-          : "bg-red-100 text-red-700"
-      }
-    `}
+              ${
+                fireSeverity === "Very Small"
+                  ? "bg-green-100 text-green-700"
+                  : fireSeverity === "Small"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : fireSeverity === "Moderate"
+                  ? "bg-orange-100 text-orange-700"
+                  : "bg-red-100 text-red-700"
+              }
+            `}
           >
             Fire Alert: {fireSeverity} Fire Detected!
           </div>
         )}
+        
         <div className="w-full">
           <ClimaChainSlider />
         </div>
@@ -345,9 +358,13 @@ const PredictionHomePage = () => {
                   name="wind_speed"
                   value={formData.wind_speed}
                   onChange={handleChange}
+                  min="0"
                   required
                   className="p-2 border-2 border-black rounded"
                 />
+                {error.field === "wind_speed" && (
+                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col col-span-full">
@@ -383,8 +400,8 @@ const PredictionHomePage = () => {
 
           <div className="flex flex-col items-center justify-center w-full mt-8 lg:mt-0 lg:ml-8">
             {loading ? (
-              <div className="w-32 h-32 flex items-center justify-center rounded-full bg-gray-300 animate-drawCircle">
-                {/* Skeleton Circle */}
+              <div className="w-44 h-44 flex items-center justify-center rounded-full bg-gray-300 animate-drawCircle">
+                
               </div>
             ) : predictionResult === null ? (
               <img
@@ -399,15 +416,15 @@ const PredictionHomePage = () => {
             )}
             {predictionResult !== null && !loading && (
               <div
-                className={`w-32 h-32 flex items-center justify-center rounded-full text-2xl font-bold
-        transition duration-300
-        ${
-          predictionResult < 5
-            ? "border-4 border-green-500 text-green-700 bg-green-100"
-            : predictionResult <= 15
-            ? "border-4 border-yellow-500 text-yellow-700 bg-yellow-100"
-            : "border-4 border-red-500 text-red-700 bg-red-100"
-        }`}
+                className={`w-44 h-44 flex items-center justify-center rounded-full text-2xl font-bold
+                  transition duration-300
+                  ${
+                    predictionResult < 5
+                      ? "border-4 border-green-500 text-green-700 bg-green-100"
+                      : predictionResult <= 15
+                      ? "border-4 border-yellow-500 text-yellow-700 bg-yellow-100"
+                      : "border-4 border-red-500 text-red-700 bg-red-100"
+                  }`}
               >
                 {typeof predictionResult === "number"
                   ? predictionResult.toFixed(4)
@@ -417,7 +434,9 @@ const PredictionHomePage = () => {
           </div>
         </div>
 
-        {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
+        {error.message && !error.field && (
+          <div className="mt-4 text-red-600 font-medium">{error.message}</div>
+        )}
 
         {predictionResult !== null && (
           <div className="w-full">

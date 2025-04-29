@@ -12,14 +12,13 @@ const ClimaChainSlider = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 4000); // show each image for 4 seconds
+    }, 4000); 
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center bg-black min-h-screen p-14">
-      {/* Left: Slider */}
+    <div className="flex flex-col md:flex-row items-center justify-center bg-black min-h-screen w-full py-14">
       <div className="relative w-[500px] h-[350px] md:w-[700px] md:h-[450px] overflow-hidden rounded-lg shadow-lg transition-all duration-500">
         {images.map((src, index) => (
           <img
@@ -32,7 +31,6 @@ const ClimaChainSlider = () => {
           />
         ))}
 
-        {/* Dots */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {images.map((_, index) => (
             <div
@@ -45,7 +43,6 @@ const ClimaChainSlider = () => {
         </div>
       </div>
 
-      {/* Right: Content */}
       <div className="text-center md:text-left mt-10 md:mt-0 md:ml-16 max-w-xl">
         <h2 className="text-2xl font-semibold mb-6 text-white">
           What you can achieve with <span className="font-bold">ClimaChain*</span>

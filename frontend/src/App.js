@@ -14,15 +14,16 @@ import UserProfile from "./components/UserProfile";
 import FeatureVisualizationPage from "./components/FeaturedVisualization";
 import NewsDetail from "./components/NewsDetail";
 import InstructionPage from "./components/InstructionPage";
-import GoogleAuthSuccess from './routes/GoogleAuthSuccess'
+import GoogleAuthSuccess from "./routes/GoogleAuthSuccess";
 import FirePredictionUpload from "./components/FirePredictionUpload";
+import ScrollToTop from "./components/ScrollToTop";
 import axios from "axios";
-
 
 function App() {
   const [news, setNews] = useState([]);
   return (
     <>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage news={news} />} />
@@ -33,8 +34,11 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/predictionHomePage" element={<PredictionHomePage />} />
-        <Route path="/feature-visualization" element={<FeatureVisualizationPage />} />
-        <Route path="/google-auth-success" element={<GoogleAuthSuccess/>}/>
+        <Route
+          path="/feature-visualization"
+          element={<FeatureVisualizationPage />}
+        />
+        <Route path="/google-auth-success" element={<GoogleAuthSuccess />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/news/:id" element={<NewsDetail news={news} />} />
         <Route path="/instructions/:type" element={<InstructionPage />} />

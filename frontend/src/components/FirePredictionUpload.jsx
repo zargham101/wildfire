@@ -54,47 +54,52 @@ const WildfireCamPrediction = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center p-6 mt-20">
-      <div className="text-4xl font-serif font-bold text-center mb-10">
-        Predict Wildfire Risk from Image
-      </div>
+    <div
+      style={{
+        backgroundImage: `url('images/texture.jpg')`,
+        backgroundRepeat: "repeat",
+      }}
+    >
+      <div className="min-h-screen bg-white flex flex-col items-center p-6 mt-20">
+        <div className="text-4xl font-serif font-bold text-center mb-10">
+          Predict Wildfire Risk from Image
+        </div>
 
-      {/* Upload Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center w-full max-w-xl bg-gray-50 p-8 rounded-lg shadow-lg"
-      >
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="mb-4 border p-2 w-full rounded-md"
-        />
-
-        {selectedImage && (
-          <img
-            src={URL.createObjectURL(selectedImage)}
-            alt="Preview"
-            className="mb-4 w-64 h-64 object-cover rounded-lg shadow"
+        {/* Upload Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center w-full max-w-xl bg-gray-50 p-8 rounded-lg shadow-lg"
+        >
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="mb-4 border p-2 w-full rounded-md"
           />
+
+          {selectedImage && (
+            <img
+              src={URL.createObjectURL(selectedImage)}
+              alt="Preview"
+              className="mb-4 w-64 h-64 object-cover rounded-lg shadow"
+            />
+          )}
+
+          <button
+            type="submit"
+            className="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition mb-4"
+          >
+            {loading ? "Predicting..." : "Predict"}
+          </button>
+        </form>
+
+        {error && (
+          <div className="mt-6 text-red-600 font-semibold">{error}</div>
         )}
 
-        <button
-          type="submit"
-          className="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 transition mb-4"
-        >
-          {loading ? "Predicting..." : "Predict"}
-        </button>
-      </form>
-
-      {error && (
-        <div className="mt-6 text-red-600 font-semibold">{error}</div>
-      )}
-
-      {/* Prediction Result */}
-      {result && (
-        <WildfirePredictionResult predictionData={result} />
-      )}
+        {/* Prediction Result */}
+        {result && <WildfirePredictionResult predictionData={result} />}
+      </div>
     </div>
   );
 };

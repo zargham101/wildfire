@@ -87,6 +87,9 @@ const userController = {
   },
   googleLoginSuccess: async (req,res) => {
     try {
+      if (!req.user) {
+        return res.redirect("http://localhost:3000/login?error=Authentication failed. Please try again.");
+      }
       const user = req.user;
       const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: "6h"

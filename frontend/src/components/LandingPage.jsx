@@ -172,7 +172,7 @@ const LandingPage = () => {
 
       <div className="bg-gray-100 py-10">
       {/* Header Line */}
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-1 relative">
         <p className="text-white font-serif text-base ml-[15px]">
           Your safety is our priority
         </p>
@@ -283,7 +283,7 @@ const LandingPage = () => {
         </div>
 
       </div>
-        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
+        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-3 relative">
           <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
           <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
         </div>
@@ -318,7 +318,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-1 relative">
         <p className="text-white font-serif  text-base ml-[15px]">
           Our Mission
         </p>
@@ -348,7 +348,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-1 relative">
+      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-1 relative">
         <p className="text-white font-serif  text-base ml-[15px]">
           Related Content
         </p>

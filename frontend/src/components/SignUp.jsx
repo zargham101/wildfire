@@ -56,7 +56,7 @@ const Signup = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5001/api/user/google";
+    window.location.href = "http://localhost:5001/api/user/google?mode=signup";
   };
 
   const isPasswordMismatch =

@@ -46,9 +46,9 @@ def generate_cam(image_bytes):
     cam = cv2.GaussianBlur(cam, (5, 5), 0)
 
     color_map = np.zeros((224, 224, 3), dtype=np.uint8)
-    color_map[cam >= 0.7] = [255, 0, 0]           # Red - High risk
-    color_map[(cam >= 0.4) & (cam < 0.7)] = [0, 255, 0]  # Green - Medium risk
-    color_map[cam < 0.4] = [0, 0, 255]             # Blue - Low risk
+    color_map[cam >= 0.7] = [255, 0, 0]           
+    color_map[(cam >= 0.4) & (cam < 0.7)] = [0, 255, 0]  
+    color_map[cam < 0.4] = [0, 0, 255]            
 
     final_img = cv2.addWeighted(img_orig, 0.7, color_map, 0.3, 0)
 

@@ -139,12 +139,13 @@ const PredictionHomePage = () => {
 
   return (
     <div
+      className="w-full"
       style={{
         backgroundImage: `url('images/texture.jpg')`,
         backgroundRepeat: "repeat",
       }}
     >
-      <div className="bg-white min-h-screen flex flex-col items-center justify-start p-4 mt-[100px] shadow-xl">
+      <div className="bg-white min-h-screen flex flex-col items-center justify-start  mt-20 shadow-xl">
         {showFireAlert && (
           <div
             className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-md font-semibold text-lg shadow-xl
@@ -162,24 +163,8 @@ const PredictionHomePage = () => {
             Fire Alert: {fireSeverity} Fire Detected!
           </div>
         )}
-
-        {/* <div
-          className="relative w-full h-[80vh] flex items-center justify-center bg-cover bg-center"
-          style={{ backgroundImage: 'url("/images/predictHome.jpg")' }}
-        >
-          <div className="text-center max-w-3xl px-6 md:px-12 py-10 bg-white bg-opacity-60 shadow-lg rounded-lg z-10">
-            <div className="text-4xl md:text-5xl font-bold font-serif text-black mb-6">
-              Welcome to Wildfire Watch...
-            </div>
-            <p className="text-xl md:text-2xl text-gray-700 mb-6">
-              Make your life easier and safe, and predict the harmful incidents
-              and take necessary measures to avoid them with all precautions.
-            </p>
-            <div className="mt-6 border-b-4 border-black w-20 mx-auto"></div>
-          </div>
-        </div> */}
-        <div className="mt-0">
-          <ClimaChainSlider/>
+        <div className="w-full">
+          <ClimaChainSlider />
         </div>
 
         <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">

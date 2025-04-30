@@ -5,6 +5,7 @@ require('dotenv').config();
 const reviewService = {
   submitReview: async ({ name, email, country, description }) => {
     try {
+      console.log("email kiska hai :::",email)
       const review = new Review({ name, email, country, description });
       await review.save();
 
@@ -27,7 +28,7 @@ const reviewService = {
 
       
       const mailOptions = {
-        from: email,  
+        from: 'hassnainahmadcheema@gmail.com',  
         to: 'hassnainahmadcheema@gmail.com',  
         subject: `New Review from ${name}`,
         replyTo: email,  

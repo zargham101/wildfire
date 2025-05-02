@@ -3,6 +3,9 @@ import axios from "axios";
 import PredictionHistoryTable from "./PredictionHistoryTable";
 import FireResponseReport from "./FireResponseReport";
 import ClimaChainSlider from "./ClimaChainSlider";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
+import Tooltip from "@mui/material/Tooltip";
+import { inputValidationRules } from "../condition/resourceCalculator";
 
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
@@ -69,44 +72,63 @@ const PredictionHomePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "wind_speed" && parseFloat(value) < 0) {
-      setError({ message: "Wind speed cannot be negative", field: name });
-      return;
-    } else {
-      setError({ message: "", field: "" });
-    }
-
-    if (
-      [
-        "fire_location_latitude",
-        "fire_location_longitude",
-        "temperature",
-        "relative_humidity",
-        "wind_speed",
-      ].includes(name)
-    ) {
-      setFormData((prev) => ({ ...prev, [name]: parseFloat(value) }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  
+    if (inputValidationRules[name]) {
+      const { min, max } = inputValidationRules[name];
+  
+      const parsed = parseFloat(value);
+  
+      if (value !== "" && (isNaN(parsed) || parsed < min || parsed > max)) {
+        setError({
+          field: name,
+          message: `Value must be between ${min} and ${max}`,
+        });
+      } else {
+        setError({ field: "", message: "" });
+      }
     }
   };
+  
+  
+  
 
-  function getFireSeverity(fireSize) {
-    if (fireSize <= 1) return "Very Small";
-    if (fireSize <= 10) return "Small";
-    if (fireSize <= 100) return "Moderate";
-    if (fireSize <= 500) return "Large";
-    return "Very Large";
+  function getFireSeverity(fireSize, temp, wind, humidity) {
+    if (temp > 42 && wind > 70 && humidity < 15) {
+      return "Very Large";
+    } else if (fireSize < 1) {
+      return "Small";
+    } else if (fireSize < 2) {
+      return "Moderate";
+    } else if (fireSize < 5) {
+      return "Large";
+    } else {
+      return "Very Large";
+    }
   }
+  const numericPayload = {
+    ...formData,
+    fire_location_latitude: parseFloat(formData.fire_location_latitude),
+    fire_location_longitude: parseFloat(formData.fire_location_longitude),
+    temperature: parseFloat(formData.temperature),
+    relative_humidity: parseFloat(formData.relative_humidity),
+    wind_speed: parseFloat(formData.wind_speed),
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.wind_speed < 0) {
-      setError({ message: "Wind speed cannot be negative", field: "wind_speed" });
+      setError({
+        message: "Wind speed cannot be negative",
+        field: "wind_speed",
+      });
       return;
     }
-  
+
     setLoading(true);
     setError({ message: "", field: "" });
 
@@ -114,7 +136,7 @@ const PredictionHomePage = () => {
       const token = localStorage.getItem("token");
       const res = await axios.post(
         "http://localhost:5001/api/prediction/predict-fire",
-        formData,
+        numericPayload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -126,7 +148,13 @@ const PredictionHomePage = () => {
       setPredictionResult(prediction);
       setCreatedAt(res.data.data.createdAt);
 
-      const severity = getFireSeverity(prediction);
+      const severity = getFireSeverity(
+        prediction,
+        formData.temperature,
+        formData.wind_speed,
+        formData.relative_humidity
+      );
+
       setFireSeverity(severity);
       setShowFireAlert(true);
 
@@ -146,7 +174,10 @@ const PredictionHomePage = () => {
         fuel_type: "",
       });
     } catch (err) {
-      setError({ message: "Prediction failed. Please check your input and try again.", field: "" });
+      setError({
+        message: "Prediction failed. Please check your input and try again.",
+        field: "",
+      });
     } finally {
       setLoading(false);
     }
@@ -156,29 +187,57 @@ const PredictionHomePage = () => {
     <div
       className="w-full"
       style={{
-        backgroundImage: `url('images/texture.jpg')`,
+        backgroundImage: "url('images/texture.jpg')",
         backgroundRepeat: "repeat",
       }}
     >
       <div className="bg-white min-h-screen flex flex-col items-center justify-start p-4 mt-[100px] shadow-xl">
         {showFireAlert && (
           <div
-            className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-md font-semibold text-lg shadow-xl
-              ${
+            className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center justify-center px-6 py-4 rounded-lg shadow-xl text-center transition-opacity duration-500 opacity-100 animate-fadeIn
+      ${
+        fireSeverity === "Very Small"
+          ? "bg-green-100 border-4 border-green-500"
+          : fireSeverity === "Small"
+          ? "bg-yellow-100 border-4 border-yellow-500"
+          : fireSeverity === "Moderate"
+          ? "bg-orange-100 border-4 border-orange-500"
+          : "bg-red-100 border-4 border-red-600"
+      }
+    `}
+            style={{
+              width:
                 fireSeverity === "Very Small"
-                  ? "bg-green-100 text-green-700"
+                  ? "220px"
                   : fireSeverity === "Small"
-                  ? "bg-yellow-100 text-yellow-700"
+                  ? "260px"
                   : fireSeverity === "Moderate"
-                  ? "bg-orange-100 text-orange-700"
-                  : "bg-red-100 text-red-700"
-              }
-            `}
+                  ? "300px"
+                  : "340px",
+            }}
           >
-            Fire Alert: {fireSeverity} Fire Detected!
+            <img
+              src="/images/fireAlert.gif"
+              alt="Fire Alert Animation"
+              className="rounded-md mb-3"
+              style={{
+                width:
+                  fireSeverity === "Very Small"
+                    ? "80px"
+                    : fireSeverity === "Small"
+                    ? "120px"
+                    : fireSeverity === "Moderate"
+                    ? "160px"
+                    : "200px",
+                height: "auto",
+              }}
+            />
+            <p className="text-xl font-bold text-gray-800">
+              Fire Alert: {fireSeverity} Fire Detected!
+            </p>
           </div>
         )}
-        
+
         <div className="w-full">
           <ClimaChainSlider />
         </div>
@@ -200,36 +259,69 @@ const PredictionHomePage = () => {
               className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
             >
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
-                  Fire Location Latitude
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
+                  Fire location Latitude
+                  <Tooltip
+                    title={inputValidationRules.fire_location_latitude.tooltip}
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <input
                   type="number"
+                  step="any"
                   name="fire_location_latitude"
                   value={formData.fire_location_latitude}
                   onChange={handleChange}
+                  min={inputValidationRules.fire_location_latitude.min}
+                  max={inputValidationRules.fire_location_latitude.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
+                {error.field === "fire_location_latitude" && (
+                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Location Longitude
+                  <Tooltip
+                    title={inputValidationRules.fire_location_longitude.tooltip}
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <input
                   type="number"
+                  step="any"
                   name="fire_location_longitude"
                   value={formData.fire_location_longitude}
                   onChange={handleChange}
+                  min={inputValidationRules.fire_location_longitude.min}
+                  max={inputValidationRules.fire_location_longitude.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
+                {error.field === "fire_location_longitude" && (
+                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Start Date
+                  <Tooltip title="Select the date when the fire started." arrow>
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <input
                   type="date"
@@ -242,8 +334,16 @@ const PredictionHomePage = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Type
+                  <Tooltip
+                    title="Specify the type of fire: ground, surface, or crown."
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <select
                   name="fire_type"
@@ -262,8 +362,16 @@ const PredictionHomePage = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Position on Slope
+                  <Tooltip
+                    title="Choose the fire's position relative to the slope."
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <select
                   name="fire_position_on_slope"
@@ -282,8 +390,16 @@ const PredictionHomePage = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Weather Conditions Over Fire
+                  <Tooltip
+                    title="Describe the weather conditions over the fire area."
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <select
                   name="weather_conditions_over_fire"
@@ -302,36 +418,70 @@ const PredictionHomePage = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Temperature (°C)
+                  <Tooltip
+                    title={inputValidationRules.temperature.tooltip}
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <input
                   type="number"
                   name="temperature"
                   value={formData.temperature}
                   onChange={handleChange}
+                  min={inputValidationRules.temperature.min}
+                  max={inputValidationRules.temperature.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
+                {error.field === "temperature" && (
+                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Relative Humidity (%)
+                  <Tooltip
+                    title={inputValidationRules.relative_humidity.tooltip}
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <input
                   type="number"
                   name="relative_humidity"
                   value={formData.relative_humidity}
                   onChange={handleChange}
+                  min={inputValidationRules.relative_humidity.min}
+                  max={inputValidationRules.relative_humidity.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
+                {error.field === "relative_humidity" && (
+                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
+                )}
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Wind Direction
+                  <Tooltip
+                    title="Specify the wind direction at the fire location (e.g., NE, SW)"
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <select
                   name="wind_direction"
@@ -350,15 +500,24 @@ const PredictionHomePage = () => {
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Wind Speed (km/h)
+                  <Tooltip
+                    title={inputValidationRules.wind_speed.tooltip}
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <input
                   type="number"
                   name="wind_speed"
                   value={formData.wind_speed}
                   onChange={handleChange}
-                  min="0"
+                  min={inputValidationRules.wind_speed.min}
+                  max={inputValidationRules.wind_speed.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
@@ -368,8 +527,16 @@ const PredictionHomePage = () => {
               </div>
 
               <div className="flex flex-col col-span-full">
-                <label className="font-semibold text-sm text-red-600 mb-1">
+                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fuel Type
+                  <Tooltip
+                    title="Select the vegetation or material type fueling the fire."
+                    arrow
+                  >
+                    <span className="ml-1 cursor-pointer">
+                      <InfoOutlineIcon fontSize="small" />
+                    </span>
+                  </Tooltip>
                 </label>
                 <select
                   name="fuel_type"
@@ -400,9 +567,7 @@ const PredictionHomePage = () => {
 
           <div className="flex flex-col items-center justify-center w-full mt-8 lg:mt-0 lg:ml-8">
             {loading ? (
-              <div className="w-44 h-44 flex items-center justify-center rounded-full bg-gray-300 animate-drawCircle">
-                
-              </div>
+              <div className="w-44 h-44 flex items-center justify-center rounded-full bg-gray-300 animate-drawCircle"></div>
             ) : predictionResult === null ? (
               <img
                 src="/images/fire5.jpg"

@@ -9,6 +9,7 @@ module.exports = {
       animation: {
         shimmering: "shimmering 3s linear infinite",
         drawCircle: 'drawCircle 5s ease-out forwards',
+        fadeIn: 'fadeIn 0.5s ease-out',
       },
       keyframes: {
         shimmering: {
@@ -28,6 +29,10 @@ module.exports = {
             transform: 'scale(1)',  // Circle grows to full size
             opacity: 1,              // Fully visible
           },
+        },
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
         },
       },
     },

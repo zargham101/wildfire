@@ -106,4 +106,33 @@ export function getFireSeverity(fireSize) {
       inspectorsNeeded
     };
   }
+
+  export const inputValidationRules = {
+    fire_location_latitude: {
+      min: 40,
+      max: 60,
+      tooltip: "Enter latitude between 40° and 60°",
+    },
+    fire_location_longitude: {
+      min: -119,
+      max: -110,
+      tooltip: "Enter longitude between -119° and -110°",
+    },
+    temperature: {
+      min: -33,
+      max: 36,
+      tooltip: "Temperature should be between -33°C and 36°C",
+    },
+    relative_humidity: {
+      min: 0,
+      max: 100,
+      tooltip: "Enter a value between 0% and 100%",
+    },
+    wind_speed: {
+      min: 0,
+      max: 80,
+      tooltip: "Enter wind speed between 0 and 80 km/h",
+    },
+  };
+  
   

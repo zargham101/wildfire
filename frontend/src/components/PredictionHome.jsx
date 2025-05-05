@@ -5,7 +5,10 @@ import FireResponseReport from "./FireResponseReport";
 import ClimaChainSlider from "./ClimaChainSlider";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
 import Tooltip from "@mui/material/Tooltip";
-import { inputValidationRules } from "../condition/resourceCalculator";
+import {
+  inputValidationRules,
+  getFireSeverity,
+} from "../condition/resourceCalculator";
 
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
@@ -72,17 +75,16 @@ const PredictionHomePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  
+
     if (inputValidationRules[name]) {
       const { min, max } = inputValidationRules[name];
-  
       const parsed = parseFloat(value);
-  
+
       if (value !== "" && (isNaN(parsed) || parsed < min || parsed > max)) {
         setError({
           field: name,
@@ -93,23 +95,7 @@ const PredictionHomePage = () => {
       }
     }
   };
-  
-  
-  
 
-  function getFireSeverity(fireSize, temp, wind, humidity) {
-    if (temp > 42 && wind > 70 && humidity < 15) {
-      return "Very Large";
-    } else if (fireSize < 1) {
-      return "Small";
-    } else if (fireSize < 2) {
-      return "Moderate";
-    } else if (fireSize < 5) {
-      return "Large";
-    } else {
-      return "Very Large";
-    }
-  }
   const numericPayload = {
     ...formData,
     fire_location_latitude: parseFloat(formData.fire_location_latitude),
@@ -121,6 +107,7 @@ const PredictionHomePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.wind_speed < 0) {
       setError({
         message: "Wind speed cannot be negative",
@@ -148,16 +135,9 @@ const PredictionHomePage = () => {
       setPredictionResult(prediction);
       setCreatedAt(res.data.data.createdAt);
 
-      const severity = getFireSeverity(
-        prediction,
-        formData.temperature,
-        formData.wind_speed,
-        formData.relative_humidity
-      );
-
+      const severity = getFireSeverity(prediction);
       setFireSeverity(severity);
       setShowFireAlert(true);
-
       setTimeout(() => setShowFireAlert(false), 5000);
 
       setFormData({
@@ -183,6 +163,15 @@ const PredictionHomePage = () => {
     }
   };
 
+  const getSeverityColorClass = (severity) => {
+    if (severity === "Very Small")
+      return "bg-green-100 border-4 border-green-500";
+    if (severity === "Small") return "bg-yellow-100 border-4 border-yellow-500";
+    if (severity === "Moderate")
+      return "bg-orange-100 border-4 border-orange-500";
+    return "bg-red-100 border-4 border-red-600";
+  };
+
   return (
     <div
       className="w-full"
@@ -194,17 +183,9 @@ const PredictionHomePage = () => {
       <div className="bg-white min-h-screen flex flex-col items-center justify-start p-4 mt-[100px] shadow-xl">
         {showFireAlert && (
           <div
-            className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center justify-center px-6 py-4 rounded-lg shadow-xl text-center transition-opacity duration-500 opacity-100 animate-fadeIn
-      ${
-        fireSeverity === "Very Small"
-          ? "bg-green-100 border-4 border-green-500"
-          : fireSeverity === "Small"
-          ? "bg-yellow-100 border-4 border-yellow-500"
-          : fireSeverity === "Moderate"
-          ? "bg-orange-100 border-4 border-orange-500"
-          : "bg-red-100 border-4 border-red-600"
-      }
-    `}
+            className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center justify-center px-6 py-4 rounded-lg shadow-xl text-center transition-opacity duration-500 opacity-100 animate-fadeIn ${getSeverityColorClass(
+              fireSeverity
+            )}`}
             style={{
               width:
                 fireSeverity === "Very Small"
@@ -580,21 +561,30 @@ const PredictionHomePage = () => {
               </div>
             )}
             {predictionResult !== null && !loading && (
-              <div
-                className={`w-44 h-44 flex items-center justify-center rounded-full text-2xl font-bold
-                  transition duration-300
-                  ${
-                    predictionResult < 5
-                      ? "border-4 border-green-500 text-green-700 bg-green-100"
-                      : predictionResult <= 15
-                      ? "border-4 border-yellow-500 text-yellow-700 bg-yellow-100"
-                      : "border-4 border-red-500 text-red-700 bg-red-100"
-                  }`}
-              >
-                {typeof predictionResult === "number"
-                  ? predictionResult.toFixed(4)
-                  : ""}
-              </div>
+              <>
+                <div
+                  className={`w-44 h-44 flex items-center justify-center rounded-full text-2xl font-bold
+        transition duration-300
+        ${
+          predictionResult < 5
+            ? "border-4 border-green-500 text-green-700 bg-green-100"
+            : predictionResult <= 15
+            ? "border-4 border-yellow-500 text-yellow-700 bg-yellow-100"
+            : "border-4 border-red-500 text-red-700 bg-red-100"
+        }`}
+                >
+                  {typeof predictionResult === "number"
+                    ? predictionResult.toFixed(4)
+                    : ""}
+                </div>
+
+                {/* 🔥 Persistent GIF stays visible below the circle */}
+                <img
+                  src="/images/fireAlert.gif"
+                  alt="Persistent fire animation"
+                  className="mt-4 w-32 h-auto"
+                />
+              </>
             )}
           </div>
         </div>

@@ -43,7 +43,9 @@ exports.handleFirePrediction = async (req, res) => {
     const prediction = await fireService.predictImage(req.file, userId);
     res.status(200).json({ message: "Prediction successful", data: prediction });
   } catch (error) {
-    res.status(500).json({ message: "Prediction failed", error: error.message });
+    const status = error.statusCode || 500;
+    const message = error.message || "Prediction failed.";
+    res.status(status).json({ message });
   }
 };
 

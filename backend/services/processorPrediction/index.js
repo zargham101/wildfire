@@ -28,11 +28,9 @@ exports.processAndPredict = async (inputData, userId) => {
 
 exports.getAllPredictions = async (userId) => {
   try {
-    console.log("id in service:::",userId)
     const predictions = await FirePrediction.find({ userId }).sort({
       createdAt: -1,
     });
-    console.log("predictions::",predictions)
     return predictions;
   } catch (error) {
     console.log("error::",error)
@@ -54,22 +52,30 @@ const uploadImageToS3 = async (file) => {
 exports.predictImage = async (file, userId) => {
   const imageUrl = await uploadImageToS3(file);
 
-  const res = await axios.post("http://localhost:5003/predict", {
-    imageUrl,
-  });
+  try {
+    const response = await axios.post("http://localhost:5003/predict", {
+      imageUrl,
+      colormap: "PLASMA"
+    });
 
-  const { prediction, noWildfireConfidence, wildfireConfidence, camImageUrl } = res.data;
+    const savedPrediction = await Prediction.create({
+      userId,
+      imageUrl,
+      predictionResult: response.data.prediction,
+      noWildfireConfidence: response.data.noWildfireConfidence,
+      wildfireConfidence: response.data.wildfireConfidence,
+      camImageUrl: response.data.camImageUrl,
+      colorScale: response.data.colorScale
+    });
 
-  const savedPrediction = await Prediction.create({
-    userId,
-    imageUrl,
-    predictionResult: prediction,
-    noWildfireConfidence,
-    wildfireConfidence,
-    camImageUrl,
-  });
-
-  return savedPrediction;
+    return savedPrediction;
+  } catch (err) {
+    const message = err.response?.data?.message || "Prediction failed.";
+    const status = err.response?.status || 500;
+    const error = new Error(message);
+    error.statusCode = status;
+    throw error;
+  }
 };
 
 

@@ -2,7 +2,7 @@
 
 .env
 
-venv/
+backend/python_service/venv/
 *.h5
 *.pyd
 *.dll

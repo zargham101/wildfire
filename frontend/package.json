@@ -19,6 +19,7 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.475.0",
+    "mapbox-gl": "^3.12.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-heatmap-grid": "^0.9.1",

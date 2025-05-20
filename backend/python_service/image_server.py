@@ -79,7 +79,9 @@ def generate_cam(original_img, conv_output, pred_class):
     if pred_class == 1:
         fire_mask = (weights > 0.5).astype(np.uint8)
         fire_mask = cv2.resize(fire_mask, (original_img_bgr.shape[1], original_img_bgr.shape[0]))
-        cam_img = cv2.addWeighted(cam_img, 0.8, heatmap, 0.4, 0, dtype=cv2.CV_8U, mask=fire_mask)
+
+        enhanced_heatmap = cv2.addWeighted(original_img_bgr, 0.6, heatmap, 0.4, 0)
+        cam_img[fire_mask == 1] = enhanced_heatmap[fire_mask == 1]
 
     return cam_img
 

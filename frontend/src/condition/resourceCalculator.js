@@ -1,10 +1,16 @@
-export function getFireSeverity(fireSize) {
-    if (fireSize <= 1) return 'Very Small';
-    if (fireSize <= 10) return 'Small';
-    if (fireSize <= 100) return 'Moderate';
-    if (fireSize <= 500) return 'Large';
-    return 'Very Large';
+export function getFireSeverity(fireSize, temp = 0, wind = 0, humidity = 100) {
+  if (temp > 42 && wind > 70 && humidity < 15) {
+    return "Very Large";
+  } else if (fireSize < 1) {
+    return "Small";
+  } else if (fireSize < 2) {
+    return "Moderate";
+  } else if (fireSize < 5) {
+    return "Large";
+  } else {
+    return "Very Large";
   }
+}
   
   export function getInitialResources(fireSeverity) {
     let resources = {

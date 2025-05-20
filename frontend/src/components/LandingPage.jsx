@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import GroupIcon from "@mui/icons-material/Group";
-import BatchPredictionIcon from "@mui/icons-material/BatchPrediction";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import ReviewsIcon from "@mui/icons-material/Reviews";
 import Carousel from "./Carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine,faUser, faBrain, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChartLine,
+  faUser,
+  faBrain,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
@@ -17,7 +18,7 @@ const LandingPage = () => {
     reports: 0,
     users: 0,
   });
-  
+
   const navigate = useNavigate();
   const handleCardClick = (type) => {
     navigate(`/instructions/${type}`);
@@ -30,18 +31,18 @@ const LandingPage = () => {
           "http://localhost:5001/api/user/all-users"
         );
         const totalUsers = usersResponse.data.totalUsers;
-        console.log("total users::",totalUsers)
+        console.log("total users::", totalUsers);
 
         const reviewsResponse = await axios.get(
           "http://localhost:5001/api/review/getAllReview"
         );
         const totalReviews = reviewsResponse.data.totalReviews;
-        console.log("total reviews::",totalReviews)
+        console.log("total reviews::", totalReviews);
 
         // const predictionResponse = await axios.get(
         //   "http://localhost:5001/api/prediction/prediction-count"
         // );
-        // const totalPredictions = predictionResponse.data.totalPredictions 
+        // const totalPredictions = predictionResponse.data.totalPredictions
         // console.log("total predictions::",totalPredictions)
 
         setCounts({
@@ -69,7 +70,7 @@ const LandingPage = () => {
     const countUp = (target, setStateKey) => {
       let start = 0;
       const end = target;
-      const duration = 5000; 
+      const duration = 5000;
       const stepTime = Math.abs(Math.floor(duration / end));
 
       const interval = setInterval(() => {
@@ -87,7 +88,7 @@ const LandingPage = () => {
               ...prev,
               [setStateKey]: 0,
             }));
-            countUp(target, setStateKey); 
+            countUp(target, setStateKey);
           }, 2000);
         }
       }, stepTime);
@@ -145,9 +146,8 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <div className=" w-full flex justify-center items-center h-[500px] mt-6 relative z-0">
-        <div className="flex w-full max-w-7xl mx-auto px-6">
-        
+      <div className="w-full flex justify-center items-center mt-6 relative z-0">
+        <div className="w-full max-w-[1440px] flex flex-col lg:flex-row gap-6 px-4 xl:px-20">
           <div className="w-1/2">
             <img
               src="/images/fire-committment.jpg"
@@ -171,189 +171,215 @@ const LandingPage = () => {
       </div>
 
       <div className="bg-gray-100 py-10">
-      {/* Header Line */}
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-1 relative">
-        <p className="text-white font-serif text-base ml-[15px]">
-          Your safety is our priority
-        </p>
-        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
-      </div>
-
-      {/* Section Title */}
-      <div className="text-center mb-12 mt-6">
-        <h2 className="text-4xl font-extrabold font-serif text-black">
-          Precautions
-        </h2>
-      </div>
-
-      {/* Cards Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        {/* Card 1 - Protection */}
-        <div
-          onClick={() => handleCardClick("protection")}
-          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
-        >
-          <div className="relative group">
-            <img
-              src="/images/fire9.jpg"
-              alt="Protection"
-              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
-              <span className="font-bold text-2xl mb-[80px]">#Protection</span>
-            </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-              <p className="mt-2 text-sm">
-                Install smoke alarms: Essential for early fire detection.
-              </p>
-            </div>
+        {/* Header Line */}
+        <div className="flex justify-center">
+          <div className="bg-red-700 w-[90%] max-w-6xl mt-[50px] p-1 relative">
+            <p className="text-white font-serif text-base ml-[15px]">
+              Your safety is our priority
+            </p>
+            <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+            <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
           </div>
         </div>
 
-        {/* Card 2 - Preparedness */}
-        <div
-          onClick={() => handleCardClick("preparedness")}
-          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
-        >
-          <div className="relative group">
-            <img
-              src="/images/fire10.jpg"
-              alt="Preparedness"
-              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
-              <span className="font-bold text-2xl mb-[80px]">#Preparedness</span>
+        {/* Section Title */}
+        <div className="text-center mb-12 mt-6">
+          <h2 className="text-4xl font-extrabold font-serif text-black">
+            Precautions
+          </h2>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Card 1 - Protection */}
+          <div
+            onClick={() => handleCardClick("protection")}
+            className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+          >
+            <div className="relative group">
+              <img
+                src="/images/fire9.jpg"
+                alt="Protection"
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">
+                  #Protection
+                </span>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Install smoke alarms: Essential for early fire detection.
+                </p>
+              </div>
             </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-              <p className="mt-2 text-sm">
-                Develop a fire escape plan and practice it regularly.
-              </p>
+          </div>
+
+          {/* Card 2 - Preparedness */}
+          <div
+            onClick={() => handleCardClick("preparedness")}
+            className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+          >
+            <div className="relative group">
+              <img
+                src="/images/fire10.jpg"
+                alt="Preparedness"
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">
+                  #Preparedness
+                </span>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Develop a fire escape plan and practice it regularly.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3 - Prevention */}
+          <div
+            onClick={() => handleCardClick("prevention")}
+            className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+          >
+            <div className="relative group">
+              <img
+                src="/images/fire11.jpg"
+                alt="Prevention"
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">
+                  #Prevention
+                </span>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Avoid overloading sockets and monitor electrical appliances.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4 - Emergency */}
+          <div
+            onClick={() => handleCardClick("emergency")}
+            className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
+          >
+            <div className="relative group">
+              <img
+                src="/images/fire12.jpg"
+                alt="Emergency"
+                className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
+                <span className="font-bold text-2xl mb-[80px]">#Emergency</span>
+              </div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
+                <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
+                <p className="mt-2 text-sm">
+                  Call emergency services immediately if you spot a fire.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Card 3 - Prevention */}
-        <div
-          onClick={() => handleCardClick("prevention")}
-          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
-        >
-          <div className="relative group">
-            <img
-              src="/images/fire11.jpg"
-              alt="Prevention"
-              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
-              <span className="font-bold text-2xl mb-[80px]">#Prevention</span>
-            </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-              <p className="mt-2 text-sm">
-                Avoid overloading sockets and monitor electrical appliances.
-              </p>
-            </div>
+        <div className="flex justify-center">
+          <div className="bg-red-700 w-[90%] max-w-6xl mt-[50px] p-3 relative">
+            <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+            <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
           </div>
-        </div>
-
-        {/* Card 4 - Emergency */}
-        <div
-          onClick={() => handleCardClick("emergency")}
-          className="cursor-pointer flex flex-col h-auto border rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:shadow-lg group"
-        >
-          <div className="relative group">
-            <img
-              src="/images/fire12.jpg"
-              alt="Emergency"
-              className="w-full h-[300px] object-cover transition duration-300 ease-in-out group-hover:opacity-75"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-100 transition-opacity duration-300 p-4 text-center">
-              <span className="font-bold text-2xl mb-[80px]">#Emergency</span>
-            </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-red-500 bg-opacity-50 p-4 text-center">
-              <hr className="border-t-2 border-white my-2 w-1/2 mx-auto" />
-              <p className="mt-2 text-sm">
-                Call emergency services immediately if you spot a fire.
-              </p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-3 relative">
-          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
         </div>
       </div>
 
       <div className=" py-12 border-2 shadow-lg p-3 rounded-md m-6">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-        <div className="flex flex-col items-center">
-  <FontAwesomeIcon icon={faUser} className="text-yellow-500 text-6xl mb-2" />
-  <p className="text-3xl font-semibold">{dynamicCounts.users}</p>
-  <p className="text-xl text-gray-600">Users</p>
-</div>
-
-
-<div className="flex flex-col items-center">
-  <FontAwesomeIcon icon={faStar} className="text-red-500 text-6xl mb-2" />
-  <p className="text-3xl font-semibold">{dynamicCounts.reviews}</p>
-  <p className="text-xl text-gray-600">Reviews</p>
-</div>
+          <div className="flex flex-col items-center">
+            <FontAwesomeIcon
+              icon={faUser}
+              className="text-yellow-500 text-6xl mb-2"
+            />
+            <p className="text-3xl font-semibold">{dynamicCounts.users}</p>
+            <p className="text-xl text-gray-600">Users</p>
+          </div>
 
           <div className="flex flex-col items-center">
-  <FontAwesomeIcon icon={faBrain} className="text-red-500 text-6xl mb-2" />
-  <p className="text-3xl font-semibold">{dynamicCounts.predictions}</p>
-  <p className="text-xl text-gray-600">Predictions</p>
-</div>
+            <FontAwesomeIcon
+              icon={faStar}
+              className="text-red-500 text-6xl mb-2"
+            />
+            <p className="text-3xl font-semibold">{dynamicCounts.reviews}</p>
+            <p className="text-xl text-gray-600">Reviews</p>
+          </div>
 
           <div className="flex flex-col items-center">
-  <FontAwesomeIcon icon={faChartLine} className="text-yellow-500 text-6xl mb-2" />
-  <p className="text-3xl font-semibold">{dynamicCounts.reports}</p>
-  <p className="text-xl text-gray-600">Reports</p>
-</div>
+            <FontAwesomeIcon
+              icon={faBrain}
+              className="text-red-500 text-6xl mb-2"
+            />
+            <p className="text-3xl font-semibold">
+              {dynamicCounts.predictions}
+            </p>
+            <p className="text-xl text-gray-600">Predictions</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <FontAwesomeIcon
+              icon={faChartLine}
+              className="text-yellow-500 text-6xl mb-2"
+            />
+            <p className="text-3xl font-semibold">{dynamicCounts.reports}</p>
+            <p className="text-xl text-gray-600">Reports</p>
+          </div>
         </div>
       </div>
 
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-1 relative">
-        <p className="text-white font-serif  text-base ml-[15px]">
-          Our Mission
-        </p>
-        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      <div className="flex justify-center">
+        <div className="bg-red-700 w-[90%] max-w-6xl mt-[50px] p-1 relative">
+          <p className="text-white font-serif  text-base ml-[15px]">
+            Our Mission
+          </p>
+          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+        </div>
       </div>
 
-      <div className="m-5 flex items-center">
+      <div className="w-full flex flex-col xl:flex-row max-w-[1440px] px-4 xl:px-20 mx-auto my-10 items-center">
         {/* Left side: Image */}
-        <div className="w-1/2">
+        <div className="w-full xl:w-1/2 mb-6 xl:mb-0">
           <img
             src="/videos/graph.webp"
             alt="Wildfire Watch"
-            className="w-[500px] h-[400px] ml-[190px] object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl mt-5"
+            className="w-full h-auto object-cover rounded-lg transition-all duration-300 hover:translate-y-2 hover:shadow-xl"
           />
         </div>
 
-        {/* Right side: Text container with red border */}
-        <div className="w-1/2 pl-3 border-l-4 border-red-500 border-solid p-3">
-          <h2 className="text-black font-serif text-4xl text-left  mb-[60px]">
-          Transform Satellite Images Into Life-Saving Predictions
-
+        {/* Right side: Text */}
+        <div className="w-full xl:w-1/2 xl:pl-10 border-l-4 border-red-500 p-6">
+          <h2 className="text-black font-serif text-3xl xl:text-4xl mb-6">
+            Transform Satellite Images Into Life-Saving Predictions
           </h2>
           <p className="text-xl font-sans italic">
-          "Our platform analyzes real-time satellite images and highlights at-risk areas using deep learning. Empower yourself with powerful predictions and protect what matters most — before it’s too late."
+            "Our platform analyzes real-time satellite images and highlights
+            at-risk areas using deep learning. Empower yourself with powerful
+            predictions and protect what matters most — before it’s too late."
           </p>
         </div>
       </div>
 
-      <div className="bg-red-700 w-[1200px] mr-[60px] ml-[150px] mt-[50px] p-1 relative">
-        <p className="text-white font-serif  text-base ml-[15px]">
-          Related Content
-        </p>
-        <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-        <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+      <div className="flex justify-center">
+        <div className="bg-red-700 w-full max-w-[1200px] mt-[50px] p-1 relative">
+          <p className="text-white font-serif  text-base ml-[15px]">
+            Related Content
+          </p>
+          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
+          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2  rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
+        </div>
       </div>
 
       <div className="mt-[30px] mx-[85px] p-5">

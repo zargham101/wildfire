@@ -3,10 +3,12 @@
 .env
 
 backend/python_service/venv/
-*.h5
+backend/wildfireModel/*.h5
+backend/wildfireModel/*.pkl
+
+*.pyc
+__pycache__/
+
 *.pyd
 *.dll
-__pycache__/
-*.py[cod]
 *.so
-*.egg-info/

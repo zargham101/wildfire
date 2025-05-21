@@ -8,7 +8,10 @@ backend/wildfireModel/*.pkl
 
 *.pyc
 __pycache__/
+*.py[cod]
 
+*.h5
+*.pkl
 *.pyd
 *.dll
 *.so

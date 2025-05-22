@@ -1,0 +1,18 @@
+# Ignore Python virtual environments
+backend/python_service/venv/
+backend/python_service/venv/*
+
+# Ignore Node.js dependencies and caches
+backend/node_modules/
+frontend/node_modules/
+frontend/node_modules/.cache/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore the .env file with sensitive environment variables
+.env

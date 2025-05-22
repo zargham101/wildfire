@@ -13,7 +13,7 @@ module.exports = (passport) => {
       async (req, accessToken, refreshToken, profile, done) => {
         try {
           const mode = req.session?.googleMode || "login";
-          console.log("mode::",mode)
+         
           const email = profile.emails[0].value;
   
           const existingUser = await User.findOne({ email });

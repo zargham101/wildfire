@@ -40,7 +40,6 @@ const ResetPassword = () => {
     }
 
     try {
-      console.log("sending data to backend.")
       const response = await fetch(
         "http://localhost:5001/api/user/reset-password",
         {
@@ -52,9 +51,7 @@ const ResetPassword = () => {
         }
       );
 
-      console.log("Response::",response)
       const data = await response.json();
-      console.log("Data::",data)
 
       if (!response.ok) {
         throw new Error(data.message || data.error || "Something went wrong");

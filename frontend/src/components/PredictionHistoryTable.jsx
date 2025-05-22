@@ -27,7 +27,6 @@ const PredictionHistoryTable = () => {
           },
         }
       );
-      console.log("response:::", res.data.data);
       setPredictions(res.data.data);
       setFilteredPredictions(res.data.data);
     } catch (err) {

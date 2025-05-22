@@ -33,7 +33,6 @@ exports.getAllPredictions = async (userId) => {
     });
     return predictions;
   } catch (error) {
-    console.log("error::",error)
     throw error;
   }
 };

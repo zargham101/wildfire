@@ -23,7 +23,6 @@ const chatService = async (message) => {
     temperature: 0.7,
     max_tokens: 150
     });
-    console.log("DeepSeek response", response);
     
     return response.choices[0].message.content.trim();
   } catch (error) {

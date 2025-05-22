@@ -49,7 +49,6 @@ const Signup = () => {
         navigate("/login");
       }, 2000);
     } catch (error) {
-      console.log("isko b dekho:::", error.response.data.message);
       setErrorMessage(error.response?.data?.message || "Registration failed");
       setTimeout(() => setErrorMessage(""), 3000);
     }

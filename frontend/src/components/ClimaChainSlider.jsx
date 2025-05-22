@@ -45,30 +45,29 @@ const ClimaChainSlider = () => {
 
       <div className="text-center md:text-left mt-10 md:mt-0 md:ml-16 max-w-xl">
         <h2 className="text-2xl font-semibold mb-6 font-serif text-black">
-          What you can achieve with <span className="font-bold">ClimaChain*</span>
+          What you can achieve with <span className="font-bold">WildFireWatch*</span>
         </h2>
 
         <div className="flex justify-center md:justify-start space-x-8 text-left">
           <div>
-            <p className="text-4xl font-bold text-red-600">40%</p>
-            <p className="text-sm text-red-600">Uplift in forecast accuracy</p>
+            <p className="text-2xl font-bold text-red-600">WildFire Size Prediction</p>
+            <p className="text-sm text-red-600"></p>
           </div>
           <div>
-            <p className="text-4xl font-bold text-red-600">30%</p>
-            <p className="text-sm text-red-600">Fewer stockouts</p>
+            <p className="text-2xl font-bold text-red-600">Wildfire Area Detection</p>
+            
           </div>
           <div>
-            <p className="text-4xl font-bold text-red-600">16x</p>
-            <p className="text-sm text-red-600">Return on investment (ROI)</p>
+            <p className="text-2xl font-bold text-red-600">Visualization</p>
+      
           </div>
         </div>
 
         <div className="mt-6 text-xs text-black italic leading-snug">
-          <p>1: Based on preliminary results</p>
-          <p>2: Projected based on improved forecasting accuracy</p>
+          <p>1: Uplift in forecast accuracy</p>
+          <p>2: Mappin of Burnt Area</p>
           <p>
-            3: Projected ROI for a live use case based on incremental revenue from improved
-            forecasting
+            3: Enhanced User Experience
           </p>
         </div>
       </div>

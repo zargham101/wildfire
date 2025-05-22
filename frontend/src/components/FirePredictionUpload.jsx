@@ -66,7 +66,6 @@ const WildfireCamPrediction = () => {
           }
         }
       );
-      console.log("map response::",response)
 
       if (response.data.features.length > 0) {
         const [lng, lat] = response.data.features[0].center;

@@ -3,7 +3,7 @@ const chatController = async (req, res) => {
   const { message } = req.body;
 
   try {
-    console.log("pushing to git")
+   
     const response = await chatService(message);
     res.json({ response });
   } catch (error) {

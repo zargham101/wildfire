@@ -140,7 +140,6 @@ const userService = {
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        console.log("error::", user);
         throw new Error("User not found")
       }
 

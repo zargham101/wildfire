@@ -16,12 +16,10 @@ exports.predictFire = async (req, res) => {
 
 exports.fetchAll = async (req,res) => {
   try {
-    console.log("useris:::" ,req.user._id)
     const userId = req.user._id; 
 
     const result = await fireService.getAllPredictions(userId);
 
-    console.log("result::", result);
 
     res.status(200).json({
       message:"Prediction successfully found",
@@ -29,7 +27,6 @@ exports.fetchAll = async (req,res) => {
   });
 
   } catch (error) {
-    console.log("error message::",error.message)
     return res.status(402).json({
       message: "Prediciton not found",
       error: error.message

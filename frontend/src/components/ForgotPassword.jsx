@@ -25,7 +25,6 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      console.log("sending response to backend");
       const response = await fetch(
         "http://localhost:5001/api/user/forgot-password",
         {
@@ -35,8 +34,6 @@ const ForgotPassword = () => {
         }
       );
 
-      console.log("response::", response);
-      console.log("Response status", response.status);
 
       let data = {};
       try {

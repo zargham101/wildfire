@@ -5,7 +5,6 @@ require('dotenv').config();
 const reviewService = {
   submitReview: async ({ name, email, country, description }) => {
     try {
-      console.log("email kiska hai :::",email)
       const review = new Review({ name, email, country, description });
       await review.save();
 

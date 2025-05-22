@@ -21,7 +21,6 @@ exports.getFireWeatherIndex = async (req, res) => {
   
       res.json({ userId,inputData,fwi, predictionId: savedRecord._id });
     } catch (err) {
-      console.log("error::", err);
       res.status(500).json({ error: "Prediction failed" });
     }
   };
@@ -31,7 +30,6 @@ exports.getPredictionCount = async (req, res) => {
     const count = await WildfirePrediction.countDocuments();
     res.json({ totalPredictions: count });
   } catch (error) {
-    console.log("Error", error);
     return res.status(404).json({ error: error.message });
   }
 };
@@ -44,7 +42,6 @@ exports.getMyPredictions = async (req, res) => {
   
       res.json({ predictions });
     } catch (err) {
-      console.log("Prediction fetch error:", err);
       res.status(500).json({ error: "Failed to fetch user predictions" });
     }
   };

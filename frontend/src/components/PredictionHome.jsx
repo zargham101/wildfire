@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import PredictionHistoryTable from "./PredictionHistoryTable";
 import FireResponseReport from "./FireResponseReport";
 import ClimaChainSlider from "./ClimaChainSlider";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
 import Tooltip from "@mui/material/Tooltip";
-import {
-  inputValidationRules,
-  getFireSeverity,
-} from "../condition/resourceCalculator";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import CombinedResults from "./CombinedResults";
+import { getFireSeverity } from "../condition/resourceCalculator";
+
+mapboxgl.accessToken =
+  "pk.eyJ1IjoiaGFzc25haW5haG1hZGNoZWVtYSIsImEiOiJjbWF3cTV1ZnUwYWI1MmxzZ3R1eTl0dmhkIn0.jwuQcSkkMNQtAwMJCPRl6w";
 
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
@@ -27,11 +30,102 @@ const PredictionHomePage = () => {
   });
 
   const [predictionResult, setPredictionResult] = useState(null);
+  const [camPredictionResult, setCamPredictionResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [camLoading, setCamLoading] = useState(false);
   const [error, setError] = useState({ message: "", field: "" });
   const [showFireAlert, setShowFireAlert] = useState(false);
   const [fireSeverity, setFireSeverity] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+
+  const [map, setMap] = useState(null);
+  const [marker, setMarker] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const mapContainer = useRef(null);
+
+  useEffect(() => {
+    const initializeMap = () => {
+      const newMap = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/satellite-v9",
+        center: [0, 0],
+        zoom: 1,
+      });
+
+      newMap.on("load", () => {
+        setMap(newMap);
+      });
+
+      newMap.on("click", (e) => {
+        const location = {
+          lng: e.lngLat.lng,
+          lat: e.lngLat.lat,
+        };
+        setSelectedLocation(location);
+        updateFormLocation(location);
+
+        // Remove existing marker
+        if (marker) marker.remove();
+
+        // Add new marker
+        const newMarker = new mapboxgl.Marker()
+          .setLngLat([e.lngLat.lng, e.lngLat.lat])
+          .addTo(newMap);
+        setMarker(newMarker);
+      });
+
+      return () => newMap.remove();
+    };
+
+    if (!map) initializeMap();
+  }, []);
+
+  const updateFormLocation = (location) => {
+    setFormData((prev) => ({
+      ...prev,
+      fire_location_latitude: location.lat,
+      fire_location_longitude: location.lng,
+    }));
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    try {
+      const response = await axios.get(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          searchQuery
+        )}.json`,
+        {
+          params: {
+            access_token: mapboxgl.accessToken,
+            limit: 1,
+          },
+        }
+      );
+
+      if (response.data.features.length > 0) {
+        const [lng, lat] = response.data.features[0].center;
+        const location = { lng, lat };
+        map.flyTo({ center: [lng, lat], zoom: 12 });
+        setSelectedLocation(location);
+        updateFormLocation(location);
+
+        if (marker) marker.remove();
+        const newMarker = new mapboxgl.Marker()
+          .setLngLat([lng, lat])
+          .addTo(map);
+        setMarker(newMarker);
+      }
+    } catch (err) {
+      setError({
+        ...error,
+        message: "Location search failed. Please try again.",
+      });
+    }
+  };
 
   const fireTypeOptions = ["Ground", "Surface", "Crown"];
   const firePositionOptions = [
@@ -75,34 +169,64 @@ const PredictionHomePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    if (inputValidationRules[name]) {
-      const { min, max } = inputValidationRules[name];
-      const parsed = parseFloat(value);
-
-      if (value !== "" && (isNaN(parsed) || parsed < min || parsed > max)) {
-        setError({
-          field: name,
-          message: `Value must be between ${min} and ${max}`,
-        });
-      } else {
-        setError({ field: "", message: "" });
-      }
-    }
   };
 
-  const numericPayload = {
-    ...formData,
-    fire_location_latitude: parseFloat(formData.fire_location_latitude),
-    fire_location_longitude: parseFloat(formData.fire_location_longitude),
-    temperature: parseFloat(formData.temperature),
-    relative_humidity: parseFloat(formData.relative_humidity),
-    wind_speed: parseFloat(formData.wind_speed),
+  const handleCamPrediction = async () => {
+    if (!selectedLocation) {
+      setError({
+        ...error,
+        message: "Please select a location on the map first.",
+      });
+      return;
+    }
+
+    setCamLoading(true);
+    setError({ message: "", field: "" });
+
+    try {
+      const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${selectedLocation.lng},${selectedLocation.lat},15/600x600?access_token=${mapboxgl.accessToken}`;
+
+      const imageResponse = await fetch(staticImageUrl);
+      const imageBlob = await imageResponse.blob();
+
+      const formData = new FormData();
+      const imageFile = new File([imageBlob], "map-image.jpg", {
+        type: "image/jpeg",
+      });
+      formData.append("image", imageFile);
+
+      formData.append("lng", selectedLocation.lng);
+      formData.append("lat", selectedLocation.lat);
+
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:5001/api/prediction/predict/cam/result",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setCamPredictionResult(response.data.data);
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Image prediction failed. Try again later.";
+      setError({
+        ...error,
+        message,
+      });
+    } finally {
+      setCamLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -120,6 +244,15 @@ const PredictionHomePage = () => {
     setError({ message: "", field: "" });
 
     try {
+      const numericPayload = {
+        ...formData,
+        fire_location_latitude: parseFloat(formData.fire_location_latitude),
+        fire_location_longitude: parseFloat(formData.fire_location_longitude),
+        temperature: parseFloat(formData.temperature),
+        relative_humidity: parseFloat(formData.relative_humidity),
+        wind_speed: parseFloat(formData.wind_speed),
+      };
+
       const token = localStorage.getItem("token");
       const res = await axios.post(
         "http://localhost:5001/api/prediction/predict-fire",
@@ -139,20 +272,6 @@ const PredictionHomePage = () => {
       setFireSeverity(severity);
       setShowFireAlert(true);
       setTimeout(() => setShowFireAlert(false), 5000);
-
-      setFormData({
-        fire_location_latitude: "",
-        fire_location_longitude: "",
-        fire_start_date: "",
-        fire_type: "",
-        fire_position_on_slope: "",
-        weather_conditions_over_fire: "",
-        temperature: "",
-        relative_humidity: "",
-        wind_direction: "",
-        wind_speed: "",
-        fuel_type: "",
-      });
     } catch (err) {
       setError({
         message: "Prediction failed. Please check your input and try again.",
@@ -231,10 +350,9 @@ const PredictionHomePage = () => {
           <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
         </div>
 
-        <div className="w-full mt-9 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <div className="flex justify-center items-center col-span-full"></div>
-
-          <div className="col-span-full lg:col-span-1">
+        <div className="w-full mt-9 max-w-6xl flex flex-col lg:flex-row gap-8">
+          {/* Left Column - Form */}
+          <div className="w-full lg:w-1/2">
             <form
               onSubmit={handleSubmit}
               className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
@@ -242,10 +360,7 @@ const PredictionHomePage = () => {
               <div className="flex flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire location Latitude
-                  <Tooltip
-                    title={inputValidationRules.fire_location_latitude.tooltip}
-                    arrow
-                  >
+                  <Tooltip title="Latitude from selected map location" arrow>
                     <span className="ml-1 cursor-pointer">
                       <InfoOutlineIcon fontSize="small" />
                     </span>
@@ -257,23 +372,16 @@ const PredictionHomePage = () => {
                   name="fire_location_latitude"
                   value={formData.fire_location_latitude}
                   onChange={handleChange}
-                  min={inputValidationRules.fire_location_latitude.min}
-                  max={inputValidationRules.fire_location_latitude.max}
                   required
-                  className="p-2 border-2 border-black rounded"
+                  readOnly
+                  className="p-2 border-2 border-black rounded bg-gray-100"
                 />
-                {error.field === "fire_location_latitude" && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </div>
 
               <div className="flex flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Location Longitude
-                  <Tooltip
-                    title={inputValidationRules.fire_location_longitude.tooltip}
-                    arrow
-                  >
+                  <Tooltip title="Longitude from selected map location" arrow>
                     <span className="ml-1 cursor-pointer">
                       <InfoOutlineIcon fontSize="small" />
                     </span>
@@ -285,14 +393,10 @@ const PredictionHomePage = () => {
                   name="fire_location_longitude"
                   value={formData.fire_location_longitude}
                   onChange={handleChange}
-                  min={inputValidationRules.fire_location_longitude.min}
-                  max={inputValidationRules.fire_location_longitude.max}
                   required
-                  className="p-2 border-2 border-black rounded"
+                  readOnly
+                  className="p-2 border-2 border-black rounded bg-gray-100"
                 />
-                {error.field === "fire_location_longitude" && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </div>
 
               <div className="flex flex-col">
@@ -402,7 +506,7 @@ const PredictionHomePage = () => {
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Temperature (°C)
                   <Tooltip
-                    title={inputValidationRules.temperature.tooltip}
+                    title="Temperature at fire location in Celsius"
                     arrow
                   >
                     <span className="ml-1 cursor-pointer">
@@ -415,23 +519,15 @@ const PredictionHomePage = () => {
                   name="temperature"
                   value={formData.temperature}
                   onChange={handleChange}
-                  min={inputValidationRules.temperature.min}
-                  max={inputValidationRules.temperature.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
-                {error.field === "temperature" && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </div>
 
               <div className="flex flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Relative Humidity (%)
-                  <Tooltip
-                    title={inputValidationRules.relative_humidity.tooltip}
-                    arrow
-                  >
+                  <Tooltip title="Relative humidity percentage" arrow>
                     <span className="ml-1 cursor-pointer">
                       <InfoOutlineIcon fontSize="small" />
                     </span>
@@ -442,14 +538,9 @@ const PredictionHomePage = () => {
                   name="relative_humidity"
                   value={formData.relative_humidity}
                   onChange={handleChange}
-                  min={inputValidationRules.relative_humidity.min}
-                  max={inputValidationRules.relative_humidity.max}
                   required
                   className="p-2 border-2 border-black rounded"
                 />
-                {error.field === "relative_humidity" && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </div>
 
               <div className="flex flex-col">
@@ -483,10 +574,7 @@ const PredictionHomePage = () => {
               <div className="flex flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Wind Speed (km/h)
-                  <Tooltip
-                    title={inputValidationRules.wind_speed.tooltip}
-                    arrow
-                  >
+                  <Tooltip title="Wind speed in kilometers per hour" arrow>
                     <span className="ml-1 cursor-pointer">
                       <InfoOutlineIcon fontSize="small" />
                     </span>
@@ -497,14 +585,10 @@ const PredictionHomePage = () => {
                   name="wind_speed"
                   value={formData.wind_speed}
                   onChange={handleChange}
-                  min={inputValidationRules.wind_speed.min}
-                  max={inputValidationRules.wind_speed.max}
+                  min="0"
                   required
                   className="p-2 border-2 border-black rounded"
                 />
-                {error.field === "wind_speed" && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </div>
 
               <div className="flex flex-col col-span-full">
@@ -546,46 +630,44 @@ const PredictionHomePage = () => {
             </form>
           </div>
 
-          <div className="flex flex-col items-center justify-center w-full mt-8 lg:mt-0 lg:ml-8">
-            {loading ? (
-              <div className="w-44 h-44 flex items-center justify-center rounded-full bg-gray-300 animate-drawCircle"></div>
-            ) : predictionResult === null ? (
-              <img
-                src="/images/fire5.jpg"
-                alt="Fire prediction illustration"
-                className="max-w-full h-auto rounded-lg"
-              />
-            ) : (
-              <div className="text-lg font-semibold font-serif mb-2 text-gray-700">
-                WildFire Size
-              </div>
-            )}
-            {predictionResult !== null && !loading && (
-              <>
-                <div
-                  className={`w-44 h-44 flex items-center justify-center rounded-full text-2xl font-bold
-        transition duration-300
-        ${
-          predictionResult < 5
-            ? "border-4 border-green-500 text-green-700 bg-green-100"
-            : predictionResult <= 15
-            ? "border-4 border-yellow-500 text-yellow-700 bg-yellow-100"
-            : "border-4 border-red-500 text-red-700 bg-red-100"
-        }`}
-                >
-                  {typeof predictionResult === "number"
-                    ? predictionResult.toFixed(4)
-                    : ""}
-                </div>
-
-                {/* 🔥 Persistent GIF stays visible below the circle */}
-                <img
-                  src="/images/fireAlert.gif"
-                  alt="Persistent fire animation"
-                  className="mt-4 w-32 h-auto"
+          {/* Right Column - Map */}
+          <div className="w-full lg:w-1/2">
+            <form onSubmit={handleSearch} className="w-full mb-4">
+              <div className="flex">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for a location..."
+                  className="flex-grow p-2 border border-gray-300 rounded-l-md"
                 />
-              </>
-            )}
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+
+            <div
+              ref={mapContainer}
+              className="w-full h-[500px] mb-4 rounded-lg shadow-lg border-2 border-gray-300"
+            />
+
+            <button
+              onClick={handleCamPrediction}
+              disabled={!selectedLocation || camLoading}
+              className={`w-full py-3 rounded-md transition duration-200 ${
+                selectedLocation
+                  ? "bg-green-700 hover:bg-green-800 text-white"
+                  : "bg-gray-400 cursor-not-allowed text-gray-700"
+              }`}
+            >
+              {camLoading
+                ? "Processing Image..."
+                : "Analyze Location with Satellite Image"}
+            </button>
           </div>
         </div>
 
@@ -593,16 +675,25 @@ const PredictionHomePage = () => {
           <div className="mt-4 text-red-600 font-medium">{error.message}</div>
         )}
 
-        {predictionResult !== null && (
-          <div className="w-full">
-            <FireResponseReport
-              fireSize={predictionResult}
-              windSpeed={formData.wind_speed}
-              humidity={formData.relative_humidity}
-              predictionDate={createdAt}
+        {(predictionResult || camPredictionResult) && (
+          <div className="w-full mt-8">
+            <CombinedResults
+              formData={formData}
+              predictionResult={predictionResult}
+              camPredictionResult={camPredictionResult}
+              createdAt={createdAt}
             />
           </div>
         )}
+
+        <div className="w-full mt-6">
+          <FireResponseReport
+            fireSize={predictionResult}
+            windSpeed={formData.wind_speed}
+            humidity={formData.relative_humidity}
+            predictionDate={createdAt}
+          />
+        </div>
 
         <div className="mt-6 w-full">
           <PredictionHistoryTable />

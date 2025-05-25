@@ -56,6 +56,8 @@ exports.predictImage = async (file, userId) => {
       imageUrl,
       colormap: "PLASMA"
     });
+    const resultCamImageUrl = response.data.camImageUrl;
+    const camImageUrl = await uploadUrlToS3(resultCamImageUrl);
 
     const savedPrediction = await Prediction.create({
       userId,
@@ -63,7 +65,7 @@ exports.predictImage = async (file, userId) => {
       predictionResult: response.data.prediction,
       noWildfireConfidence: response.data.noWildfireConfidence,
       wildfireConfidence: response.data.wildfireConfidence,
-      camImageUrl: response.data.camImageUrl,
+      camImageUrl,
       colorScale: response.data.colorScale
     });
 

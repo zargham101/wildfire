@@ -6,8 +6,16 @@ import UserProfileDropdown from "./UserProfileDropdown";
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showToolsDropdown, setShowToolsDropdown] = useState(false);
+  const [selectedToolLabel, setSelectedToolLabel] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+
+  const toolsLinks = [
+    { label: "Prediction", path: "/predictionHomePage" },
+    { label: "Detection", path: "/predict/cam/result" },
+    { label: "Visualization", path: "/feature-visualization" },
+  ];
 
   const isActive = (path) => location.pathname === path;
 
@@ -40,6 +48,13 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Set selected tool label based on current pathname
+  useEffect(() => {
+    const match = toolsLinks.find((link) => link.path === location.pathname);
+    if (match) setSelectedToolLabel(match.label);
+    else setSelectedToolLabel("");
+  }, [location.pathname]);
+
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
@@ -49,6 +64,7 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 md:px-8 xl:px-12 2xl:px-16 py-4 flex items-center justify-between">
+        {/* Left: Logo */}
         <div className="flex-1 flex items-center space-x-3">
           <img
             src="/images/logo.png"
@@ -61,41 +77,79 @@ const Navbar = () => {
           </h1>
         </div>
 
-        {/* Middle - Navigation Links */}
+        {/* Middle: Navigation */}
         <ul className="flex flex-auto justify-center space-x-4 lg:space-x-6 xl:space-x-10 text-sm md:text-base xl:text-lg font-medium font-serif text-gray-600">
-          {[
-            { label: "Home", path: "/" },
-            { label: "About Us", path: "/aboutus" },
-            { label: "Contact Us", path: "/contactus" },
-            { label: "Prediction", path: "/predictionHomePage" },
-            { label: "Detection", path: "/predict/cam/result" },
-            { label: "Visualization", path: "/feature-visualization" },
-          ].map(({ label, path }) => (
-            <li key={path}>
-              <Link
-                to={
-                  user || ["/", "/aboutus", "/contactus"].includes(path)
-                    ? path
-                    : "#"
-                }
-                onClick={(e) =>
-                  !user && !["/", "/aboutus", "/contactus"].includes(path)
-                    ? handleProtectedRouteClick(e, path)
-                    : undefined
-                }
-                className={`hover:text-red-500 transition-all ${
-                  isActive(path)
-                    ? "text-red-500 border-b-2 border-red-500 pb-1"
-                    : ""
-                }`}
+          {[{ label: "Home", path: "/" }, { label: "About Us", path: "/aboutus" }, { label: "Contact Us", path: "/contactus" }].map(
+            ({ label, path }) => (
+              <li key={path}>
+                <Link
+                  to={path}
+                  className={`hover:text-red-500 transition-all ${
+                    isActive(path)
+                      ? "text-red-500 border-b-2 border-red-500 pb-1"
+                      : ""
+                  }`}
+                >
+                  {label}
+                </Link>
+              </li>
+            )
+          )}
+
+          {/* Tools Dropdown */}
+          <li className="relative">
+            <button
+              type="button"
+              onClick={() => setShowToolsDropdown((prev) => !prev)}
+              className="flex items-center space-x-1 text-gray-700 hover:text-red-600 font-medium transition"
+            >
+              <span className="text-base md:text-lg font-serif">
+                {selectedToolLabel || "Tools"}
+              </span>
+              <svg
+                className="w-4 h-4 mt-[1px]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                {label}
-              </Link>
-            </li>
-          ))}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {showToolsDropdown && (
+              <ul className="absolute left-0 mt-3 w-56 bg-white border rounded-md shadow-xl z-20 overflow-hidden">
+                {toolsLinks.map(({ label, path }) => {
+                  const active = location.pathname === path;
+                  return (
+                    <li key={path}>
+                      <Link
+                        to={user ? path : "#"}
+                        onClick={(e) => {
+                          if (!user) {
+                            handleProtectedRouteClick(e, path);
+                          } else {
+                            setSelectedToolLabel(label);
+                            setShowToolsDropdown(false);
+                          }
+                        }}
+                        className={`block px-5 py-3 text-base font-medium font-serif transition-all ${
+                          active
+                            ? "bg-red-600 text-white"
+                            : "text-gray-700 hover:bg-red-100 hover:text-red-700"
+                        }`}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
         </ul>
 
-        {/* Right - Auth */}
+        {/* Right: Auth Section */}
         <div className="flex-1 flex justify-end items-center space-x-3">
           {!user ? (
             <>

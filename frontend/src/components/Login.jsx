@@ -15,24 +15,31 @@ const Login = () => {
   const location = useLocation();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/user/login",
-        { email, password }
-      );
-      const loggedInUser = response.data.user;
+  e.preventDefault();
+  try {
+    const response = await axios.post(
+      "http://localhost:5001/api/user/login",
+      { email, password }
+    );
+    const loggedInUser = response.data.user;
 
-      localStorage.setItem("user", JSON.stringify(loggedInUser));
-      localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(loggedInUser));
+    localStorage.setItem("token", response.data.token);
 
-      setSuccessMessage(response.data.message);
-      setUser(loggedInUser);
+    setSuccessMessage(response.data.message);
+    setUser(loggedInUser);
+
+    if (loggedInUser.role === "admin") {
+      localStorage.setItem("admin_token", response.data.token);
+      navigate("/admin");
+    } else {
       navigate("/predictionHomePage");
-    } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Login failed");
     }
-  };
+  } catch (error) {
+    setErrorMessage(error.response?.data?.message || "Login failed");
+  }
+};
+
 
   const handleGoogleLogin = () => {
     window.location.href = "http://localhost:5001/api/user/google?mode=login";

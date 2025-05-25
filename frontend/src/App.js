@@ -18,6 +18,8 @@ import GoogleAuthSuccess from "./routes/GoogleAuthSuccess";
 import FirePredictionUpload from "./components/FirePredictionUpload";
 import ScrollToTop from "./components/ScrollToTop";
 import axios from "axios";
+import AdminDashboard from "./components/AdminDashboard";
+import ConfirmOtp from "./components/ConfirmOTP";
 
 function App() {
   const [news, setNews] = useState([]);
@@ -34,6 +36,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/predictionHomePage" element={<PredictionHomePage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/confirm-otp" element={<ConfirmOtp />} />
         <Route
           path="/feature-visualization"
           element={<FeatureVisualizationPage />}

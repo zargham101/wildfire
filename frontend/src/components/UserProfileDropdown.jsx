@@ -9,7 +9,6 @@ const UserProfileDropdown = ({ user, handleLogout }) => {
     setIsOpen((prevState) => !prevState);
   };
 
-  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -44,6 +43,16 @@ const UserProfileDropdown = ({ user, handleLogout }) => {
                 Profile
               </Link>
             </li>
+            {user.role === "admin" && (
+              <li>
+                <Link
+                  to="/admin"
+                  className="block px-[70px] py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Admin Dashboard
+                </Link>
+              </li>
+            )}
             <li>
               <button
                 onClick={handleLogout}

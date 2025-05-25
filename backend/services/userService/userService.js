@@ -1,4 +1,5 @@
 const User = require("../../model/user/index");
+const PendingUser = require("../../model/user/pendingUser");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { s3 } = require("../../config/multerConfig");
@@ -32,21 +33,112 @@ const userService = {
       throw new Error("Failed to upload the image to S3", error.message);
     }
   },
+
+  generateOTP: () => {
+    return Math.floor(1000 + Math.random() * 9000).toString(); // 4-digit OTP
+  },
+
+  generateAndSendOTP: async (name, email) => {
+    const existing = await User.findOne({ email });
+    if (existing) throw new Error("User already registered.");
+
+    const otp = userService.generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+    await PendingUser.findOneAndUpdate(
+      { email },
+      { name, email, otp, otpExpiresAt: expiresAt },
+      { upsert: true }
+    );
+
+    const emailHtml = `
+      <h3>Welcome to Wildfire Watch!</h3>
+      <p>Your OTP is:</p>
+      <h1>${otp}</h1>
+      <p>Expires in 10 minutes. Or click <a href="http://localhost:3000/confirm-otp?email=${email}">here</a> to confirm.</p>
+    `;
+
+    await transporter.sendMail({
+      to: email,
+      subject: "Verify Your Email - Wildfire Watch",
+      html: emailHtml,
+    });
+
+    return { message: "OTP sent to email." };
+  },
+
+  verifyOTP: async (email, otp) => {
+    const pending = await PendingUser.findOne({ email });
+    if (!pending) throw new Error("No verification request found.");
+    if (pending.otp !== otp) throw new Error("Invalid OTP.");
+    if (new Date() > pending.otpExpiresAt) throw new Error("OTP expired.");
+
+    return { name: pending.name, email: pending.email };
+  },
+
   registerUser: async ({ name, email, password, image }) => {
     try {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) throw new Error("User already exists");
 
-    let user = await User.findOne({ email });
-    if (user) throw new Error("User already exists");
+      const pending = await PendingUser.findOne({ email });
+      if (!pending)
+        throw new Error("Please verify your email before registering");
 
-    user = new User({ name, email, password, image });
+      if (pending.name !== name)
+        throw new Error("Name does not match the verified user");
 
-    await user.save();
-    return {
-      user,
-      message: "User registered successfully",
-    };
+      const user = new User({ name, email, password, image });
+      await user.save();
+
+      await PendingUser.deleteOne({ email });
+
+      const mailOptions = {
+        from: `"Wildfire Watch" <${process.env.SMTP_USER}>`,
+        to: user.email,
+        subject: "🎉 Welcome to Wildfire Watch – You're Now a Member!",
+        html: `
+          <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 40px;">
+            <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <h2 style="color: #e63946; text-align: center;"> Welcome to Wildfire Watch, ${name}! 🔥</h2>
+              <p style="font-size: 16px; color: #333;">
+                We're thrilled to have you onboard. You've just joined a growing community dedicated to environmental awareness and wildfire safety.
+              </p>
+              <p style="font-size: 16px; color: #333;">
+                With your new account, you can:
+              </p>
+              <ul style="font-size: 16px; color: #333; padding-left: 20px;">
+                <li>🛰️ Monitor wildfire predictions in real time</li>
+                <li>🧠 Submit data and images for AI-based analysis</li>
+                <li>💬 Leave reviews and feedback for the community</li>
+              </ul>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="http://localhost:3000/login" style="display: inline-block; padding: 12px 24px; background-color: #1d3557; color: white; text-decoration: none; border-radius: 6px; font-size: 16px;">
+                  Go to Dashboard →
+                </a>
+              </div>
+              <p style="font-size: 14px; color: #888; text-align: center;">
+                If you have any questions, reach out to us at support@wildfirewatch.com<br/>
+                Thank you for being part of the mission.
+              </p>
+              <hr style="border: none; border-top: 1px solid #eee;" />
+              <p style="font-size: 12px; color: #aaa; text-align: center;">
+                © ${new Date().getFullYear()} Wildfire Watch. All rights reserved.
+              </p>
+            </div>
+          </div>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return {
+        user,
+        message: "User registered successfully. Confirmation email sent.",
+      };
     } catch (error) {
-      throw error
+      console.error("Registration error:", error.message);
+      throw error;
     }
   },
 
@@ -79,16 +171,17 @@ const userService = {
       throw error;
     }
   },
+
   getUserProfile: async (userId) => {
     try {
       const user = await User.findById(userId).select("-password");
       if (!user) throw new Error("User not found");
-
       return user;
     } catch (error) {
       throw error;
     }
   },
+
   getAllUsers: async () => {
     try {
       const users = await User.find()
@@ -101,6 +194,7 @@ const userService = {
       throw error;
     }
   },
+
   updateUser: async (userId, { name, email, password }) => {
     try {
       let updateData = {};
@@ -136,12 +230,11 @@ const userService = {
       throw error;
     }
   },
+
   forgotPassword: async (email) => {
     try {
       const user = await User.findOne({ email });
-      if (!user) {
-        throw new Error("User not found")
-      }
+      if (!user) throw new Error("User not found");
 
       const resetToken = crypto.randomBytes(32).toString("hex");
       const hashedToken = crypto
@@ -157,7 +250,7 @@ const userService = {
       const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}&email=${email}`;
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: process.env.SMTP_USER,
         to: user.email,
         subject: "Password Reset Request",
         html: `
@@ -175,10 +268,10 @@ const userService = {
       return { message: "Password reset link sent successfully" };
     } catch (error) {
       console.error("Error in forgot password:", error.message);
-
-      throw new Error(error)
+      throw new Error(error);
     }
   },
+
   resetPassword: async ({ resetToken, newPassword }) => {
     try {
       const hashedToken = crypto
@@ -210,21 +303,21 @@ const userService = {
       throw error;
     }
   },
+
   googleLogin: (req, res, next) => {
-    const mode = req.query.mode || "login";  
-    req.session = req.session || {};         
-    req.session.googleMode = mode;            
-  
-    
+    const mode = req.query.mode || "login";
+    req.session = req.session || {};
+    req.session.googleMode = mode;
+
     passport.authenticate("google", {
-      scope: ["profile", "email"]
+      scope: ["profile", "email"],
     })(req, res, next);
   },
-  
+
   googleCallback: passport.authenticate("google", {
     failureRedirect: "http://localhost:3000/login?google_error=true",
     failureMessage: true,
-    session: false
+    session: false,
   }),
 };
 

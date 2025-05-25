@@ -105,6 +105,24 @@ const userController = {
         message:error.message
       })
     }
+  },
+   sendOtp: async (req, res) => {
+    try {
+      const { name, email } = req.body;
+      const response = await userService.generateAndSendOTP(name, email);
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  },
+  verifyOtp: async (req, res) => {
+    try {
+      const { email, otp } = req.body;
+      const response = await userService.verifyOTP(email, otp);
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
 };
 

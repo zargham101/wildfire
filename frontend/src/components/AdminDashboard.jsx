@@ -63,7 +63,7 @@ export default function AdminDashboard() {
       formDataToSend.append("image", imageFile);
     }
     try {
-      await axios.post("http://localhost:5001/api/user/register", formDataToSend);
+      await axios.post("http://localhost:5001/api/user/admin-signup", formDataToSend);
       setOpenDialog(false);
       setFormData({ name: "", email: "", password: "" });
       setImageFile(null);

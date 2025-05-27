@@ -19,7 +19,24 @@ const userController = {
       res.status(400).json({ message: error.message });
     }
   },
+  adminUserCreation: async (req,res) => {
+    try {
+      const imageUrl = await userService.uploadImageToS3(req.file)
 
+      const { name, email, password } = req.body;
+      
+      if (!name || !email || !password) {
+        return res.status(400).json({ message: "Name, email, and password are required" });
+      }
+
+      const response = await userService.adminSignUp({ name, email, password, imageUrl })
+      res.status(201).json(response);
+    } catch (error) {
+      return res.status(400).json({
+        message: error.message
+      });
+    }
+  },
   login: async (req, res) => {
     try {
       const response = await userService.loginUser(req.body);

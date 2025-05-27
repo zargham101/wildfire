@@ -141,6 +141,21 @@ const userService = {
       throw error;
     }
   },
+  adminSignUp: async ({ name, email, password, image }) => {
+    try {
+      const existing = await User.findOne({ email });
+      if (existing) {
+        throw new Error("User a;ready exists");
+      }
+
+      const user = new User({ name, email, password, image });
+      await user.save();
+      return user;
+    } catch (error) {
+      console.error("Registration error:", error.message);
+      throw error;
+    }
+  },
 
   loginUser: async ({ email, password }) => {
     try {

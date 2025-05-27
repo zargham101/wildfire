@@ -2,6 +2,7 @@ const axios = require("axios");
 const FirePrediction = require("../../model/allFeaturePrediction/index");
 const { s3 } = require("../../config/multerConfig");
 const Prediction = require("../../model/camModel/camModelSchema");
+const fs = require("fs");
 
 exports.processAndPredict = async (inputData, userId) => {
   try {
@@ -49,26 +50,35 @@ const uploadImageToS3 = async (file) => {
 };
 
 exports.predictImage = async (file, userId) => {
+  
   const imageUrl = await uploadImageToS3(file);
-
+  
   try {
     const response = await axios.post("http://localhost:5003/predict", {
       imageUrl,
-      colormap: "PLASMA"
+      colormap: "PLASMA",
     });
-    const resultCamImageUrl = response.data.camImageUrl;
-    const camImageUrl = await uploadUrlToS3(resultCamImageUrl);
-
+    const imageBuffer = await axios({
+      url: response.data.camImageUrl,
+      responseType: "arraybuffer",
+    });
+  
+    const resultUpload = await uploadImageToS3({
+      buffer: imageBuffer.data,
+      originalname: "camImage.jpg", 
+      mimetype: "image/jpeg", 
+    });
+  
     const savedPrediction = await Prediction.create({
       userId,
       imageUrl,
       predictionResult: response.data.prediction,
       noWildfireConfidence: response.data.noWildfireConfidence,
       wildfireConfidence: response.data.wildfireConfidence,
-      camImageUrl,
-      colorScale: response.data.colorScale
+      camImageUrl: resultUpload,
+      colorScale: response.data.colorScale,
     });
-
+  
     return savedPrediction;
   } catch (err) {
     const message = err.response?.data?.message || "Prediction failed.";
@@ -78,6 +88,3 @@ exports.predictImage = async (file, userId) => {
     throw error;
   }
 };
-
-
-

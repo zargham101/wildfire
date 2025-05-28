@@ -6,6 +6,7 @@ import {useAuth} from "../routes/AuthContext"
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,13 +15,21 @@ const Signup = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isVerified, setIsVerified] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    otp: ""
+  });
 
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
 
   useEffect(() => {
-    
     if (location.state?.verified) {
       setIsVerified(true);
       if (location.state?.name) setName(location.state.name);
@@ -35,25 +44,114 @@ const Signup = () => {
     }
   };
 
+  const validateField = (name, value) => {
+    let error = "";
+    switch (name) {
+      case "name":
+        if (!value) error = "Name is required";
+        break;
+      case "email":
+        if (!value) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Invalid email format";
+        }
+        break;
+      case "password":
+        if (!value) {
+          error = "Password is required";
+        } else if (value.length < 6) {
+          error = "Password must be at least 6 characters";
+        }
+        break;
+      case "confirmPassword":
+        if (value !== password) {
+          error = "Passwords do not match";
+        }
+        break;
+      case "otp":
+        if (!value && otpSent) {
+          error = "OTP is required";
+        } else if (value && value.length !== 4) {
+          error = "OTP must be 4 digits";
+        }
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setFieldErrors(prev => ({ ...prev, [name]: error }));
+  };
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
+    
+    // Validate name and email before sending OTP
+    const nameError = validateField("name", name);
+    const emailError = validateField("email", email);
+    
+    setFieldErrors({
+      ...fieldErrors,
+      name: nameError,
+      email: emailError
+    });
+
+    if (nameError || emailError) return;
+
     try {
       const res = await axios.post("http://localhost:5001/api/user/send-otp", {
         name,
         email,
       });
       setSuccessMessage(res.data.message);
-      setTimeout(() => {
-        navigate("/signup");
-      }, 2000);
+      setOtpSent(true);
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Failed to send OTP");
       setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    const otpError = validateField("otp", otp);
+    setFieldErrors(prev => ({ ...prev, otp: otpError }));
+    
+    if (otpError) return;
+
+    try {
+      const res = await axios.post("http://localhost:5001/api/user/verify-otp", {
+        email,
+        otp
+      });
+      setIsVerified(true);
+      setSuccessMessage(res.data.message);
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Invalid OTP");
+      setTimeout(() => setErrorMessage(""), 3000);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const passwordError = validateField("password", password);
+    const confirmPasswordError = validateField("confirmPassword", confirmPassword);
+    
+    setFieldErrors({
+      ...fieldErrors,
+      password: passwordError,
+      confirmPassword: confirmPasswordError
+    });
+
+    if (passwordError || confirmPasswordError) return;
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -77,8 +175,6 @@ const Signup = () => {
     window.location.href = "http://localhost:5001/api/user/google?mode=signup";
   };
 
-  const isPasswordMismatch = confirmPassword && confirmPassword !== password;
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-white mt-24">
       <div className="p-8 w-full max-w-md">
@@ -89,69 +185,111 @@ const Signup = () => {
           Create an Account
         </h2>
 
-        <form onSubmit={isVerified ? handleSubmit : handleSendOtp}>
+        <form onSubmit={isVerified ? handleSubmit : (otpSent ? handleVerifyOtp : handleSendOtp)}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Name *</label>
             <input
               type="text"
+              name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={handleBlur}
               placeholder="John Doe"
-              className="w-full p-2 border-2 border-black"
+              className={`w-full p-2 border-2 ${fieldErrors.name ? "border-red-500" : "border-black"}`}
               required
-              disabled={isVerified}
+              disabled={otpSent}
             />
+            {fieldErrors.name && (
+              <p className="text-red-500 text-sm mt-1">{fieldErrors.name}</p>
+            )}
           </div>
 
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Email *</label>
             <input
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={handleBlur}
               placeholder="johndoe@example.com"
-              className="w-full p-2 border-2 border-black"
+              className={`w-full p-2 border-2 ${fieldErrors.email ? "border-red-500" : "border-black"}`}
               required
-              disabled={isVerified}
+              disabled={otpSent}
             />
+            {fieldErrors.email && (
+              <p className="text-red-500 text-sm mt-1">{fieldErrors.email}</p>
+            )}
           </div>
+
+          {otpSent && !isVerified && (
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">OTP *</label>
+              <input
+                type="text"
+                name="otp"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                onBlur={handleBlur}
+                placeholder="Enter 4-digit OTP"
+                className={`w-full p-2 border-2 ${fieldErrors.otp ? "border-red-500" : "border-black"}`}
+                required
+              />
+              {fieldErrors.otp && (
+                <p className="text-red-500 text-sm mt-1">{fieldErrors.otp}</p>
+              )}
+            </div>
+          )}
 
           {isVerified && (
             <>
               <div className="mb-4 relative">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Password *</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full p-2 border-2 border-black pr-10"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-9 right-3 text-gray-500 mt-1"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Password *</label>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={handleBlur}
+                placeholder="Enter your password"
+                className={`w-full p-2 border-2 ${fieldErrors.password ? "border-red-500" : "border-black"} pr-10`}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-9 right-3 text-gray-500 mt-1"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+              {fieldErrors.password && (
+                <p className="text-red-500 text-sm mt-1">{fieldErrors.password}</p>
+              )}
+            </div>
 
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Confirm Password *</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  className={`w-full p-2 border-2 ${isPasswordMismatch ? "border-red-500" : "border-black"}`}
-                  required
-                />
-                {isPasswordMismatch && (
-                  <p className="text-red-500 text-sm mt-1">Passwords do not match.</p>
-                )}
-              </div>
-
+            <div className="mb-4 relative">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Confirm Password *</label>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onBlur={handleBlur}
+                placeholder="Confirm your password"
+                className={`w-full p-2 border-2 ${fieldErrors.confirmPassword ? "border-red-500" : "border-black"} pr-10`}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute top-9 right-3 text-gray-500 mt-1"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+              {fieldErrors.confirmPassword && (
+                <p className="text-red-500 text-sm mt-1">{fieldErrors.confirmPassword}</p>
+              )}
+            </div>
               <div className="mb-4">
                 <label htmlFor="file-upload" className="block text-sm mb-2 font-bold text-gray-700">Upload Image</label>
                 <input
@@ -185,11 +323,11 @@ const Signup = () => {
             type="submit"
             className="w-full bg-red-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-red-700 hover:text-black"
           >
-            {isVerified ? "Sign Up" : "Send OTP"}
+            {isVerified ? "Sign Up" : otpSent ? "Verify OTP" : "Send OTP"}
           </button>
         </form>
 
-        {/* ✅ Google Sign-In Button */}
+        {/* Google Sign-In Button */}
         <button
           type="button"
           onClick={handleGoogleLogin}
@@ -203,7 +341,7 @@ const Signup = () => {
           Continue with Google
         </button>
 
-        {errorMessage && (
+        {errorMessage && !Object.values(fieldErrors).some(err => err) && (
           <div className="mt-4 rounded-md bg-red-100 border border-red-400 text-red-700 px-4 py-3">
             <strong className="font-bold">Error:</strong> <span>{errorMessage}</span>
           </div>

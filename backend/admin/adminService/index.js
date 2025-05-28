@@ -20,7 +20,10 @@ async function getUserById(id) {
 }
 
 async function updateUser(id, data) {
-  return await User.findByIdAndUpdate(id, data, { new: true });
+  console.log("update data::",id,data)
+  const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
+  console.log("updated user::",updatedUser)
+  return updatedUser
 }
 
 async function deleteUser(id) {

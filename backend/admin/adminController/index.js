@@ -32,6 +32,7 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
+    console.log("body::",req.body);
     const user = await adminService.updateUser(req.params.id, req.body);
     res.json(user);
   } catch (error) {

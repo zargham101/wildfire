@@ -1,6 +1,7 @@
 const express = require('express');
 const controller = require('../adminController/index');
 const middleware = require('../../middleware/isAdmin');
+const {upload} = require("../../config/multerConfig")
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.use(middleware.isAdmin);
 
 router.get("/users", controller.getAllUsers);
 router.get("/users/:id", controller.getUserById);
-router.put("/users/:id", controller.updateUser);
+router.put("/users/:id", upload, controller.updateUser);
 router.delete("/users/:id", controller.deleteUser);
 
 router.get("/reviews", controller.getAllReviews);

@@ -37,15 +37,27 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `${baseUrl}/${selectedCategory}?page=${page}&limit=${limit}`,
-        {
+      let res;
+
+      // Check if selected category is 'users'
+      if (selectedCategory === "users") {
+        // Fetch all users (no role filter)
+        res = await axios.get(`${baseUrl}/users?page=${page}&limit=${limit}`, {
           headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setData(res.data);
+        });
+      } else if (selectedCategory === "resource-requests") {
+        // Fetch only users with the 'agency' role (filtered by role)
+        res = await axios.get(
+          `${baseUrl}/users?role=agency&page=${page}&limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
+
+      setData(res.data); // Set the data received from the API
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching data:", err);
     } finally {
       setLoading(false);
     }
@@ -143,6 +155,8 @@ export default function AdminDashboard() {
       navigate("/predict/cam/result");
     } else if (selectedCategory === "feature-predictions") {
       navigate("/predictionHomePage");
+    } else if (selectedCategory === "resource-requests") {
+      navigate("/resourceRequests");
     }
   };
 
@@ -164,8 +178,34 @@ export default function AdminDashboard() {
         </div>
       ));
     }
-    if (key === "imageUrl" || key === "camImageUrl") {
-      return <img src={value} alt={key} className="w-24 h-auto" />;
+    if (key === "requiredResources") {
+      if (!value) {
+        return <div>No resources available</div>;
+      }
+      return (
+        <div>
+          <div>
+            <strong>Firefighters:</strong>{" "}
+            {value.firefighters || "Not available"}
+          </div>
+          <div>
+            <strong>Firetrucks:</strong> {value.firetrucks || "Not available"}
+          </div>
+          <div>
+            <strong>Helicopters:</strong> {value.helicopters || "Not available"}
+          </div>
+          <div>
+            <strong>Commanders:</strong> {value.commanders || "Not available"}
+          </div>
+          <div>
+            <strong>Heavy Equipment:</strong>{" "}
+            {value.heavyEquipment?.join(", ") || "Not available"}
+          </div>
+        </div>
+      );
+    }
+    if (key === "assignedAgency") {
+      return <div>{value ? value.name : "Not assigned"}</div>; // Display agency name or "Not assigned"
     }
     return String(value);
   };
@@ -184,6 +224,8 @@ export default function AdminDashboard() {
       ];
     } else if (selectedCategory === "feature-predictions") {
       return ["userId", "input", "prediction"];
+    } else if (selectedCategory === "resource-requests") {
+      return ["userId", "requiredResources", "status"];
     }
     return keys.filter((key) => key !== "_id" && key !== "__v");
   };
@@ -191,6 +233,22 @@ export default function AdminDashboard() {
   const handleViewItem = (item) => {
     setViewItem(item);
     setOpenViewModal(true);
+  };
+
+  const handleSendRequest = async (requestId) => {
+    try {
+      // Send request to the agency
+      const response = await axios.post(
+        `http://localhost:5001/api/resource-requests/${requestId}/send-request`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchData(); // Refresh data after sending request
+    } catch (error) {
+      console.error("Error sending request", error);
+    }
   };
 
   return (
@@ -232,10 +290,10 @@ export default function AdminDashboard() {
           </li>
           <li>
             <button
-              onClick={() => setSelectedCategory("reviews")}
+              onClick={() => setSelectedCategory("resource-requests")}
               className="w-full text-left hover:text-yellow-400"
             >
-              Reviews
+              Resource Requests
             </button>
           </li>
         </ul>
@@ -290,6 +348,34 @@ export default function AdminDashboard() {
                           style={{ color: "blue", cursor: "pointer" }}
                           onClick={() => handleViewItem(item)}
                         />
+                        {selectedCategory === "resource-requests" && (
+                          <>
+                            <td className="p-2 border text-sm flex space-x-2">
+                              <VisibilityIcon
+                                style={{ color: "blue", cursor: "pointer" }}
+                                onClick={() => handleViewItem(item)}
+                              />
+                              {selectedCategory === "resource-requests" && (
+                                <button
+                                  onClick={() => handleSendRequest(item._id)} // Send request to agency
+                                  className="px-4 py-2 bg-green-600 text-white rounded"
+                                >
+                                  Send Request
+                                </button>
+                              )}
+                              {selectedCategory === "users" && (
+                                <EditIcon
+                                  style={{ color: "orange", cursor: "pointer" }}
+                                  onClick={() => openCreateModal(item)}
+                                />
+                              )}
+                              <DeleteIcon
+                                style={{ color: "red", cursor: "pointer" }}
+                                onClick={() => deleteItem(item._id)}
+                              />
+                            </td>
+                          </>
+                        )}
                         {selectedCategory === "users" && (
                           <EditIcon
                             style={{ color: "orange", cursor: "pointer" }}
@@ -323,7 +409,6 @@ export default function AdminDashboard() {
             </div>
           </>
         )}
-
         {openDialog && selectedCategory === "users" && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded shadow-xl w-full max-w-lg">
@@ -401,7 +486,9 @@ export default function AdminDashboard() {
                           alt={key}
                           className="w-full max-w-xs h-auto"
                         />
-                      ) : key === "input" && viewItem[key] && typeof viewItem[key] === "object" ? (
+                      ) : key === "input" &&
+                        viewItem[key] &&
+                        typeof viewItem[key] === "object" ? (
                         <div className="space-y-2">
                           {Object.entries(viewItem[key]).map(([k, v]) => (
                             <div key={k}>
@@ -409,7 +496,9 @@ export default function AdminDashboard() {
                             </div>
                           ))}
                         </div>
-                      ) : key === "userId" && viewItem[key] && typeof viewItem[key] === "object" ? (
+                      ) : key === "userId" &&
+                        viewItem[key] &&
+                        typeof viewItem[key] === "object" ? (
                         viewItem[key].name || "Unknown"
                       ) : (
                         String(viewItem[key])

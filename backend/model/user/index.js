@@ -24,8 +24,30 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin","agency"],
     default: "user",
+  },
+  hasMadeRequest: { 
+    type: Boolean,
+    default: false,
+  },
+  completedPrediction: {
+    type: Boolean,
+    default: false,
+  },
+  agencyInfo: { 
+    agencyName: {
+      type: String,
+      trim: true,
+    },
+    agencyContact: {
+      type: String,
+      trim: true,
+    },
+    agencyLocation: {
+      type: String,
+      trim: true,
+    },
   },
   resetPasswordToken: {
     type: String,

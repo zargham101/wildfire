@@ -2,14 +2,20 @@ import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { calculateResources } from "../condition/resourceCalculator";
+import axios from "axios";
 
 const FireResponseReport = ({
   fireSize,
   windSpeed,
   humidity,
   predictionDate,
+  predictionId,
+  latitude,
+  longitude,
 }) => {
   const [showAlert, setShowAlert] = useState(true);
+  const [error, setError] = useState("");
+  const [sendingRequest, setSendingRequest] = useState(false);
 
   if (fireSize === null) return null;
 
@@ -54,6 +60,54 @@ const FireResponseReport = ({
     });
 
     doc.save("fire_response_report.pdf");
+  };
+
+  // Send the resource request to the admin
+  const sendResourceRequest = async () => {
+    setSendingRequest(true);
+    setError("");
+
+    const token = localStorage.getItem("token"); // Get the token for authorization
+
+    try {
+      const payload = {
+        predictionId: predictionId,
+        message: "This is a fire resource request",
+        latitude: latitude,
+        longitude: longitude,
+        requiredResources: {
+          firefighters: initialResources.firefighters,
+          firetrucks: initialResources.firetrucks,
+          helicopters: initialResources.helicopters,
+          commanders: initialResources.commanders,
+          heavyEquipment: longTermResources.heavyEquipment,
+        },
+      };
+
+      console.log("Payload:", payload);
+
+      // Make an API call to send the request
+      const response = await axios.post(
+        "http://localhost:5001/api/agency/resource-requests",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        alert("Resource request sent successfully!");
+      } else {
+        setError("Failed to send request. Please try again.");
+      }
+    } catch (err) {
+      setError("Error sending the request. Please try again.");
+    } finally {
+      setSendingRequest(false);
+    }
   };
 
   return (
@@ -159,6 +213,19 @@ const FireResponseReport = ({
             Download Full Report
           </button>
         </div>
+
+        {/* Button to send resource request */}
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={sendResourceRequest}
+            disabled={sendingRequest}
+            className="w-[180px] bg-green-700 text-white py-2 hover:bg-white hover:border-b-4 hover:border-green-700 hover:text-black"
+          >
+            {sendingRequest ? "Sending..." : "Send Request to Admin"}
+          </button>
+        </div>
+
+        {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
       </div>
     </div>
   );

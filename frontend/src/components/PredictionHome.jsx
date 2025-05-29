@@ -30,6 +30,7 @@ const PredictionHomePage = () => {
   });
 
   const [predictionResult, setPredictionResult] = useState(null);
+  const [predictionId, setPredictionId] = useState(null);
   const [camPredictionResult, setCamPredictionResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [camLoading, setCamLoading] = useState(false);
@@ -264,12 +265,21 @@ const PredictionHomePage = () => {
           },
         }
       );
-      const prediction = res.data.data.prediction;
+
+      console.log("backend se kia ara hai::",res.data.data)
+      const prediction = res.data.data.prediction; // Get the prediction data
+      const predictionId = res.data.data._id; // Get the prediction ID
+
+      console.log("pre ID::",res.data.data._id)
+      // Set the prediction ID and result
+      setPredictionId(predictionId);
       setPredictionResult(prediction);
       setCreatedAt(res.data.data.createdAt);
 
       const severity = getFireSeverity(prediction);
       setFireSeverity(severity);
+
+      // Show fire alert for 5 seconds
       setShowFireAlert(true);
       setTimeout(() => setShowFireAlert(false), 5000);
     } catch (err) {
@@ -692,6 +702,9 @@ const PredictionHomePage = () => {
             windSpeed={formData.wind_speed}
             humidity={formData.relative_humidity}
             predictionDate={createdAt}
+            predictionId={predictionId}
+            latitude={formData.fire_location_latitude} 
+            longitude={formData.fire_location_longitude}
           />
         </div>
 

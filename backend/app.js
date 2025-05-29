@@ -32,6 +32,7 @@ app.use("/api/review", routes.review);
 app.use("/api/chat", routes.chat);
 app.use("/api/prediction", routes.prediction);
 app.use("/api/admin", routes.admin);
+app.use("/api/agency", routes.agency);
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

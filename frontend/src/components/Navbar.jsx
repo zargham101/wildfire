@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
 import UserProfileDropdown from "./UserProfileDropdown";
@@ -10,6 +10,8 @@ const Navbar = () => {
   const [selectedToolLabel, setSelectedToolLabel] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const toolsLinks = [
     { label: "Prediction", path: "/predictionHomePage" },
@@ -48,12 +50,32 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Set selected tool label based on current pathname
+  // Set selected tool label based on current pathname and handle click outside
   useEffect(() => {
     const match = toolsLinks.find((link) => link.path === location.pathname);
     if (match) setSelectedToolLabel(match.label);
     else setSelectedToolLabel("");
-  }, [location.pathname]);
+
+    const handleClickOutside = (event) => {
+      if (
+        showToolsDropdown &&
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setShowToolsDropdown(false);
+      }
+    };
+
+    if (showToolsDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [location.pathname, showToolsDropdown]);
 
   return (
     <nav
@@ -77,29 +99,30 @@ const Navbar = () => {
           </h1>
         </div>
 
-        {/* Middle: Navigation */}
         <ul className="flex flex-auto justify-center space-x-4 lg:space-x-6 xl:space-x-10 text-sm md:text-base xl:text-lg font-medium font-serif text-gray-600">
-          {[{ label: "Home", path: "/" }, { label: "About Us", path: "/aboutus" }, { label: "Contact Us", path: "/contactus" }].map(
-            ({ label, path }) => (
-              <li key={path}>
-                <Link
-                  to={path}
-                  className={`hover:text-red-500 transition-all ${
-                    isActive(path)
-                      ? "text-red-500 border-b-2 border-red-500 pb-1"
-                      : ""
-                  }`}
-                >
-                  {label}
-                </Link>
-              </li>
-            )
-          )}
+          {[
+            { label: "Home", path: "/" }, 
+            { label: "About Us", path: "/aboutus" }, 
+            { label: "Contact Us", path: "/contactus" }
+          ].map(({ label, path }) => (
+            <li key={path}>
+              <Link
+                to={path}
+                className={`hover:text-red-500 transition-all ${
+                  isActive(path)
+                    ? "text-red-500 border-b-2 border-red-500 pb-1"
+                    : ""
+                }`}
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
 
-          {/* Tools Dropdown */}
           <li className="relative">
             <button
               type="button"
+              ref={buttonRef}
               onClick={() => setShowToolsDropdown((prev) => !prev)}
               className="flex items-center space-x-1 text-gray-700 hover:text-red-600 font-medium transition"
             >
@@ -118,7 +141,10 @@ const Navbar = () => {
             </button>
 
             {showToolsDropdown && (
-              <ul className="absolute left-0 mt-3 w-56 bg-white border rounded-md shadow-xl z-20 overflow-hidden">
+              <ul 
+                ref={dropdownRef}
+                className="absolute left-0 mt-3 w-56 bg-white border rounded-md shadow-xl z-20 overflow-hidden"
+              >
                 {toolsLinks.map(({ label, path }) => {
                   const active = location.pathname === path;
                   return (

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require('../model/user/index');
 
-const isAdmin = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Unauthorized" });
@@ -9,7 +9,7 @@ const isAdmin = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
-    if (!user || user.role !== "admin") {
+    if (!user) {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -20,20 +20,14 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-const singleAdminCreation = async (req, res, next) => {
-  try {
-    const existingAdmin = await User.findOne({ role: "admin" });
-
-    if (existingAdmin) {
-      return res
-        .status(400)
-        .json({ message: "Admin already exists. Delete existing to create new." });
-    }
-
-    next();
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+const authorize = (roles) => {
+  return (req, res, next) => {
+    // If the user has one of the roles, grant access
+    if (roles.includes(req.user.role)) {
+      return next();
+    } 
+    return res.status(403).json({ message: "Forbidden - Insufficient permissions" });
+  };
 };
 
-module.exports = { isAdmin, singleAdminCreation };
+module.exports = { authenticate, authorize };

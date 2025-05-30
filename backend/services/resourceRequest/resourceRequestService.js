@@ -15,10 +15,12 @@ async function createRequest(predictionId, userId, resources, location, message,
 }
 
 // Get all requests by user
-async function getRequestsByUser(userId) {
-  return await ResourceRequest.find({ userId })
+async function getRequestsByUser() {
+  const request = await ResourceRequest.find()
     .populate("predictionId")
     .populate("assignedAgency", "name email");
+
+  return request
 }
 
 // Get all pending requests

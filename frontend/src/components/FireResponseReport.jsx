@@ -10,6 +10,7 @@ const FireResponseReport = ({
   humidity,
   predictionDate,
   predictionId,
+  userId,
   latitude,
   longitude,
 }) => {
@@ -72,6 +73,7 @@ const FireResponseReport = ({
     try {
       const payload = {
         predictionId: predictionId,
+        userId: userId,
         message: "This is a fire resource request",
         latitude: latitude,
         longitude: longitude,
@@ -83,8 +85,6 @@ const FireResponseReport = ({
           heavyEquipment: longTermResources.heavyEquipment,
         },
       };
-
-      console.log("Payload:", payload);
 
       // Make an API call to send the request
       const response = await axios.post(

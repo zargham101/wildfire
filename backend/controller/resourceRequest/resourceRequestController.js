@@ -5,10 +5,10 @@ const AllFeaturePredicionSchema = require("../../model/allFeaturePrediction/inde
 async function createRequest(req, res) {
   try {
     const { predictionId, message, assignedAgency } = req.body;  // Get assignedAgency from the body
-    console.log("body::", predictionId, message, assignedAgency);
+   
     
     const userId = req.user._id;
-    console.log("user::", userId);
+    
     
     // Get prediction details
     const prediction = await AllFeaturePredicionSchema.findById(predictionId);
@@ -44,7 +44,6 @@ async function createRequest(req, res) {
     
     res.status(201).json(request);
   } catch (error) {
-    console.log("error::", error.message);
     res.status(500).json({ message: error.message });
   }
 }
@@ -52,7 +51,7 @@ async function createRequest(req, res) {
 
 async function getUserRequests(req, res) {
   try {
-    const requests = await resourceRequestService.getRequestsByUser(req.user._id);
+    const requests = await resourceRequestService.getRequestsByUser();
     res.json(requests);
   } catch (error) {
     res.status(500).json({ message: error.message });

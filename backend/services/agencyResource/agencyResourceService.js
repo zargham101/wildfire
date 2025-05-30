@@ -70,7 +70,6 @@ async function deleteAgency(id) {
   await AgencyResources.findOneAndDelete({ agencyId: id });
   await User.findByIdAndDelete(id);
 
-  console.log(`Agency ${id} and associated resources deleted.`);
 }
 
 // Function to deduct resources when the agency accepts a request

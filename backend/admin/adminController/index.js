@@ -32,7 +32,6 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    console.log("body::",req.body);
     const user = await adminService.updateUser(req.params.id, req.body);
     res.json(user);
   } catch (error) {
@@ -101,6 +100,7 @@ exports.deleteImagePrediction = async (req, res) => {
 exports.getAllFeaturePredictions = async (req, res) => {
   try {
     const predictions = await adminService.getAllFeaturePredictions();
+    
     res.json(predictions);
   } catch (error) {
     res.status(500).json({ message: error.message });

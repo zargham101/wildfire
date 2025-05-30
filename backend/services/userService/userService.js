@@ -209,7 +209,41 @@ const userService = {
       throw error;
     }
   },
+  getUsers: async ({ role, page, limit }) => {
+    try {
+      const query = {};
 
+      if (role) {
+        query.role = role;
+      }
+
+      const skip = (page - 1) * limit;
+
+      const users = await User.find(query).skip(skip).limit(Number(limit));
+
+
+      const totalUsers = await User.countDocuments(query);
+
+
+      return {
+        users,
+        totalPages: Math.ceil(totalUsers / limit),
+      };
+    } catch (error) {
+      console.error("Error fetching users in service:", error);
+      throw error;
+    }
+  },
+  UserById: async (userId) => {
+    try {
+      const id = typeof userId === 'object' && userId.id ? userId.id : userId;
+
+      const user = await User.findById(id);
+      return user;    
+    } catch (error) {
+      throw error       
+    }
+  },
   updateUser: async (userId, { name, email, password }) => {
     try {
       let updateData = {};

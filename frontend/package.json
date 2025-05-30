@@ -27,7 +27,8 @@
     "react-loading-skeleton": "^3.5.0",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
-    "recharts": "^2.15.2"
+    "recharts": "^2.15.2",
+    "sweetalert2-react-content": "^5.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

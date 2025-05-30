@@ -4,13 +4,15 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CloseIcon from "@mui/icons-material/Close";
+import Swal from "sweetalert2";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("users");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("admin_token"));
+  const [token] = useState(localStorage.getItem("admin_token"));
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [openDialog, setOpenDialog] = useState(false);
@@ -24,8 +26,15 @@ export default function AdminDashboard() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const [viewItem, setViewItem] = useState(null);
-  const [openViewModal, setOpenViewModal] = useState(false);
+  const [userNameMap, setUserNameMap] = useState({});
+  const [agencyUsers, setAgencyUsers] = useState([]);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+  const [selectedAgencyUser, setSelectedAgencyUser] = useState(null);
+  const [showAgencyCard, setShowAgencyCard] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+const [editData, setEditData] = useState(null);
+const [editImageFile, setEditImageFile] = useState(null);
 
   const baseUrl = "http://localhost:5001/api/admin";
 
@@ -34,28 +43,69 @@ export default function AdminDashboard() {
     else fetchData();
   }, [selectedCategory, page]);
 
+  const fetchUserName = async (userId) => {
+    if (userNameMap[userId]) return userNameMap[userId];
+    try {
+      const res = await axios.get(
+        `http://localhost:5001/api/user/user-details/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const name = res.data.name;
+      setUserNameMap((prev) => ({ ...prev, [userId]: name }));
+      return name;
+    } catch (err) {
+      return "Unknown";
+    }
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
       let res;
 
-      // Check if selected category is 'users'
       if (selectedCategory === "users") {
-        // Fetch all users (no role filter)
         res = await axios.get(`${baseUrl}/users?page=${page}&limit=${limit}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        setData(res.data);
       } else if (selectedCategory === "resource-requests") {
-        // Fetch only users with the 'agency' role (filtered by role)
+        const [requestRes, agencyRes] = await Promise.all([
+          axios.get(`http://localhost:5001/api/agency/resource-requests`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`http://localhost:5001/api/user/user-role?role=agency`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const enrichedData = await Promise.all(
+          requestRes.data.map(async (item) => ({
+            ...item,
+            userName: await fetchUserName(item.userId),
+          }))
+        );
+
+        setData(enrichedData);
+        setAgencyUsers(agencyRes.data.data || []);
+      } else if (selectedCategory === "image-predictions") {
         res = await axios.get(
-          `${baseUrl}/users?role=agency&page=${page}&limit=${limit}`,
+          `${baseUrl}/image-predictions?page=${page}&limit=${limit}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        setData(res.data);
+      } else if (selectedCategory === "feature-predictions") {
+        res = await axios.get(
+          `${baseUrl}/feature-predictions?page=${page}&limit=${limit}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setData(res.data);
       }
-
-      setData(res.data); // Set the data received from the API
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -63,192 +113,136 @@ export default function AdminDashboard() {
     }
   };
 
-  const deleteItem = async (id) => {
-    try {
-      await axios.delete(`${baseUrl}/${selectedCategory}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchData();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleUserCreation = async () => {
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("email", formData.email);
-    formDataToSend.append("password", formData.password);
-    if (imageFile) {
-      formDataToSend.append("image", imageFile);
-    }
+  const sendRequestToAgency = async () => {
     try {
       await axios.post(
-        "http://localhost:5001/api/user/admin-signup",
-        formDataToSend
+        `http://localhost:5001/api/agency/resource-requests/${selectedRequestId}/send-request`,
+        { agencyId: selectedAgencyUser._id },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setOpenDialog(false);
-      setFormData({ name: "", email: "", password: "" });
-      setImageFile(null);
-      setSuccessMessage("User created successfully!");
-      setShowSuccessPopup(true);
-      setTimeout(() => setShowSuccessPopup(false), 5000);
+      setShowAgencyCard(false);
       fetchData();
+      alert("Request sent successfully!");
     } catch (err) {
-      console.error("User creation failed", err);
+      console.error("Failed to send request", err);
     }
-  };
-
-  const handleUserEdit = async () => {
-    const formDataToSend = new FormData();
-
-    if (formData.name) formDataToSend.append("name", formData.name);
-    if (formData.email) formDataToSend.append("email", formData.email);
-    if (formData.password) formDataToSend.append("password", formData.password);
-
-    if (imageFile) {
-      formDataToSend.append("image", imageFile);
-    }
-
-    try {
-      const response = await axios.put(
-        `${baseUrl}/users/${selectedUserId}`,
-        formDataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setOpenDialog(false);
-      setFormData({ name: "", email: "", password: "" });
-      setImageFile(null);
-      fetchData();
-      setSuccessMessage("User updated successfully!");
-      setShowSuccessPopup(true);
-      setTimeout(() => setShowSuccessPopup(false), 5000);
-    } catch (err) {
-      console.error("User update failed", err);
-      if (err.response) {
-        console.error("Response data:", err.response.data);
-        console.error("Response status:", err.response.status);
-      }
-    }
-  };
-
-  const openCreateModal = (user = null) => {
-    if (selectedCategory === "users") {
-      if (user) {
-        setSelectedUserId(user._id);
-        setFormData({
-          name: user.name,
-          email: user.email,
-          password: "",
-        });
-      } else {
-        setFormData({ name: "", email: "", password: "" });
-      }
-      setOpenDialog(true);
-    } else if (selectedCategory === "image-predictions") {
-      navigate("/predict/cam/result");
-    } else if (selectedCategory === "feature-predictions") {
-      navigate("/predictionHomePage");
-    } else if (selectedCategory === "resource-requests") {
-      navigate("/resourceRequests");
-    }
-  };
-
-  const formatLabel = (label) => {
-    return label
-      .replace(/_/g, " ")
-      .replace(/([a-z])([A-Z])/g, "$1 $2")
-      .replace(/^./, (str) => str.toUpperCase());
-  };
-
-  const renderCell = (key, value, item) => {
-    if (key === "userId" && value && typeof value === "object") {
-      return value.name || "Unknown";
-    }
-    if (key === "input" && value && typeof value === "object") {
-      return Object.entries(value).map(([k, v]) => (
-        <div key={k}>
-          <strong>{formatLabel(k)}:</strong> {String(v)}
-        </div>
-      ));
-    }
-    if (key === "requiredResources") {
-      if (!value) {
-        return <div>No resources available</div>;
-      }
-      return (
-        <div>
-          <div>
-            <strong>Firefighters:</strong>{" "}
-            {value.firefighters || "Not available"}
-          </div>
-          <div>
-            <strong>Firetrucks:</strong> {value.firetrucks || "Not available"}
-          </div>
-          <div>
-            <strong>Helicopters:</strong> {value.helicopters || "Not available"}
-          </div>
-          <div>
-            <strong>Commanders:</strong> {value.commanders || "Not available"}
-          </div>
-          <div>
-            <strong>Heavy Equipment:</strong>{" "}
-            {value.heavyEquipment?.join(", ") || "Not available"}
-          </div>
-        </div>
-      );
-    }
-    if (key === "assignedAgency") {
-      return <div>{value ? value.name : "Not assigned"}</div>; // Display agency name or "Not assigned"
-    }
-    return String(value);
-  };
-
-  const getVisibleKeys = () => {
-    if (!Array.isArray(data) || data.length === 0) return [];
-    const keys = Object.keys(data[0]);
-    if (selectedCategory === "image-predictions") {
-      return [
-        "userId",
-        "imageUrl",
-        "predictionResult",
-        "noWildfireConfidence",
-        "wildfireConfidence",
-        "camImageUrl",
-      ];
-    } else if (selectedCategory === "feature-predictions") {
-      return ["userId", "input", "prediction"];
-    } else if (selectedCategory === "resource-requests") {
-      return ["userId", "requiredResources", "status"];
-    }
-    return keys.filter((key) => key !== "_id" && key !== "__v");
   };
 
   const handleViewItem = (item) => {
-    setViewItem(item);
-    setOpenViewModal(true);
+    console.log("View:", item);
   };
 
-  const handleSendRequest = async (requestId) => {
-    try {
-      // Send request to the agency
-      const response = await axios.post(
-        `http://localhost:5001/api/resource-requests/${requestId}/send-request`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      fetchData(); // Refresh data after sending request
-    } catch (error) {
-      console.error("Error sending request", error);
+  const handleEditItem = (item) => {
+  setEditData(item);
+  setShowEditModal(true);
+};
+
+  const handleDeleteItem = async (item) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to undo this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(
+          `${baseUrl}/delete/${selectedCategory}/${item._id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        fetchData();
+        Swal.fire("Deleted!", "Record has been deleted.", "success");
+      } catch (err) {
+        console.error("Delete error", err);
+        Swal.fire("Error", "Failed to delete", "error");
+      }
     }
+  };
+
+  const handleSendRequest = (requestId) => {
+    setSelectedRequestId(requestId);
+    setShowAgencyCard(true);
+  };
+
+  const formatLabel = (label) =>
+    label
+      .replace(/_/g, " ")
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/^./, (str) => str.toUpperCase());
+
+  const getVisibleKeys = () => {
+    if (!Array.isArray(data) || data.length === 0) return [];
+
+    if (selectedCategory === "image-predictions")
+      return ["imageUrl", "camImageUrl", "predictionResult"];
+    if (selectedCategory === "feature-predictions")
+      return ["userName", "input", "prediction"];
+    if (selectedCategory === "resource-requests")
+      return ["userName", "requiredResources", "status"];
+
+    const keys = Object.keys(data[0]);
+    return keys.filter((key) => !["_id", "__v", "password"].includes(key));
+  };
+
+  const renderCell = (key, value, item) => {
+    if (key === "userName") {
+      if (selectedCategory === "feature-predictions") {
+        return item.userId?.name || "Unknown";
+      } else {
+        return value || "Unknown";
+      }
+    }
+
+    if (key === "input" && typeof value === "object") {
+      return (
+        <div className="text-sm space-y-1">
+          {Object.entries(value).map(([k, v]) => (
+            <div key={k}>
+              <strong>{k.replace(/_/g, " ")}:</strong> {String(v)}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (key === "imageUrl" && value) {
+      return <img src={value} alt="Prediction" className="w-24 h-auto" />;
+    }
+
+    if (key === "camImageUrl" && value) {
+      return <img src={value} alt="Camera" className="w-24 h-auto" />;
+    }
+
+    if (key === "requiredResources" && value) {
+      return (
+        <div>
+          <div>
+            <strong>Firefighters:</strong> {value.firefighters}
+          </div>
+          <div>
+            <strong>Firetrucks:</strong> {value.firetrucks}
+          </div>
+          <div>
+            <strong>Helicopters:</strong> {value.helicopters}
+          </div>
+          <div>
+            <strong>Commanders:</strong> {value.commanders}
+          </div>
+          <div>
+            <strong>Heavy Equipment:</strong>{" "}
+            {value.heavyEquipment?.join(", ")}
+          </div>
+        </div>
+      );
+    }
+
+    return String(value);
   };
 
   return (
@@ -298,6 +292,7 @@ export default function AdminDashboard() {
           </li>
         </ul>
       </aside>
+
       <main className="flex-1 p-6">
         <div className="flex justify-between mb-4 items-center">
           <h1 className="text-2xl font-bold capitalize">
@@ -306,7 +301,10 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4">
             <button
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={openCreateModal}
+              onClick={() => {
+                if (selectedCategory === "users") setShowCreateModal(true);
+                else navigate(`/admin/create/${selectedCategory}`);
+              }}
             >
               + Create
             </button>
@@ -328,69 +326,154 @@ export default function AdminDashboard() {
                 <tr className="bg-gray-200 text-black">
                   {getVisibleKeys().map((key) => (
                     <th key={key} className="p-2 border text-left">
-                      {formatLabel(key === "userId" ? "User" : key)}
+                      {formatLabel(key)}
                     </th>
                   ))}
                   <th className="p-2 border">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(data) &&
-                  data.map((item) => (
-                    <tr key={item._id} className="border-b">
-                      {getVisibleKeys().map((key) => (
-                        <td key={key} className="p-2 border text-sm">
-                          {renderCell(key, item[key])}
-                        </td>
-                      ))}
-                      <td className="p-2 border text-sm flex space-x-2">
-                        <VisibilityIcon
-                          style={{ color: "blue", cursor: "pointer" }}
-                          onClick={() => handleViewItem(item)}
-                        />
-                        {selectedCategory === "resource-requests" && (
-                          <>
-                            <td className="p-2 border text-sm flex space-x-2">
-                              <VisibilityIcon
-                                style={{ color: "blue", cursor: "pointer" }}
-                                onClick={() => handleViewItem(item)}
-                              />
-                              {selectedCategory === "resource-requests" && (
-                                <button
-                                  onClick={() => handleSendRequest(item._id)} // Send request to agency
-                                  className="px-4 py-2 bg-green-600 text-white rounded"
-                                >
-                                  Send Request
-                                </button>
-                              )}
-                              {selectedCategory === "users" && (
-                                <EditIcon
-                                  style={{ color: "orange", cursor: "pointer" }}
-                                  onClick={() => openCreateModal(item)}
-                                />
-                              )}
-                              <DeleteIcon
-                                style={{ color: "red", cursor: "pointer" }}
-                                onClick={() => deleteItem(item._id)}
-                              />
-                            </td>
-                          </>
-                        )}
-                        {selectedCategory === "users" && (
-                          <EditIcon
-                            style={{ color: "orange", cursor: "pointer" }}
-                            onClick={() => openCreateModal(item)}
-                          />
-                        )}
-                        <DeleteIcon
-                          style={{ color: "red", cursor: "pointer" }}
-                          onClick={() => deleteItem(item._id)}
-                        />
+                {data.map((item) => (
+                  <tr key={item._id} className="border-b">
+                    {getVisibleKeys().map((key) => (
+                      <td key={key} className="p-2 border text-sm">
+                        {renderCell(key, item[key], item)}
                       </td>
-                    </tr>
-                  ))}
+                    ))}
+                    <td className="p-2 border text-sm flex space-x-2 items-center">
+                      <VisibilityIcon
+                        style={{ color: "blue", cursor: "pointer" }}
+                        onClick={() => handleViewItem(item)}
+                      />
+                      <EditIcon
+                        style={{ color: "orange", cursor: "pointer" }}
+                        onClick={() => handleEditItem(item)}
+                      />
+                      <DeleteIcon
+                        style={{ color: "red", cursor: "pointer" }}
+                        onClick={() => handleDeleteItem(item)}
+                      />
+                      {selectedCategory === "resource-requests" && (
+                        <button
+                          onClick={() => handleSendRequest(item._id)}
+                          className="px-4 py-1 bg-green-600 text-white rounded text-xs ml-2"
+                        >
+                          Send Request
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+
+            {showAgencyCard && (
+              <div className="fixed top-20 right-10 bg-white text-black p-4 rounded shadow-lg w-96 z-50 border">
+                <h2 className="text-xl font-bold mb-4">Select an Agency</h2>
+                <ul className="space-y-2 max-h-64 overflow-y-auto">
+                  {agencyUsers.map((user) => (
+                    <li
+                      key={user._id}
+                      onClick={() => setSelectedAgencyUser(user)}
+                      className={`p-2 border rounded cursor-pointer hover:bg-blue-100 ${
+                        selectedAgencyUser?._id === user._id
+                          ? "bg-blue-200"
+                          : ""
+                      }`}
+                    >
+                      <strong>{user.name}</strong> — {user.email}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 flex justify-end space-x-2">
+                  <button
+                    className="bg-green-600 text-white px-4 py-2 rounded"
+                    onClick={sendRequestToAgency}
+                    disabled={!selectedAgencyUser}
+                  >
+                    Confirm Send
+                  </button>
+                  <button
+                    className="bg-gray-400 text-white px-4 py-2 rounded"
+                    onClick={() => setShowAgencyCard(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {showCreateModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center">
+                <div className="bg-white p-6 rounded-lg w-[400px] relative">
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                  >
+                    <CloseIcon />
+                  </button>
+                  <h2 className="text-lg font-semibold mb-4">Create User</h2>
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    placeholder="Name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                  />
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    placeholder="Password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                  />
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    type="file"
+                    onChange={(e) => setImageFile(e.target.files[0])}
+                  />
+                  <button
+                    onClick={async () => {
+                      const form = new FormData();
+                      form.append("name", formData.name);
+                      form.append("email", formData.email);
+                      form.append("password", formData.password);
+                      if (imageFile) form.append("photo", imageFile);
+
+                      try {
+                        await axios.post(`${baseUrl}/create-user`, form, {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "multipart/form-data",
+                          },
+                        });
+                        setShowCreateModal(false);
+                        fetchData();
+                        Swal.fire("User created!", "", "success");
+                      } catch (err) {
+                        console.error("Create failed", err);
+                        Swal.fire("Error", "Failed to create user", "error");
+                      }
+                    }}
+                    className="w-full bg-blue-600 text-white p-2 rounded"
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="mt-4 flex justify-between">
               <button
                 className="px-4 py-2 border rounded"
@@ -408,128 +491,6 @@ export default function AdminDashboard() {
               </button>
             </div>
           </>
-        )}
-        {openDialog && selectedCategory === "users" && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white p-6 rounded shadow-xl w-full max-w-lg">
-              <h2 className="text-xl font-bold mb-4">
-                {selectedUserId ? "Edit User" : "Create User"}
-              </h2>
-              <input
-                className="w-full p-2 border border-gray-300 rounded mb-3"
-                placeholder="Name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-              />
-              <input
-                className="w-full p-2 border border-gray-300 rounded mb-3"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-              <input
-                type="password"
-                className="w-full p-2 border border-gray-300 rounded mb-3"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-              <input
-                type="file"
-                className="w-full mb-3"
-                onChange={(e) => setImageFile(e.target.files[0])}
-              />
-              <div className="flex justify-end space-x-2">
-                <button
-                  className="px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
-                  onClick={() => setOpenDialog(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  onClick={selectedUserId ? handleUserEdit : handleUserCreation}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {openViewModal && viewItem && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div
-              className={`p-6 rounded shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto ${
-                isDarkTheme ? "bg-gray-800" : "bg-white"
-              }`}
-            >
-              <h2 className="text-xl font-bold mb-4">
-                {selectedCategory.replace("-", " ")} Details
-              </h2>
-              <div className="space-y-4">
-                {getVisibleKeys().map((key) => (
-                  <div key={key} className="grid grid-cols-3 gap-4">
-                    <div className="col-span-1 font-semibold">
-                      {formatLabel(key === "userId" ? "User" : key)}:
-                    </div>
-                    <div className="col-span-2">
-                      {key === "imageUrl" || key === "camImageUrl" ? (
-                        <img
-                          src={viewItem[key]}
-                          alt={key}
-                          className="w-full max-w-xs h-auto"
-                        />
-                      ) : key === "input" &&
-                        viewItem[key] &&
-                        typeof viewItem[key] === "object" ? (
-                        <div className="space-y-2">
-                          {Object.entries(viewItem[key]).map(([k, v]) => (
-                            <div key={k}>
-                              <strong>{formatLabel(k)}:</strong> {String(v)}
-                            </div>
-                          ))}
-                        </div>
-                      ) : key === "userId" &&
-                        viewItem[key] &&
-                        typeof viewItem[key] === "object" ? (
-                        viewItem[key].name || "Unknown"
-                      ) : (
-                        String(viewItem[key])
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 flex justify-end">
-                <button
-                  className={`px-4 py-2 rounded ${
-                    isDarkTheme
-                      ? "bg-gray-700 hover:bg-gray-600"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                  onClick={() => setOpenViewModal(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showSuccessPopup && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-xl flex items-center space-x-4">
-              <span className="text-3xl">✅</span>
-              <span className="text-lg font-medium">{successMessage}</span>
-            </div>
-          </div>
         )}
       </main>
     </div>

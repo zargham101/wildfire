@@ -32,6 +32,7 @@ const PredictionHomePage = () => {
   const [predictionResult, setPredictionResult] = useState(null);
   const [predictionId, setPredictionId] = useState(null);
   const [camPredictionResult, setCamPredictionResult] = useState(null);
+  const [userId, setUserID] = useState(null);
   const [loading, setLoading] = useState(false);
   const [camLoading, setCamLoading] = useState(false);
   const [error, setError] = useState({ message: "", field: "" });
@@ -266,13 +267,13 @@ const PredictionHomePage = () => {
         }
       );
 
-      console.log("backend se kia ara hai::",res.data.data)
-      const prediction = res.data.data.prediction; // Get the prediction data
-      const predictionId = res.data.data._id; // Get the prediction ID
+      const prediction = res.data.data.prediction; 
+      const predictionId = res.data.data._id;
+      const userId = res.data.data.userId 
 
-      console.log("pre ID::",res.data.data._id)
       // Set the prediction ID and result
       setPredictionId(predictionId);
+      setUserID(userId);
       setPredictionResult(prediction);
       setCreatedAt(res.data.data.createdAt);
 
@@ -705,6 +706,7 @@ const PredictionHomePage = () => {
             predictionId={predictionId}
             latitude={formData.fire_location_latitude} 
             longitude={formData.fire_location_longitude}
+            userId={userId}
           />
         </div>
 

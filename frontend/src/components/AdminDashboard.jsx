@@ -11,11 +11,13 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("users");
   const [data, setData] = useState([]);
+  const [resourceRequests, setResourceRequests] = useState([]);
+  const [newRequestsCount, setNewRequestsCount] = useState(0);
+  const [lastSeenRequestIds, setLastSeenRequestIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [token] = useState(localStorage.getItem("admin_token"));
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,8 +25,6 @@ export default function AdminDashboard() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [userNameMap, setUserNameMap] = useState({});
   const [agencyUsers, setAgencyUsers] = useState([]);
@@ -33,8 +33,10 @@ export default function AdminDashboard() {
   const [showAgencyCard, setShowAgencyCard] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-const [editData, setEditData] = useState(null);
-const [editImageFile, setEditImageFile] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [editData, setEditData] = useState(null);
+  const [viewData, setViewData] = useState(null);
+  const [editImageFile, setEditImageFile] = useState(null);
 
   const baseUrl = "http://localhost:5001/api/admin";
 
@@ -42,6 +44,30 @@ const [editImageFile, setEditImageFile] = useState(null);
     if (!token) navigate("/login");
     else fetchData();
   }, [selectedCategory, page]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      axios
+        .get("http://localhost:5001/api/agency/resource-requests", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const requests = res.data;
+          setResourceRequests(requests);
+
+          const unseenRequests = requests.filter(
+            (req) => !lastSeenRequestIds.includes(req._id)
+          );
+
+          setNewRequestsCount(unseenRequests.length);
+        })
+        .catch((err) => {
+          console.error("Failed to poll resource requests", err);
+        });
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [lastSeenRequestIds, token]);
 
   const fetchUserName = async (userId) => {
     if (userNameMap[userId]) return userNameMap[userId];
@@ -87,6 +113,9 @@ const [editImageFile, setEditImageFile] = useState(null);
           }))
         );
 
+        const unseenCount = enrichedData.filter((req) => !req.isSeen).length;
+        setNewRequestsCount(unseenCount);
+
         setData(enrichedData);
         setAgencyUsers(agencyRes.data.data || []);
       } else if (selectedCategory === "image-predictions") {
@@ -128,14 +157,44 @@ const [editImageFile, setEditImageFile] = useState(null);
     }
   };
 
-  const handleViewItem = (item) => {
-    console.log("View:", item);
+  const handleViewItem = async (item) => {
+    try {
+      let res;
+      if (selectedCategory === "users") {
+        res = await axios.get(`${baseUrl}/users/${item._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else if (selectedCategory === "image-predictions") {
+        res = await axios.get(`${baseUrl}/image-predictions/${item._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else if (selectedCategory === "feature-predictions") {
+        res = await axios.get(`${baseUrl}/feature-predictions/${item._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+      setViewData(res.data);
+      setShowViewModal(true);
+    } catch (err) {
+      console.error("Error fetching item details:", err);
+      Swal.fire("Error", "Failed to fetch details", "error");
+    }
   };
 
-  const handleEditItem = (item) => {
-  setEditData(item);
-  setShowEditModal(true);
-};
+  const handleEditItem = async (item) => {
+    if (selectedCategory === "users") {
+      try {
+        const res = await axios.get(`${baseUrl}/users/${item._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setEditData(res.data);
+        setShowEditModal(true);
+      } catch (err) {
+        console.error("Error fetching user details:", err);
+        Swal.fire("Error", "Failed to fetch user details", "error");
+      }
+    }
+  };
 
   const handleDeleteItem = async (item) => {
     const result = await Swal.fire({
@@ -150,12 +209,18 @@ const [editImageFile, setEditImageFile] = useState(null);
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(
-          `${baseUrl}/delete/${selectedCategory}/${item._id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        let url;
+        if (selectedCategory === "users") {
+          url = `${baseUrl}/users/${item._id}`;
+        } else if (selectedCategory === "image-predictions") {
+          url = `${baseUrl}/image-predictions/${item._id}`;
+        } else if (selectedCategory === "feature-predictions") {
+          url = `${baseUrl}/feature-predictions/${item._id}`;
+        }
+
+        await axios.delete(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         fetchData();
         Swal.fire("Deleted!", "Record has been deleted.", "success");
       } catch (err) {
@@ -235,8 +300,7 @@ const [editImageFile, setEditImageFile] = useState(null);
             <strong>Commanders:</strong> {value.commanders}
           </div>
           <div>
-            <strong>Heavy Equipment:</strong>{" "}
-            {value.heavyEquipment?.join(", ")}
+            <strong>Heavy Equipment:</strong> {value.heavyEquipment?.join(", ")}
           </div>
         </div>
       );
@@ -284,10 +348,19 @@ const [editImageFile, setEditImageFile] = useState(null);
           </li>
           <li>
             <button
-              onClick={() => setSelectedCategory("resource-requests")}
-              className="w-full text-left hover:text-yellow-400"
+              onClick={() => {
+                setSelectedCategory("resource-requests");
+                setNewRequestsCount(0);
+                setLastSeenRequestIds(resourceRequests.map((r) => r._id)); 
+              }}
+              className="w-full text-left hover:text-yellow-400 flex justify-between items-center"
             >
-              Resource Requests
+              <span>Resource Requests</span>
+              {newRequestsCount > 0 && (
+                <span className="ml-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
+                  {newRequestsCount}
+                </span>
+              )}
             </button>
           </li>
         </ul>
@@ -302,8 +375,15 @@ const [editImageFile, setEditImageFile] = useState(null);
             <button
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               onClick={() => {
-                if (selectedCategory === "users") setShowCreateModal(true);
-                else navigate(`/admin/create/${selectedCategory}`);
+                if (selectedCategory === "users") {
+                  setShowCreateModal(true);
+                } else if (selectedCategory === "image-predictions") {
+                  navigate("/predict/cam/result");
+                } else if (selectedCategory === "feature-predictions") {
+                  navigate("/predictionHomePage");
+                } else {
+                  navigate(`/admin/create/${selectedCategory}`);
+                }
               }}
             >
               + Create
@@ -345,10 +425,12 @@ const [editImageFile, setEditImageFile] = useState(null);
                         style={{ color: "blue", cursor: "pointer" }}
                         onClick={() => handleViewItem(item)}
                       />
-                      <EditIcon
-                        style={{ color: "orange", cursor: "pointer" }}
-                        onClick={() => handleEditItem(item)}
-                      />
+                      {selectedCategory === "users" && (
+                        <EditIcon
+                          style={{ color: "orange", cursor: "pointer" }}
+                          onClick={() => handleEditItem(item)}
+                        />
+                      )}
                       <DeleteIcon
                         style={{ color: "red", cursor: "pointer" }}
                         onClick={() => handleDeleteItem(item)}
@@ -470,6 +552,144 @@ const [editImageFile, setEditImageFile] = useState(null);
                   >
                     Create
                   </button>
+                </div>
+              </div>
+            )}
+
+            {showEditModal && editData && (
+              <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center">
+                <div className="bg-white p-6 rounded-lg w-[400px] relative">
+                  <button
+                    onClick={() => setShowEditModal(false)}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                  >
+                    <CloseIcon />
+                  </button>
+                  <h2 className="text-lg font-semibold mb-4">Edit User</h2>
+
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    placeholder="Name"
+                    value={editData.name || ""}
+                    onChange={(e) =>
+                      setEditData({ ...editData, name: e.target.value })
+                    }
+                  />
+
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    placeholder="Email"
+                    value={editData.email || ""}
+                    onChange={(e) =>
+                      setEditData({ ...editData, email: e.target.value })
+                    }
+                  />
+
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    placeholder="Password"
+                    type="password"
+                    onChange={(e) =>
+                      setEditData({ ...editData, password: e.target.value })
+                    }
+                  />
+
+                  <input
+                    className="w-full p-2 mb-2 border rounded"
+                    type="file"
+                    onChange={(e) => setEditImageFile(e.target.files[0])}
+                  />
+
+                  <button
+                    onClick={async () => {
+                      const form = new FormData();
+                      form.append("name", editData.name);
+                      form.append("email", editData.email);
+                      if (editData.password)
+                        form.append("password", editData.password);
+                      if (editImageFile) form.append("photo", editImageFile);
+
+                      try {
+                        await axios.put(
+                          `${baseUrl}/users/${editData._id}`,
+                          form,
+                          {
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                              "Content-Type": "multipart/form-data",
+                            },
+                          }
+                        );
+                        setShowEditModal(false);
+                        fetchData();
+                        Swal.fire(
+                          "Updated!",
+                          "User updated successfully",
+                          "success"
+                        );
+                      } catch (err) {
+                        console.error("Update failed", err);
+                        Swal.fire("Error", "Failed to update user", "error");
+                      }
+                    }}
+                    className="w-full bg-green-600 text-white p-2 rounded"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {showViewModal && viewData && (
+              <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center">
+                <div className="bg-white p-6 rounded-lg w-[600px] max-h-[80vh] overflow-y-auto relative">
+                  <button
+                    onClick={() => setShowViewModal(false)}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                  >
+                    <CloseIcon />
+                  </button>
+                  <h2 className="text-lg font-semibold mb-4">
+                    {selectedCategory === "users" && "User Details"}
+                    {selectedCategory === "image-predictions" &&
+                      "Image Prediction Details"}
+                    {selectedCategory === "feature-predictions" &&
+                      "Feature Prediction Details"}
+                  </h2>
+
+                  <div className="space-y-4">
+                    {Object.entries(viewData).map(([key, value]) => {
+                      if (["_id", "__v", "password"].includes(key)) return null;
+
+                      return (
+                        <div key={key} className="border-b pb-2">
+                          <strong className="capitalize">
+                            {formatLabel(key)}:
+                          </strong>
+                          <div className="mt-1">
+                            {key === "imageUrl" || key === "camImageUrl" ? (
+                              <img
+                                src={value}
+                                alt={key}
+                                className="w-48 h-auto"
+                              />
+                            ) : typeof value === "object" ? (
+                              <div className="text-sm space-y-1">
+                                {Object.entries(value).map(([k, v]) => (
+                                  <div key={k}>
+                                    <strong>{formatLabel(k)}:</strong>{" "}
+                                    {String(v)}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              String(value)
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}

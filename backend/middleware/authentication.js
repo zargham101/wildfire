@@ -22,7 +22,6 @@ const authenticate = async (req, res, next) => {
 
 const authorize = (roles) => {
   return (req, res, next) => {
-    // If the user has one of the roles, grant access
     if (roles.includes(req.user.role)) {
       return next();
     } 

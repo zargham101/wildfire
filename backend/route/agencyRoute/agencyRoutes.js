@@ -9,6 +9,9 @@ const { isAdmin, singleAdminCreation } = require('../../middleware/isAdmin');
 router.post('/agencies', authenticate, isAdmin, agencyController.createAgency); 
 router.get('/agencies', authenticate, isAdmin, agencyController.getAllAgencies); 
 router.get('/agencies/:id', authenticate, isAdmin, agencyController.getAgencyById); 
+router.get('/agencies/me/resources', authenticate,
+  authorize(['agency']),
+  agencyController.getMyResources)
 router.put('/agencies/:id', authenticate, isAdmin, agencyController.updateAgency);
 router.delete('/agencies/:id', authenticate, isAdmin, agencyController.deleteAgency); 
 
@@ -18,9 +21,11 @@ router.get('/agencies/:agencyId/resources', authenticate, authorize(['admin', 'a
 
 // Resource request routes
 router.post('/resource-requests', authenticate, authorize(['admin', 'agency', 'user']), resourceController.createRequest); // Admin, agency, and user
-router.get('/resource-requests', authenticate, authorize(['admin', 'agency']), resourceController.getUserRequests); // Admin and agency
+router.get('/resource-requests', authenticate, authorize(['admin', 'agency']), resourceController.getUserRequests);
+router.get('/resource-requests-detail', authenticate, authorize(['admin', 'agency']), resourceController.getAgencyRequests);
 router.get('/resource-requests/pending', authenticate, authorize(['admin']), resourceController.getPendingRequests); // Admin only
 router.post('/resource-requests/:requestId/assign', authenticate, authorize(['admin']), resourceController.assignRequest); // Admin only
 router.post('/resource-requests/:requestId/respond', authenticate, authorize(['agency']), resourceController.respondToRequest); // Agency only
 
+router.post('/populate-agency', agencyController.populateAgencyResource)
 module.exports = router;

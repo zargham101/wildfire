@@ -32,7 +32,11 @@ const Login = () => {
     if (loggedInUser.role === "admin") {
       localStorage.setItem("admin_token", response.data.token);
       navigate("/admin");
-    } else {
+    } else if(loggedInUser.role === "agency"){
+      localStorage.setItem("agency_token", response.data.token);
+      navigate("/agency");
+    }
+    else {
       navigate("/predictionHomePage");
     }
   } catch (error) {

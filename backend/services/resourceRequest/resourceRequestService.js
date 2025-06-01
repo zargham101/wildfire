@@ -1,15 +1,24 @@
 const ResourceRequest = require("../../model/resourceRequest/index");
 const AgencyResources = require("../../model/agencyResource/index");
-const { deductResources } = require("../../services/agencyResource/agencyResourceService");
+const {
+  deductResources,
+} = require("../../services/agencyResource/agencyResourceService");
 
-async function createRequest(predictionId, userId, resources, location, message, assignedAgency) {
+async function createRequest(
+  predictionId,
+  userId,
+  resources,
+  location,
+  message,
+  assignedAgency
+) {
   const request = new ResourceRequest({
     predictionId,
     userId,
     requiredResources: resources,
     location,
     userMessage: message,
-    assignedAgency,  // New field for agency assignment
+    assignedAgency, // New field for agency assignment
   });
   return await request.save();
 }
@@ -19,8 +28,8 @@ async function getRequestsByUser() {
   const request = await ResourceRequest.find()
     .populate("predictionId")
     .populate("assignedAgency", "name email");
-
-  return request
+  console.log("result::", requests);
+  return request;
 }
 
 // Get all pending requests
@@ -73,9 +82,21 @@ async function respondToRequest(requestId, agencyId, response) {
 
 // Get all requests assigned to an agency
 async function getAgencyRequests(agencyId) {
-  return await ResourceRequest.find({ assignedAgency: agencyId })
-    .populate("userId", "name email")
-    .populate("predictionId");
+  try {
+    console.log("🟡 Running find query for agencyId:", agencyId);
+
+    const data = await ResourceRequest.find({ assignedAgency: agencyId })
+      .populate({ path: "userId", select: "name email", strictPopulate: false })
+      .populate("predictionId");
+
+    console.log("✅ Successfully fetched agency requests");
+    return data;
+  } catch (err) {
+    console.error("🔥 Error in getAgencyRequests service:");
+    console.log(err.name, err.message);
+    console.log(err.stack);
+    throw err;
+  }
 }
 
 module.exports = {

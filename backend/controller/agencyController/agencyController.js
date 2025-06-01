@@ -10,10 +10,34 @@ async function createOrUpdateResources(req, res) {
   }
 }
 
+async function populateAgencyResource(req,res){
+  try {
+    const results = await agencyResourcesService.populateAgency();
+    res.json({ success: true, message: "Resource initialization completed", results });
+  } catch (error) {
+    console.error("Populate error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 async function getResources(req, res) {
   try {
     const agencyId = req.params.agencyId || req.user._id;
     const resources = await agencyResourcesService.getAgencyResources(agencyId);
+    res.json(resources);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+async function getMyResources(req, res) {
+  try {
+    const agencyId = req.user._id;
+    const resources = await agencyResourcesService.getAgencyResources(agencyId);
+
+    if (!resources) {
+      return res.status(404).json({ message: 'No resources found for this agency' });
+    }
+
     res.json(resources);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -96,5 +120,7 @@ module.exports = {
   deleteAgency,
   updateAgency,
   getAgencyById,
-  getAllAgencies
+  getAllAgencies,
+  populateAgencyResource,
+  getMyResources
 };

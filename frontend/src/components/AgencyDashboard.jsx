@@ -6,6 +6,7 @@ export default function AgencyDashboard() {
   const [agencyResources, setAgencyResources] = useState(null);
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [token] = useState(localStorage.getItem("agency_token"));
+
   const baseUrl = "http://localhost:5001/api/agency";
 
   useEffect(() => {
@@ -31,8 +32,12 @@ export default function AgencyDashboard() {
       const res = await axios.get(`${baseUrl}/resource-requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('res::',res)
-      setIncomingRequests(res.data);
+      const data = res.data;
+      data.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      setIncomingRequests(data);
     } catch (err) {
       console.error("Error fetching resource requests:", err);
     }

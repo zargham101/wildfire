@@ -138,6 +138,11 @@ export default function AdminDashboard() {
           }))
         );
 
+        enrichedData.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
         const unseenCount = enrichedData.filter((req) => !req.isSeen).length;
         setNewRequestsCount(unseenCount);
 
@@ -485,7 +490,7 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => handleSendRequest(item._id)}
                             className="px-4 py-1 bg-green-600 text-white rounded text-xs ml-2"
-                            disabled={item.sent} 
+                            disabled={item.sent}
                           >
                             {item.sent ? "Request Sent" : "Send Request"}{" "}
                           </button>

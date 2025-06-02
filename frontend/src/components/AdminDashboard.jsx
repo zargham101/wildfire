@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [newRequestsCount, setNewRequestsCount] = useState(0);
   const [lastSeenRequestIds, setLastSeenRequestIds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isRequestSent, setIsRequestSent] = useState(false);
   const [selectedAgencyResources, setSelectedAgencyResources] = useState(null);
   const [token] = useState(localStorage.getItem("admin_token"));
   const [page, setPage] = useState(1);
@@ -90,11 +91,14 @@ export default function AdminDashboard() {
 
     fetchResources();
   }, [selectedAgencyUser]);
+
   const fetchUserName = async (userId) => {
+    const validUserId = userId._id || userId;
+
     if (userNameMap[userId]) return userNameMap[userId];
     try {
       const res = await axios.get(
-        `http://localhost:5001/api/user/user-details/${userId}`,
+        `http://localhost:5001/api/user/user-details/${validUserId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -165,16 +169,36 @@ export default function AdminDashboard() {
 
   const sendRequestToAgency = async () => {
     try {
+      setIsRequestSent(true);
       await axios.post(
-        `http://localhost:5001/api/agency/resource-requests/${selectedRequestId}/send-request`,
+        `http://localhost:5001/api/agency/resource-requests/${selectedRequestId}/assign`,
         { agencyId: selectedAgencyUser._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      Swal.fire({
+        title: "Request Sent",
+        text: "The request has been successfully sent to the agency.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      setResourceRequests((prevRequests) =>
+        prevRequests.map((req) =>
+          req._id === selectedRequestId ? { ...req, sent: true } : req
+        )
+      );
+
       setShowAgencyCard(false);
+
       fetchData();
-      alert("Request sent successfully!");
     } catch (err) {
       console.error("Failed to send request", err);
+      Swal.fire(
+        "Error",
+        "Failed to send the request. Please try again.",
+        "error"
+      );
     }
   };
 
@@ -457,12 +481,15 @@ export default function AdminDashboard() {
                         onClick={() => handleDeleteItem(item)}
                       />
                       {selectedCategory === "resource-requests" && (
-                        <button
-                          onClick={() => handleSendRequest(item._id)}
-                          className="px-4 py-1 bg-green-600 text-white rounded text-xs ml-2"
-                        >
-                          Send Request
-                        </button>
+                        <div className="flex gap-4 mt-2">
+                          <button
+                            onClick={() => handleSendRequest(item._id)}
+                            className="px-4 py-1 bg-green-600 text-white rounded text-xs ml-2"
+                            disabled={item.sent} 
+                          >
+                            {item.sent ? "Request Sent" : "Send Request"}{" "}
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -488,6 +515,7 @@ export default function AdminDashboard() {
                     </li>
                   ))}
                 </ul>
+
                 {selectedAgencyResources && (
                   <div className="mt-4 text-sm border-t pt-2">
                     <h3 className="font-semibold text-base mb-2">
@@ -518,11 +546,15 @@ export default function AdminDashboard() {
 
                 <div className="mt-4 flex justify-end space-x-2">
                   <button
-                    className="bg-green-600 text-white px-4 py-2 rounded"
+                    className={`px-4 py-2 rounded ${
+                      isRequestSent || !selectedAgencyUser
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700 text-white"
+                    }`}
                     onClick={sendRequestToAgency}
-                    disabled={!selectedAgencyUser}
+                    disabled={isRequestSent || !selectedAgencyUser}
                   >
-                    Confirm Send
+                    {isRequestSent ? "Request Sent" : "Confirm Send"}
                   </button>
                   <button
                     className="bg-gray-400 text-white px-4 py-2 rounded"

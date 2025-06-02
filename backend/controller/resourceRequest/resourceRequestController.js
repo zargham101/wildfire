@@ -52,7 +52,6 @@ async function createRequest(req, res) {
 async function getUserRequests(req, res) {
   try {
     const requests = await resourceRequestService.getRequestsByUser();
-    console.log("result::",requests)
     res.json(requests);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -80,13 +79,10 @@ async function assignRequest(req, res) {
 
 async function getAgencyRequests(req, res) {
   try {
-    console.log("📥 getAgencyRequests controller hit");
-    const result = await resourceRequestService.getAgencyRequests(req.user._id);
-    console.log("results::",result)
-    res.status(201).json(result);
+    const requests = await resourceRequestService.getAgencyRequests(req.user._id);
+    res.json(requests);
   } catch (error) {
-    console.log("❌ Failed to fetch agency requests:", error.message);
-    res.status(500).json({ message: error.message || "Server error" });
+    res.status(500).json({ message: error.message });
   }
 }
 

@@ -1,35 +1,26 @@
 const ResourceRequest = require("../../model/resourceRequest/index");
 const AgencyResources = require("../../model/agencyResource/index");
-const {
-  deductResources,
-} = require("../../services/agencyResource/agencyResourceService");
+const { deductResources } = require("../../services/agencyResource/agencyResourceService");
 
-async function createRequest(
-  predictionId,
-  userId,
-  resources,
-  location,
-  message,
-  assignedAgency
-) {
+async function createRequest(predictionId, userId, resources, location, message, assignedAgency) {
   const request = new ResourceRequest({
     predictionId,
     userId,
     requiredResources: resources,
     location,
     userMessage: message,
-    assignedAgency, // New field for agency assignment
+    assignedAgency, 
   });
   return await request.save();
 }
 
-// Get all requests by user
 async function getRequestsByUser() {
   const request = await ResourceRequest.find()
     .populate("predictionId")
-    .populate("assignedAgency", "name email");
-  console.log("result::", requests);
-  return request;
+    .populate("assignedAgency", "name email")
+    .populate("userId", "name email");
+
+  return request
 }
 
 // Get all pending requests
@@ -39,9 +30,8 @@ async function getPendingRequests() {
     .populate("predictionId");
 }
 
-// Assign a request to an agency
 async function assignRequest(requestId, agencyId, message) {
-  // Find and update the request status to "assigned"
+
   const request = await ResourceRequest.findByIdAndUpdate(
     requestId,
     {
@@ -55,7 +45,6 @@ async function assignRequest(requestId, agencyId, message) {
   return request;
 }
 
-// Respond to a resource request (accept or reject)
 async function respondToRequest(requestId, agencyId, response) {
   const { status, message } = response;
 
@@ -63,40 +52,23 @@ async function respondToRequest(requestId, agencyId, response) {
   if (!request) throw new Error("Request not found");
 
   if (status === "accepted") {
-    // Use the service to deduct resources from the agency
     const agency = await deductResources(agencyId, request.requiredResources);
 
-    // Update the request status to "completed" after resources are deducted
     request.status = "completed";
   } else {
-    // If the agency rejects the request, the status should be "rejected"
     request.status = "rejected";
   }
 
-  // Save the updated request and add the agency's message
   request.agencyMessage = message;
   await request.save();
 
   return request;
 }
 
-// Get all requests assigned to an agency
 async function getAgencyRequests(agencyId) {
-  try {
-    console.log("🟡 Running find query for agencyId:", agencyId);
-
-    const data = await ResourceRequest.find({ assignedAgency: agencyId })
-      .populate({ path: "userId", select: "name email", strictPopulate: false })
-      .populate("predictionId");
-
-    console.log("✅ Successfully fetched agency requests");
-    return data;
-  } catch (err) {
-    console.error("🔥 Error in getAgencyRequests service:");
-    console.log(err.name, err.message);
-    console.log(err.stack);
-    throw err;
-  }
+  return await ResourceRequest.find({ assignedAgency: agencyId })
+    .populate("userId", "name email")
+    .populate("predictionId");
 }
 
 module.exports = {

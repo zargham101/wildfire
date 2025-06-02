@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [newRequestsCount, setNewRequestsCount] = useState(0);
   const [lastSeenRequestIds, setLastSeenRequestIds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedAgencyResources, setSelectedAgencyResources] = useState(null);
   const [token] = useState(localStorage.getItem("admin_token"));
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -30,7 +31,6 @@ export default function AdminDashboard() {
   const [agencyUsers, setAgencyUsers] = useState([]);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [selectedAgencyUser, setSelectedAgencyUser] = useState(null);
-  const [selectedAgencyResources, setSelectedAgencyResources] = useState(null);
   const [showAgencyCard, setShowAgencyCard] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -70,28 +70,26 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, [lastSeenRequestIds, token]);
 
- useEffect(() => {
-  const fetchResources = async () => {
-    if (!selectedAgencyUser) return;
+  useEffect(() => {
+    const fetchResources = async () => {
+      if (!selectedAgencyUser) return;
 
-    try {
-      const res = await axios.get(
-        `http://localhost:5001/api/agency/agencies/${selectedAgencyUser._id}/resources`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setSelectedAgencyResources(res.data);
-    } catch (err) {
-      console.error("Failed to fetch agency resources", err);
-      setSelectedAgencyResources(null);
-    }
-  };
+      try {
+        const res = await axios.get(
+          `http://localhost:5001/api/agency/agencies/${selectedAgencyUser._id}/resources`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setSelectedAgencyResources(res.data);
+      } catch (err) {
+        console.error("Failed to fetch agency resources", err);
+        setSelectedAgencyResources(null);
+      }
+    };
 
-  fetchResources();
-}, [selectedAgencyUser]);
-
-
+    fetchResources();
+  }, [selectedAgencyUser]);
   const fetchUserName = async (userId) => {
     if (userNameMap[userId]) return userNameMap[userId];
     try {
@@ -168,7 +166,7 @@ export default function AdminDashboard() {
   const sendRequestToAgency = async () => {
     try {
       await axios.post(
-        `http://localhost:5001/api/agency/agencies/${selectedRequestId}/resources`,
+        `http://localhost:5001/api/agency/resource-requests/${selectedRequestId}/send-request`,
         { agencyId: selectedAgencyUser._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -517,6 +515,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 )}
+
                 <div className="mt-4 flex justify-end space-x-2">
                   <button
                     className="bg-green-600 text-white px-4 py-2 rounded"

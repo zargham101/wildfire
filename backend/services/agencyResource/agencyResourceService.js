@@ -3,42 +3,37 @@ const User = require("../../model/user/index");
 
 async function createOrUpdateAgencyResources(agencyId, data) {
   let agencyResources = await AgencyResources.findOne({ agencyId });
-
+  
   if (!agencyResources) {
     // Set current resources to max resources initially
     data.currentResources = data.maxResources;
     agencyResources = new AgencyResources({ agencyId, ...data });
   } else {
     // Calculate the difference in max resources and adjust current accordingly
-    const firefightersDiff =
-      data.maxResources.firefighters -
-      agencyResources.maxResources.firefighters;
-    const firetrucksDiff =
-      data.maxResources.firetrucks - agencyResources.maxResources.firetrucks;
-    const helicoptersDiff =
-      data.maxResources.helicopters - agencyResources.maxResources.helicopters;
-    const commandersDiff =
-      data.maxResources.commanders - agencyResources.maxResources.commanders;
-
+    const firefightersDiff = data.maxResources.firefighters - agencyResources.maxResources.firefighters;
+    const firetrucksDiff = data.maxResources.firetrucks - agencyResources.maxResources.firetrucks;
+    const helicoptersDiff = data.maxResources.helicopters - agencyResources.maxResources.helicopters;
+    const commandersDiff = data.maxResources.commanders - agencyResources.maxResources.commanders;
+    
     agencyResources.maxResources = data.maxResources;
     agencyResources.currentResources.firefighters += firefightersDiff;
     agencyResources.currentResources.firetrucks += firetrucksDiff;
     agencyResources.currentResources.helicopters += helicoptersDiff;
     agencyResources.currentResources.commanders += commandersDiff;
-
+    
     if (data.heavyEquipment) {
       agencyResources.heavyEquipment = data.heavyEquipment;
     }
   }
-
+  
   return await agencyResources.save();
 }
 
 async function getAgencyResources(agencyId) {
-  return await AgencyResources.findOne({ agencyId }).populate(
-    "agencyId",
-    "name email"
-  );
+  return await AgencyResources.findOne({ agencyId }).populate("agencyId", "name email");
+}
+async function getAgencyDetails(agencyId) {
+  return await AgencyResources.findOne({ agencyId }).populate("agencyId", "name email");
 }
 
 async function getAllAgenciesWithResources() {
@@ -51,11 +46,11 @@ async function createAgency(agencyData) {
 }
 
 async function getAllAgencies() {
-  return await User.find({ role: "agency" }).select("-password");
+  return await User.find({ role: 'agency' }).select('-password');
 }
 
 async function getAgencyById(id) {
-  return await User.findById(id).select("-password");
+  return await User.findById(id).select('-password');
 }
 
 async function updateAgency(id, updateData) {
@@ -63,20 +58,21 @@ async function updateAgency(id, updateData) {
   if (updateData.role) {
     delete updateData.role;
   }
-
-  return await User.findByIdAndUpdate(id, updateData, {
+  
+  return await User.findByIdAndUpdate(id, updateData, { 
     new: true,
-    runValidators: true,
-  }).select("-password");
+    runValidators: true
+  }).select('-password');
 }
 
 async function deleteAgency(id) {
   const agency = await User.findById(id);
-  if (!agency || agency.role !== "agency") throw new Error("Agency not found");
+  if (!agency || agency.role !== 'agency') throw new Error('Agency not found');
 
   // Delete the agency's resource data
   await AgencyResources.findOneAndDelete({ agencyId: id });
   await User.findByIdAndDelete(id);
+
 }
 
 // Function to deduct resources when the agency accepts a request
@@ -105,10 +101,8 @@ async function deductResources(agencyId, resourcesRequested) {
 
   return agency;
 }
-
-async function populateAgency() {
-  try {
-    const agencies = await User.find({ role: "agency" });
+async function populateAgencyResourcesForAllAgencies() {
+  const agencies = await User.find({ role: "agency" });
 
   const results = [];
 
@@ -153,11 +147,8 @@ async function populateAgency() {
   }
 
   return results;
-  } catch (error) {
-    console.log("error", error.message);
-    throw error;
-  }
 }
+
 
 module.exports = {
   createOrUpdateAgencyResources,
@@ -168,6 +159,7 @@ module.exports = {
   updateAgency,
   getAgencyById,
   getAllAgencies,
+  getAgencyDetails,
   deductResources,
-  populateAgency
+  populateAgencyResourcesForAllAgencies
 };

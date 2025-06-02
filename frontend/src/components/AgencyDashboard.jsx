@@ -19,6 +19,7 @@ export default function AgencyDashboard() {
       const res = await axios.get(`${baseUrl}/agencies/me/resources`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("res:::",res)
       setAgencyResources(res.data);
     } catch (err) {
       console.error("Error fetching agency resources:", err);
@@ -27,12 +28,10 @@ export default function AgencyDashboard() {
 
   const fetchIncomingRequests = async () => {
     try {
-        console.log("sending request to backend")
-      const res = await axios.get(`${baseUrl}/resource-requests-detail`, {
+      const res = await axios.get(`${baseUrl}/resource-requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
-      console.log("res::",res);
+      console.log('res::',res)
       setIncomingRequests(res.data);
     } catch (err) {
       console.error("Error fetching resource requests:", err);

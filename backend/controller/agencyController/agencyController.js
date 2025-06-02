@@ -10,34 +10,10 @@ async function createOrUpdateResources(req, res) {
   }
 }
 
-async function populateAgencyResource(req,res){
-  try {
-    const results = await agencyResourcesService.populateAgency();
-    res.json({ success: true, message: "Resource initialization completed", results });
-  } catch (error) {
-    console.error("Populate error:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-}
-
 async function getResources(req, res) {
   try {
-    const agencyId = req.params.agencyId || req.user._id;
+    const agencyId = req.params.agencyId === 'me' ? req.user._id : req.params.agencyId;
     const resources = await agencyResourcesService.getAgencyResources(agencyId);
-    res.json(resources);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-async function getMyResources(req, res) {
-  try {
-    const agencyId = req.user._id;
-    const resources = await agencyResourcesService.getAgencyResources(agencyId);
-
-    if (!resources) {
-      return res.status(404).json({ message: 'No resources found for this agency' });
-    }
-
     res.json(resources);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -111,9 +87,36 @@ async function deleteAgency(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+async function populateAllAgencyResources(req, res) {
+  try {
+    const results = await userService.populateAgencyResourcesForAllAgencies();
+    res.json({ success: true, message: "Resource initialization completed", results });
+  } catch (error) {
+    console.error("Populate error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+async function getMyResources(req, res) {
+  try {
+    console.log("ID::",req.user._id);
+    const agencyId = req.user._id;
+    
+    const resources = await agencyResourcesService.getAgencyDetails(agencyId);
+
+    if (!resources) {
+      return res.status(404).json({ message: 'No resources found for this agency' });
+    }
+
+    res.json(resources);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 module.exports = {
   createOrUpdateResources,
+  populateAllAgencyResources,
   getResources,
   getAllAgenciesResources,
   createAgency,
@@ -121,6 +124,5 @@ module.exports = {
   updateAgency,
   getAgencyById,
   getAllAgencies,
-  populateAgencyResource,
   getMyResources
 };

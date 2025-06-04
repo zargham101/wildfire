@@ -40,7 +40,14 @@ const AgencyResourcesSchema = new mongoose.Schema({
       enum: ['deduct'],
       default: 'deduct'
     }
-  }]
+  }],
+  locked: {
+    type: Boolean,
+    default: false
+  },
+  lockReason: {
+    type : String
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("AgencyResources", AgencyResourcesSchema);

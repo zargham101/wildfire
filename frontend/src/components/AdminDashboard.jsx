@@ -26,6 +26,7 @@ export default function AdminDashboard() {
     password: "",
   });
   const [imageFile, setImageFile] = useState(null);
+  const [lockedAgencies, setLockedAgencies] = useState(null)
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [userNameMap, setUserNameMap] = useState({});
@@ -39,6 +40,8 @@ export default function AdminDashboard() {
   const [editData, setEditData] = useState(null);
   const [viewData, setViewData] = useState(null);
   const [editImageFile, setEditImageFile] = useState(null);
+  const [completedRequestsCount, setCompletedRequestsCount] = useState(null);
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(null);
 
   const baseUrl = "http://localhost:5001/api/admin";
 
@@ -126,10 +129,12 @@ export default function AdminDashboard() {
           axios.get(`http://localhost:5001/api/agency/resource-requests`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
+
           axios.get(`http://localhost:5001/api/user/user-role?role=agency`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
+        console.log("req response::", requestRes);
 
         const enrichedData = await Promise.all(
           requestRes.data.map(async (item) => ({
@@ -138,16 +143,38 @@ export default function AdminDashboard() {
           }))
         );
 
+        const lockedAgencies = agencyRes.data.filter(
+        (agency) => agency.locked === true
+      );
+      const availableAgencies = agencyRes.data.filter(
+        (agency) => agency.locked === false
+      );
+      setLockedAgencies(lockedAgencies);
+      setAgencyUsers(availableAgencies);
+
+        const completedRequests = enrichedData.filter(
+          (req) => req.status === "completed"
+        );
+        const pendingRequests = enrichedData.filter(
+          (req) => req.status === "pending"
+        );
+
+        const completedRequestsCount = completedRequests.length;
+        const pendingRequestsCount = pendingRequests.length;
+
         enrichedData.sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+        console.log("Enriched Data with User Names:", enrichedData);
 
         const unseenCount = enrichedData.filter((req) => !req.isSeen).length;
         setNewRequestsCount(unseenCount);
 
         setData(enrichedData);
-        setAgencyUsers(agencyRes.data.data || []);
+        // setAgencyUsers(agencyRes.data.data || []);
+        setCompletedRequestsCount(completedRequestsCount);
+        setPendingRequestsCount(pendingRequestsCount);
       } else if (selectedCategory === "image-predictions") {
         res = await axios.get(
           `${baseUrl}/image-predictions?page=${page}&limit=${limit}`,
@@ -299,7 +326,7 @@ export default function AdminDashboard() {
     if (selectedCategory === "feature-predictions")
       return ["userName", "input", "prediction"];
     if (selectedCategory === "resource-requests")
-      return ["userName", "requiredResources", "status"];
+      return ["userName", "requiredResources", "location", "status"];
 
     const keys = Object.keys(data[0]);
     return keys.filter((key) => !["_id", "__v", "password"].includes(key));
@@ -351,6 +378,19 @@ export default function AdminDashboard() {
           </div>
           <div>
             <strong>Heavy Equipment:</strong> {value.heavyEquipment?.join(", ")}
+          </div>
+        </div>
+      );
+    }
+
+    if (key === "location" && value) {
+      return (
+        <div>
+          <div>
+            <strong>Latitude:</strong> {value.latitude}
+          </div>
+          <div>
+            <strong>Longitude:</strong> {value.longitude}
           </div>
         </div>
       );
@@ -451,6 +491,35 @@ export default function AdminDashboard() {
           <p>Loading...</p>
         ) : (
           <>
+            {selectedCategory === "resource-requests" && (
+              <div className="flex justify-between space-x-4 mb-8">
+                <div className="bg-green-100 p-4 rounded-lg shadow-md w-1/3">
+                  <h3 className="font-semibold text-xl text-green-700">
+                    Completed Requests
+                  </h3>
+                  <p className="text-2xl font-bold text-green-800">
+                    {completedRequestsCount}
+                  </p>
+                </div>
+
+                <div className="bg-yellow-100 p-4 rounded-lg shadow-md w-1/3">
+                  <h3 className="font-semibold text-xl text-yellow-700">
+                    Pending Requests
+                  </h3>
+                  <p className="text-2xl font-bold text-yellow-800">
+                    {pendingRequestsCount}
+                  </p>
+                </div>
+                <div className="bg-yellow-100 p-4 rounded-lg shadow-md w-1/3">
+                  <h3 className="font-semibold text-xl text-yellow-700">
+                    Total Requests
+                  </h3>
+                  <p className="text-2xl font-bold text-yellow-800">
+                    {newRequestsCount}
+                  </p>
+                </div>
+              </div>
+            )}
             <table className="w-full table-auto border">
               <thead>
                 <tr className="bg-gray-200 text-black">

@@ -271,7 +271,6 @@ const PredictionHomePage = () => {
       const predictionId = res.data.data._id;
       const userId = res.data.data.userId 
 
-      // Set the prediction ID and result
       setPredictionId(predictionId);
       setUserID(userId);
       setPredictionResult(prediction);

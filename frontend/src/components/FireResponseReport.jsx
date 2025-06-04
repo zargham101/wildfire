@@ -68,7 +68,7 @@ const FireResponseReport = ({
     setSendingRequest(true);
     setError("");
 
-    const token = localStorage.getItem("token"); // Get the token for authorization
+    const token = localStorage.getItem("token"); 
 
     try {
       const payload = {

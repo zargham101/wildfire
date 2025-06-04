@@ -9,14 +9,11 @@ async function createRequest(req, res) {
     
     const userId = req.user._id;
     
-    
-    // Get prediction details
     const prediction = await AllFeaturePredicionSchema.findById(predictionId);
     if (!prediction) {
       return res.status(404).json({ message: "Prediction not found" });
     }
     
-    // Calculate required resources based on prediction
     const resources = calculateResources(
       prediction.input.temperature,
       prediction.input.wind_speed,

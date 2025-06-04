@@ -75,32 +75,50 @@ async function deleteAgency(id) {
 
 }
 
-// Function to deduct resources when the agency accepts a request
 async function deductResources(agencyId, resourcesRequested) {
   const agency = await AgencyResources.findOne({ agencyId });
   if (!agency) throw new Error("Agency not found");
 
-  // Deduct resources from the current pool
+  const remainingResources = {
+    firefighters: agency.currentResources.firefighters - resourcesRequested.firefighters,
+    firetrucks: agency.currentResources.firetrucks - resourcesRequested.firetrucks,
+    helicopters: agency.currentResources.helicopters - resourcesRequested.helicopters,
+    commanders: agency.currentResources.commanders - resourcesRequested.commanders,
+  };
+
+  if (
+    remainingResources.firefighters < 0 ||
+    remainingResources.firetrucks < 0 ||
+    remainingResources.helicopters < 0 ||
+    remainingResources.commanders < 0
+  ) {
+    agency.locked = true; 
+    agency.lockReason = "Insufficient resources for the requested allocation.";
+
+    await agency.save();
+
+    throw new Error("Not enough resources available to fulfill the request. Agency locked.");
+  }
+
   agency.currentResources.firefighters -= resourcesRequested.firefighters;
   agency.currentResources.firetrucks -= resourcesRequested.firetrucks;
   agency.currentResources.helicopters -= resourcesRequested.helicopters;
   agency.currentResources.commanders -= resourcesRequested.commanders;
 
-  // Save the agency after deducting resources
-  await agency.save();
-
-  // Track the resource usage in the history
   agency.resourceHistory.push({
     resourcesUsed: resourcesRequested,
     dateUsed: new Date(),
     action: "deduct",
   });
 
-  // Save the resource history
+  await agency.save();
+
   await agency.save();
 
   return agency;
 }
+
+
 async function populateAgencyResourcesForAllAgencies() {
   const agencies = await User.find({ role: "agency" });
 
@@ -125,6 +143,8 @@ async function populateAgencyResourcesForAllAgencies() {
           commanders: 8,
         },
         heavyEquipment: ["bulldozer", "crane"],
+        locked:false,
+        lockReason:"null"
       };
 
       const created = await AgencyResources.create(defaultResources);

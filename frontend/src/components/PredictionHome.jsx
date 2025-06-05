@@ -352,23 +352,28 @@ const PredictionHomePage = () => {
           <ClimaChainSlider />
         </div>
 
-        <div className="bg-red-700 w-[1200px] mr-[60px] ml-[70px] mt-[50px] p-3 relative">
-          <p className="text-white text-4xl font-bold text-center">
-            Predict Wildfire
-          </p>
-          <div className="absolute left-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] ml-1 shadow-lg border-2 border-white"></div>
-          <div className="absolute right-0 top-1/2 p-1 transform -translate-y-1/2 rounded-full w-[10px] h-[10px] mr-1 shadow-lg border-2 border-white"></div>
-        </div>
+      <div className="bg-red-600 w-full relative flex items-center justify-center py-4 shadow-lg">
+  <p className="text-white text-2xl font-bold text-center select-none">
+    Predict Wildfire
+  </p>
+
+  {/* Left circle */}
+  <div className="absolute left-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
+
+  {/* Right circle */}
+  <div className="absolute right-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
+</div>
+
 
         <div className="w-full mt-9 max-w-6xl flex flex-col lg:flex-row gap-8">
           {/* Left Column - Form */}
-          <div className="w-full lg:w-1/2">
+          <div className="w-full  lg:w-1/2">
             <form
               onSubmit={handleSubmit}
               className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
             >
-              <div className="flex flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
+                <label className="font-semibold  text-sm text-red-600 mb-1 flex items-center">
                   Fire location Latitude
                   <Tooltip title="Latitude from selected map location" arrow>
                     <span className="ml-1 cursor-pointer">
@@ -388,7 +393,7 @@ const PredictionHomePage = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Location Longitude
                   <Tooltip title="Longitude from selected map location" arrow>
@@ -409,7 +414,7 @@ const PredictionHomePage = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Start Date
                   <Tooltip title="Select the date when the fire started." arrow>
@@ -428,7 +433,7 @@ const PredictionHomePage = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Type
                   <Tooltip
@@ -456,7 +461,7 @@ const PredictionHomePage = () => {
                 </select>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fire Position on Slope
                   <Tooltip
@@ -484,7 +489,7 @@ const PredictionHomePage = () => {
                 </select>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Weather Conditions Over Fire
                   <Tooltip
@@ -512,7 +517,7 @@ const PredictionHomePage = () => {
                 </select>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Temperature (°C)
                   <Tooltip
@@ -534,7 +539,7 @@ const PredictionHomePage = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Relative Humidity (%)
                   <Tooltip title="Relative humidity percentage" arrow>
@@ -553,7 +558,7 @@ const PredictionHomePage = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Wind Direction
                   <Tooltip
@@ -581,7 +586,7 @@ const PredictionHomePage = () => {
                 </select>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Wind Speed (km/h)
                   <Tooltip title="Wind speed in kilometers per hour" arrow>
@@ -601,7 +606,7 @@ const PredictionHomePage = () => {
                 />
               </div>
 
-              <div className="flex flex-col col-span-full">
+              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col col-span-full">
                 <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
                   Fuel Type
                   <Tooltip
@@ -629,55 +634,73 @@ const PredictionHomePage = () => {
                 </select>
               </div>
 
-              <div className="col-span-full text-center mt-4">
-                <button
-                  type="submit"
-                  className="w-[150px] bg-red-700 text-white py-2 hover:bg-white hover:border-4 hover:border-red-700 hover:text-black"
-                >
-                  {loading ? "Predicting..." : "Predict Fire"}
-                </button>
-              </div>
+             <div className="col-span-full text-center mt-4">
+  <button
+    type="submit"
+    disabled={loading}
+    className={`w-[150px] py-2 px-4 rounded-md font-semibold transition-all duration-300 
+                bg-red-700 text-white 
+                hover:bg-white hover:text-red-700 hover:border-red-700 
+                border-2 border-transparent 
+                hover:scale-105 shadow-md hover:shadow-lg 
+                disabled:opacity-60 disabled:cursor-not-allowed`}
+  >
+    {loading ? "Predicting..." : "Predict Fire"}
+  </button>
+</div>
+
             </form>
           </div>
 
           {/* Right Column - Map */}
-          <div className="w-full lg:w-1/2">
-            <form onSubmit={handleSearch} className="w-full mb-4">
-              <div className="flex">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for a location..."
-                  className="flex-grow p-2 border border-gray-300 rounded-l-md"
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600"
-                >
-                  Search
-                </button>
-              </div>
+          <div className="w-full  lg:w-1/2">
+            <form onSubmit={handleSearch} className="w-full transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up mb-4">
+             <div className="flex">
+  <input
+    type="text"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    placeholder="Search for a location..."
+    className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-400"
+  />
+  <button
+    type="submit"
+    className="px-4 py-2 bg-green-500 text-white rounded-r-md 
+               transition-all duration-300 font-medium border-2 border-transparent 
+               hover:bg-white hover:text-green-600 hover:border-green-600 
+               hover:scale-105 shadow-md hover:shadow-lg"
+  >
+    Search
+  </button>
+</div>
+
             </form>
 
             <div
               ref={mapContainer}
-              className="w-full h-[500px] mb-4 rounded-lg shadow-lg border-2 border-gray-300"
+              className="w-full transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up h-[500px] mb-4 rounded-lg shadow-lg border-2 border-gray-300"
             />
 
-            <button
-              onClick={handleCamPrediction}
-              disabled={!selectedLocation || camLoading}
-              className={`w-full py-3 rounded-md transition duration-200 ${
-                selectedLocation
-                  ? "bg-green-700 hover:bg-green-800 text-white"
-                  : "bg-gray-400 cursor-not-allowed text-gray-700"
-              }`}
-            >
-              {camLoading
-                ? "Processing Image..."
-                : "Analyze Location with Satellite Image"}
-            </button>
+           <button
+  onClick={handleCamPrediction}
+  disabled={!selectedLocation || camLoading}
+  className={`w-full py-3 rounded-md font-medium transition-all duration-300 ease-in-out
+    ${
+      selectedLocation && !camLoading
+        ? "bg-green-700 text-white hover:bg-white hover:text-green-700 hover:border-2 hover:border-green-700 hover:scale-105 shadow-md hover:shadow-lg"
+        : "bg-gray-300 text-gray-600 cursor-not-allowed opacity-70"
+    }`}
+>
+  {camLoading ? (
+    <div className="flex items-center justify-center gap-2">
+      <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+      <span>Processing Image...</span>
+    </div>
+  ) : (
+    "Analyze Location with Satellite Image"
+  )}
+</button>
+
           </div>
         </div>
 
@@ -686,7 +709,7 @@ const PredictionHomePage = () => {
         )}
 
         {(predictionResult || camPredictionResult) && (
-          <div className="w-full mt-8">
+          <div className="w-full p-10 mt-8">
             <CombinedResults
               formData={formData}
               predictionResult={predictionResult}
@@ -696,7 +719,7 @@ const PredictionHomePage = () => {
           </div>
         )}
 
-        <div className="w-full mt-6">
+        <div className="w-full  mt-6">
           <FireResponseReport
             fireSize={predictionResult}
             windSpeed={formData.wind_speed}

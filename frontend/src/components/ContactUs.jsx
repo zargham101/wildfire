@@ -181,13 +181,13 @@ const ContactUs = () => {
 
       {/* Office Timings */}
       <p className="text-lg text-gray-700">
-        Our switchboard service is available Monday to Friday, 8:30 AM – 5:00 PM.
+        Our  service is available Monday to Friday, 8:30 AM – 5:00 PM.
       </p>
 
       {/* Phone Number */}
       <div className="flex items-center space-x-2 text-2xl font-bold text-red-700">
         <span>📞</span>
-        <span>020 8555 1200</span>
+        <span>041 1400 1500</span>
       </div>
 
       {/* Divider */}
@@ -195,11 +195,11 @@ const ContactUs = () => {
 
       {/* Office Address */}
       <h3 className="text-2xl font-semibold text-gray-900">
-        Fire Brigade Head Office
+        Head Office
       </h3>
       <div className="flex items-center space-x-2 text-lg font-bold text-gray-700">
         <span>📍</span>
-        <span>169 Union Street, SE1 0LL</span>
+        <span>392 - Defence Road_Lahore</span>
       </div>
 
       {/* Google Maps Link */}

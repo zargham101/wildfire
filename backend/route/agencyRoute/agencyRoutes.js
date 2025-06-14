@@ -17,11 +17,11 @@ router.get('/agencies/resources', authenticate, isAdmin, agencyController.getAll
 router.get('/agencies/:agencyId/resources', authenticate, authorize(['admin', 'agency']), agencyController.getResources); 
 
 // Resource request routes
-router.post('/resource-requests', authenticate, authorize(['admin', 'agency', 'user']), resourceController.createRequest); // Admin, agency, and user
-router.get('/resource-requests', authenticate, authorize(['admin', 'agency']), resourceController.getUserRequests); // Admin and agency
-router.get('/resource-requests/pending', authenticate, authorize(['admin']), resourceController.getPendingRequests); // Admin only
-router.post('/resource-requests/:requestId/assign', authenticate, authorize(['admin']), resourceController.assignRequest); // Admin only
-router.post('/resource-requests/:requestId/respond', authenticate, authorize(['agency']), resourceController.respondToRequest); // Agency only
+router.post('/resource-requests', authenticate, authorize(['admin', 'agency', 'user']), resourceController.createRequest); 
+router.get('/resource-requests', authenticate, authorize(['admin', 'agency']), resourceController.getUserRequests); 
+router.get('/resource-requests/pending', authenticate, authorize(['admin']), resourceController.getPendingRequests);
+router.post('/resource-requests/:requestId/assign', authenticate, authorize(['admin']), resourceController.assignRequest);
+router.post('/resource-requests/:requestId/respond', authenticate, authorize(['agency']), resourceController.respondToRequest); 
 //Populate agency resources
 router.post("/agencies/populate-resources", agencyController.populateAllAgencyResources);
 router.get(

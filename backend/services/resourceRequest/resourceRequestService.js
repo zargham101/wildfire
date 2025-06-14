@@ -1,15 +1,24 @@
 const ResourceRequest = require("../../model/resourceRequest/index");
 const AgencyResources = require("../../model/agencyResource/index");
-const { deductResources } = require("../../services/agencyResource/agencyResourceService");
+const {
+  deductResources,
+} = require("../../services/agencyResource/agencyResourceService");
 
-async function createRequest(predictionId, userId, resources, location, message, assignedAgency) {
+async function createRequest(
+  predictionId,
+  userId,
+  resources,
+  location,
+  message,
+  assignedAgency
+) {
   const request = new ResourceRequest({
     predictionId,
     userId,
     requiredResources: resources,
     location,
     userMessage: message,
-    assignedAgency, 
+    assignedAgency,
   });
   return await request.save();
 }
@@ -20,7 +29,7 @@ async function getRequestsByUser() {
     .populate("assignedAgency", "name email")
     .populate("userId", "name email");
 
-  return request
+  return request;
 }
 
 // Get all pending requests
@@ -31,7 +40,6 @@ async function getPendingRequests() {
 }
 
 async function assignRequest(requestId, agencyId, message) {
-
   const request = await ResourceRequest.findByIdAndUpdate(
     requestId,
     {
@@ -52,9 +60,23 @@ async function respondToRequest(requestId, agencyId, response) {
   if (!request) throw new Error("Request not found");
 
   if (status === "accepted") {
-    const agency = await deductResources(agencyId, request.requiredResources);
+    try {
+      const agency = await deductResources(agencyId, request.requiredResources);
+      request.status = "completed";
+    } catch (err) {
+      if (err.message.includes("Not enough resources")) {
+        await ResourceRequest.findByIdAndUpdate(requestId, {
+          status: "rejected",
+          rejectionReason: "Not enough resources in agency.",
+        });
 
-    request.status = "completed";
+        await AgencyResources.findOneAndUpdate(
+          { agencyId },
+          { locked: true, lockReason: "Insufficient resources" }
+        );
+      }
+      throw err;
+    }
   } else {
     request.status = "rejected";
   }

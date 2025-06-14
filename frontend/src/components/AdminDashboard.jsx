@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("users");
+  const [unseenSidebarCount, setUnseenSidebarCount] = useState(0);
   const [data, setData] = useState([]);
   const [resourceRequests, setResourceRequests] = useState([]);
   const [newRequestsCount, setNewRequestsCount] = useState(0);
@@ -26,7 +27,7 @@ export default function AdminDashboard() {
     password: "",
   });
   const [imageFile, setImageFile] = useState(null);
-  const [lockedAgencies, setLockedAgencies] = useState(null)
+  const [lockedAgencies, setLockedAgencies] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [userNameMap, setUserNameMap] = useState({});
@@ -65,6 +66,7 @@ export default function AdminDashboard() {
           );
 
           setNewRequestsCount(unseenRequests.length);
+          setUnseenSidebarCount(unseenRequests.length);
         })
         .catch((err) => {
           console.error("Failed to poll resource requests", err);
@@ -96,18 +98,18 @@ export default function AdminDashboard() {
   }, [selectedAgencyUser]);
 
   const fetchUserName = async (userId) => {
-    const validUserId = userId._id || userId;
+    const id = userId._id || userId; // normalize to ID string
+    if (userNameMap[id]) return userNameMap[id]; // check with string key
 
-    if (userNameMap[userId]) return userNameMap[userId];
     try {
       const res = await axios.get(
-        `http://localhost:5001/api/user/user-details/${validUserId}`,
+        `http://localhost:5001/api/user/user-details/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const name = res.data.name;
-      setUserNameMap((prev) => ({ ...prev, [userId]: name }));
+      setUserNameMap((prev) => ({ ...prev, [id]: name })); // use ID as key
       return name;
     } catch (err) {
       return "Unknown";
@@ -137,20 +139,25 @@ export default function AdminDashboard() {
         console.log("req response::", requestRes);
 
         const enrichedData = await Promise.all(
-          requestRes.data.map(async (item) => ({
-            ...item,
-            userName: await fetchUserName(item.userId),
-          }))
+          requestRes.data.map(async (item) => {
+            const userName = await fetchUserName(item.userId);
+            console.log("Fetched user name for", item.userId, "→", userName);
+            return {
+              ...item,
+              userName,
+            };
+          })
         );
 
-        const lockedAgencies = agencyRes.data.filter(
-        (agency) => agency.locked === true
-      );
-      const availableAgencies = agencyRes.data.filter(
-        (agency) => agency.locked === false
-      );
-      setLockedAgencies(lockedAgencies);
-      setAgencyUsers(availableAgencies);
+        const agencies = Array.isArray(agencyRes.data)
+          ? agencyRes.data
+          : agencyRes.data.data || [];
+
+        const lockedAgencies = agencies.filter((agency) => agency.locked);
+        const availableAgencies = agencies.filter((agency) => !agency.locked);
+
+        setLockedAgencies(lockedAgencies);
+        setAgencyUsers(availableAgencies);
 
         const completedRequests = enrichedData.filter(
           (req) => req.status === "completed"
@@ -440,7 +447,7 @@ export default function AdminDashboard() {
             <button
               onClick={() => {
                 setSelectedCategory("resource-requests");
-                setNewRequestsCount(0);
+                setUnseenSidebarCount(0);
                 setLastSeenRequestIds(resourceRequests.map((r) => r._id));
               }}
               className="w-full text-left hover:text-yellow-400 flex justify-between items-center"
@@ -448,7 +455,7 @@ export default function AdminDashboard() {
               <span>Resource Requests</span>
               {newRequestsCount > 0 && (
                 <span className="ml-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
-                  {newRequestsCount}
+                  {unseenSidebarCount}
                 </span>
               )}
             </button>

@@ -89,7 +89,7 @@ async function deleteAgency(req, res) {
 }
 async function populateAllAgencyResources(req, res) {
   try {
-    const results = await userService.populateAgencyResourcesForAllAgencies();
+    const results = await agencyResourcesService.populateAgencyResourcesForAllAgencies();
     res.json({ success: true, message: "Resource initialization completed", results });
   } catch (error) {
     console.error("Populate error:", error);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import PredictionHistoryTable from "./PredictionHistoryTable";
+import MapWithMarkers from "./MapWithMarkers";
 import FireResponseReport from "./FireResponseReport";
 import ClimaChainSlider from "./ClimaChainSlider";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
@@ -13,6 +14,11 @@ import { getFireSeverity } from "../condition/resourceCalculator";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiaGFzc25haW5haG1hZGNoZWVtYSIsImEiOiJjbWF3cTV1ZnUwYWI1MmxzZ3R1eTl0dmhkIn0.jwuQcSkkMNQtAwMJCPRl6w";
 
+const markerData = [
+  { lat: 51.5, lon: -0.09 },
+  { lat: 51.51, lon: -0.1 },
+  { lat: 51.49, lon: -0.08 },
+];
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
     fire_location_latitude: "",
@@ -46,42 +52,42 @@ const PredictionHomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const mapContainer = useRef(null);
 
-  useEffect(() => {
-    const initializeMap = () => {
-      const newMap = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: "mapbox://styles/mapbox/satellite-v9",
-        center: [0, 0],
-        zoom: 1,
-      });
+  // useEffect(() => {
+  //   const initializeMap = () => {
+  //     const newMap = new mapboxgl.Map({
+  //       container: mapContainer.current,
+  //       style: "mapbox://styles/mapbox/satellite-v9",
+  //       center: [0, 0],
+  //       zoom: 1,
+  //     });
 
-      newMap.on("load", () => {
-        setMap(newMap);
-      });
+  //     newMap.on("load", () => {
+  //       setMap(newMap);
+  //     });
 
-      newMap.on("click", (e) => {
-        const location = {
-          lng: e.lngLat.lng,
-          lat: e.lngLat.lat,
-        };
-        setSelectedLocation(location);
-        updateFormLocation(location);
+  //     newMap.on("click", (e) => {
+  //       const location = {
+  //         lng: e.lngLat.lng,
+  //         lat: e.lngLat.lat,
+  //       };
+  //       setSelectedLocation(location);
+  //       updateFormLocation(location);
 
-        // Remove existing marker
-        if (marker) marker.remove();
+  //       // Remove existing marker
+  //       if (marker) marker.remove();
 
-        // Add new marker
-        const newMarker = new mapboxgl.Marker()
-          .setLngLat([e.lngLat.lng, e.lngLat.lat])
-          .addTo(newMap);
-        setMarker(newMarker);
-      });
+  //       // Add new marker
+  //       const newMarker = new mapboxgl.Marker()
+  //         .setLngLat([e.lngLat.lng, e.lngLat.lat])
+  //         .addTo(newMap);
+  //       setMarker(newMarker);
+  //     });
 
-      return () => newMap.remove();
-    };
+  //     return () => newMap.remove();
+  //   };
 
-    if (!map) initializeMap();
-  }, []);
+  //   if (!map) initializeMap();
+  // }, []);
 
   const updateFormLocation = (location) => {
     setFormData((prev) => ({
@@ -91,43 +97,43 @@ const PredictionHomePage = () => {
     }));
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
+  // const handleSearch = async (e) => {
+  //   e.preventDefault();
+  //   if (!searchQuery.trim()) return;
 
-    try {
-      const response = await axios.get(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          searchQuery
-        )}.json`,
-        {
-          params: {
-            access_token: mapboxgl.accessToken,
-            limit: 1,
-          },
-        }
-      );
+  //   try {
+  //     const response = await axios.get(
+  //       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+  //         searchQuery
+  //       )}.json`,
+  //       {
+  //         params: {
+  //           access_token: mapboxgl.accessToken,
+  //           limit: 1,
+  //         },
+  //       }
+  //     );
 
-      if (response.data.features.length > 0) {
-        const [lng, lat] = response.data.features[0].center;
-        const location = { lng, lat };
-        map.flyTo({ center: [lng, lat], zoom: 12 });
-        setSelectedLocation(location);
-        updateFormLocation(location);
+  //     if (response.data.features.length > 0) {
+  //       const [lng, lat] = response.data.features[0].center;
+  //       const location = { lng, lat };
+  //       map.flyTo({ center: [lng, lat], zoom: 12 });
+  //       setSelectedLocation(location);
+  //       updateFormLocation(location);
 
-        if (marker) marker.remove();
-        const newMarker = new mapboxgl.Marker()
-          .setLngLat([lng, lat])
-          .addTo(map);
-        setMarker(newMarker);
-      }
-    } catch (err) {
-      setError({
-        ...error,
-        message: "Location search failed. Please try again.",
-      });
-    }
-  };
+  //       if (marker) marker.remove();
+  //       const newMarker = new mapboxgl.Marker()
+  //         .setLngLat([lng, lat])
+  //         .addTo(map);
+  //       setMarker(newMarker);
+  //     }
+  //   } catch (err) {
+  //     setError({
+  //       ...error,
+  //       message: "Location search failed. Please try again.",
+  //     });
+  //   }
+  // };
 
   const fireTypeOptions = ["Ground", "Surface", "Crown"];
   const firePositionOptions = [
@@ -267,9 +273,9 @@ const PredictionHomePage = () => {
         }
       );
 
-      const prediction = res.data.data.prediction; 
+      const prediction = res.data.data.prediction;
       const predictionId = res.data.data._id;
-      const userId = res.data.data.userId 
+      const userId = res.data.data.userId;
 
       setPredictionId(predictionId);
       setUserID(userId);
@@ -299,6 +305,10 @@ const PredictionHomePage = () => {
     if (severity === "Moderate")
       return "bg-orange-100 border-4 border-orange-500";
     return "bg-red-100 border-4 border-red-600";
+  };
+
+  const handleSelectedArea = (points) => {
+    console.log("Selected Points:", points);
   };
 
   return (
@@ -352,356 +362,23 @@ const PredictionHomePage = () => {
           <ClimaChainSlider />
         </div>
 
-      <div className="bg-red-600 w-full relative flex items-center justify-center py-4 shadow-lg">
-  <p className="text-white text-2xl font-bold text-center select-none">
-    Predict Wildfire
-  </p>
+        <div className="bg-red-600 w-full relative flex items-center justify-center py-4 shadow-lg">
+          <p className="text-white text-2xl font-bold text-center select-none">
+            Predict Wildfire
+          </p>
 
-  {/* Left circle */}
-  <div className="absolute left-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
+          {/* Left circle */}
+          <div className="absolute left-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
 
-  {/* Right circle */}
-  <div className="absolute right-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
-</div>
+          {/* Right circle */}
+          <div className="absolute right-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
+        </div>
 
-
-        <div className="w-full mt-9 max-w-6xl flex flex-col lg:flex-row gap-8">
-          {/* Left Column - Form */}
-          <div className="w-full  lg:w-1/2">
-            <form
-              onSubmit={handleSubmit}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
-            >
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold  text-sm text-red-600 mb-1 flex items-center">
-                  Fire location Latitude
-                  <Tooltip title="Latitude from selected map location" arrow>
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  name="fire_location_latitude"
-                  value={formData.fire_location_latitude}
-                  onChange={handleChange}
-                  required
-                  readOnly
-                  className="p-2 border-2 border-black rounded bg-gray-100"
-                />
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Fire Location Longitude
-                  <Tooltip title="Longitude from selected map location" arrow>
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  name="fire_location_longitude"
-                  value={formData.fire_location_longitude}
-                  onChange={handleChange}
-                  required
-                  readOnly
-                  className="p-2 border-2 border-black rounded bg-gray-100"
-                />
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Fire Start Date
-                  <Tooltip title="Select the date when the fire started." arrow>
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="date"
-                  name="fire_start_date"
-                  value={formData.fire_start_date}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                />
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Fire Type
-                  <Tooltip
-                    title="Specify the type of fire: ground, surface, or crown."
-                    arrow
-                  >
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <select
-                  name="fire_type"
-                  value={formData.fire_type}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black"
-                >
-                  <option value="">Select Fire Type</option>
-                  {fireTypeOptions.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Fire Position on Slope
-                  <Tooltip
-                    title="Choose the fire's position relative to the slope."
-                    arrow
-                  >
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <select
-                  name="fire_position_on_slope"
-                  value={formData.fire_position_on_slope}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                >
-                  <option value="">Select Position</option>
-                  {firePositionOptions.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Weather Conditions Over Fire
-                  <Tooltip
-                    title="Describe the weather conditions over the fire area."
-                    arrow
-                  >
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <select
-                  name="weather_conditions_over_fire"
-                  value={formData.weather_conditions_over_fire}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                >
-                  <option value="">Select Weather</option>
-                  {weatherOptions.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Temperature (°C)
-                  <Tooltip
-                    title="Temperature at fire location in Celsius"
-                    arrow
-                  >
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="number"
-                  name="temperature"
-                  value={formData.temperature}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                />
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Relative Humidity (%)
-                  <Tooltip title="Relative humidity percentage" arrow>
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="number"
-                  name="relative_humidity"
-                  value={formData.relative_humidity}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                />
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Wind Direction
-                  <Tooltip
-                    title="Specify the wind direction at the fire location (e.g., NE, SW)"
-                    arrow
-                  >
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <select
-                  name="wind_direction"
-                  value={formData.wind_direction}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                >
-                  <option value="">Select Wind Direction</option>
-                  {windDirectionOptions.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Wind Speed (km/h)
-                  <Tooltip title="Wind speed in kilometers per hour" arrow>
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <input
-                  type="number"
-                  name="wind_speed"
-                  value={formData.wind_speed}
-                  onChange={handleChange}
-                  min="0"
-                  required
-                  className="p-2 border-2 border-black rounded"
-                />
-              </div>
-
-              <div className="flex transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up flex-col col-span-full">
-                <label className="font-semibold text-sm text-red-600 mb-1 flex items-center">
-                  Fuel Type
-                  <Tooltip
-                    title="Select the vegetation or material type fueling the fire."
-                    arrow
-                  >
-                    <span className="ml-1 cursor-pointer">
-                      <InfoOutlineIcon fontSize="small" />
-                    </span>
-                  </Tooltip>
-                </label>
-                <select
-                  name="fuel_type"
-                  value={formData.fuel_type}
-                  onChange={handleChange}
-                  required
-                  className="p-2 border-2 border-black rounded"
-                >
-                  <option value="">Select Fuel Type</option>
-                  {fuelTypeOptions.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-             <div className="col-span-full text-center mt-4">
-  <button
-    type="submit"
-    disabled={loading}
-    className={`w-[150px] py-2 px-4 rounded-md font-semibold transition-all duration-300 
-                bg-red-700 text-white 
-                hover:bg-white hover:text-red-700 hover:border-red-700 
-                border-2 border-transparent 
-                hover:scale-105 shadow-md hover:shadow-lg 
-                disabled:opacity-60 disabled:cursor-not-allowed`}
-  >
-    {loading ? "Predicting..." : "Predict Fire"}
-  </button>
-</div>
-
-            </form>
-          </div>
-
-          {/* Right Column - Map */}
-          <div className="w-full  lg:w-1/2">
-            <form onSubmit={handleSearch} className="w-full transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up mb-4">
-             <div className="flex">
-  <input
-    type="text"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    placeholder="Search for a location..."
-    className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-400"
-  />
-  <button
-    type="submit"
-    className="px-4 py-2 bg-green-500 text-white rounded-r-md 
-               transition-all duration-300 font-medium border-2 border-transparent 
-               hover:bg-white hover:text-green-600 hover:border-green-600 
-               hover:scale-105 shadow-md hover:shadow-lg"
-  >
-    Search
-  </button>
-</div>
-
-            </form>
-
-            <div
-              ref={mapContainer}
-              className="w-full transition-all duration-500 ease-in-out transform hover:scale-[1.03] hover:shadow-xl hover:shadow-red-400 bg-white p-2 rounded-xl hover:bg-red-50 animate-slide-up h-[500px] mb-4 rounded-lg shadow-lg border-2 border-gray-300"
-            />
-
-           <button
-  onClick={handleCamPrediction}
-  disabled={!selectedLocation || camLoading}
-  className={`w-full py-3 rounded-md font-medium transition-all duration-300 ease-in-out
-    ${
-      selectedLocation && !camLoading
-        ? "bg-green-700 text-white hover:bg-white hover:text-green-700 hover:border-2 hover:border-green-700 hover:scale-105 shadow-md hover:shadow-lg"
-        : "bg-gray-300 text-gray-600 cursor-not-allowed opacity-70"
-    }`}
->
-  {camLoading ? (
-    <div className="flex items-center justify-center gap-2">
-      <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
-      <span>Processing Image...</span>
-    </div>
-  ) : (
-    "Analyze Location with Satellite Image"
-  )}
-</button>
-
-          </div>
+        <div className="w-full mt-9 max-w-6xl flex flex-col lg:flex-row gap-8 z-0">
+          <MapWithMarkers
+            markerData={markerData}
+            onAreaSelected={handleSelectedArea}
+          />
         </div>
 
         {error.message && !error.field && (
@@ -726,7 +403,7 @@ const PredictionHomePage = () => {
             humidity={formData.relative_humidity}
             predictionDate={createdAt}
             predictionId={predictionId}
-            latitude={formData.fire_location_latitude} 
+            latitude={formData.fire_location_latitude}
             longitude={formData.fire_location_longitude}
             userId={userId}
           />

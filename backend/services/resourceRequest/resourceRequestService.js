@@ -61,31 +61,43 @@ async function respondToRequest(requestId, agencyId, response) {
 
   if (status === "accepted") {
     try {
-      const agency = await deductResources(agencyId, request.requiredResources);
+      await deductResources(agencyId, request.requiredResources);
       request.status = "completed";
+      request.agencyMessage = message;
+      await request.save();
+      return request;
     } catch (err) {
       if (err.message.includes("Not enough resources")) {
-        await ResourceRequest.findByIdAndUpdate(requestId, {
-          status: "rejected",
-          rejectionReason: "Not enough resources in agency.",
-        });
+        const updatedRequest = await ResourceRequest.findByIdAndUpdate(
+          requestId,
+          {
+            status: "rejected",
+            rejectionReason: "Not enough resources in agency.",
+            agencyMessage: message,
+          },
+          { new: true }
+        );
 
         await AgencyResources.findOneAndUpdate(
           { agencyId },
-          { locked: true, lockReason: "Insufficient resources" }
+          {
+            locked: true,
+            lockReason: "Insufficient resources",
+          }
         );
+
+        return updatedRequest;
       }
       throw err;
     }
   } else {
     request.status = "rejected";
+    request.agencyMessage = message;
+    await request.save();
+    return request;
   }
-
-  request.agencyMessage = message;
-  await request.save();
-
-  return request;
 }
+
 
 async function getAgencyRequests(agencyId) {
   return await ResourceRequest.find({ assignedAgency: agencyId })

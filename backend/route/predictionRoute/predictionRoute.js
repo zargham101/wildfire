@@ -13,6 +13,7 @@ router.get("/user/me/predictions",verifyToken, controller.getMyPredictions);
 router.post("/predict-fire", verifyToken, prepocessorController.predictFire);
 router.get("/my/fire/prediction", verifyToken, prepocessorController.fetchAll);
 router.post("/predict/cam/result", upload, verifyToken,prepocessorController.handleFirePrediction);
+router.post("/process-data", prepocessorController.handleFireSize);
 
 
 module.exports = router;

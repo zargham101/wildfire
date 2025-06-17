@@ -1,8 +1,12 @@
-const axios = require("axios");
+const axios = require('axios');
 const FirePrediction = require("../../model/allFeaturePrediction/index");
 const { s3 } = require("../../config/multerConfig");
 const Prediction = require("../../model/camModel/camModelSchema");
 const fs = require("fs");
+const path = require("path");
+const {parse} = require("csv-parse/sync")
+const {fetchWeatherApi} = require("openmeteo");
+const {Buffer} = require("buffer")
 
 exports.processAndPredict = async (inputData, userId) => {
   try {
@@ -88,3 +92,61 @@ exports.predictImage = async (file, userId) => {
     throw error;
   }
 };
+
+exports.trackFires = async (records) => {
+  const grouped = {};
+  const allSeries = {}; // 🔹 To store results for saving
+
+  for (const rec of records) {
+    const lat = parseFloat(rec.latitude).toFixed(2);
+    const lon = parseFloat(rec.longitude).toFixed(2);
+    const key = `${lat},${lon}`;
+    const dateTime = `${rec.acq_date}T${rec.acq_time}`;
+    const frp = parseFloat(rec.frp);
+
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({ dateTime, frp });
+  }
+
+  for (const key in grouped) {
+    const [lat, lon] = key.split(",");
+    const weatherData = await fetchWeatherData(lat, lon); // Fetch weather data for the location
+    
+    const series = grouped[key]
+      .sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime))
+      .map((d, i, arr) => {
+        const prev = i > 0 ? arr[i - 1] : null;
+        const firearea = d.frp * 0.5;
+        const prevgrow = prev ? prev.frp * 0.5 : 0;
+        const pctgrowth =
+          prevgrow > 0
+            ? Math.max(0, ((firearea - prevgrow) / prevgrow) * 100)
+            : 0;
+        const day_frac = i / Math.max(1, arr.length - 1);
+        const date = d.dateTime.split("T")[0];
+
+        // Add weather data to the fire tracking
+        return {
+          key,
+          date,
+          firearea: firearea.toFixed(2),
+          prevgrow: prevgrow.toFixed(2),
+          pctgrowth: pctgrowth.toFixed(2),
+          day_frac: day_frac.toFixed(2),
+          weather: weatherData.daily // Adding weather data here
+        };
+      });
+
+    allSeries[key] = series;
+
+    console.log(`\nFire at [${key}]:`);
+    for (const entry of series) {
+      console.log(
+        `Date: ${entry.date} | Fire Area: ${entry.firearea} ha | Prev Area: ${entry.prevgrow} ha | Growth: ${entry.pctgrowth}% | Day Fraction: ${entry.day_frac}`
+      );
+    }
+  }
+
+  // 🔹 Save output to JSON file
+  fs.writeFileSync("fire_tracks_with_weather.json", JSON.stringify(allSeries, null, 2));
+}

@@ -90,14 +90,12 @@ async function getAgencyRequests(req, res) {
 async function respondToRequest(req, res) {
   try {
     const { requestId, status, message } = req.body;
-    console.log("look here:::", requestId, status, message);
     const response = await resourceRequestService.respondToRequest(
       requestId,
       req.user._id,
       { status, message }
     );
-    console.log("response::", response);
-    res.json(response);
+    res.status(200).json(response);
   } catch (error) {
     const isResourceError =
       error.message?.toLowerCase().includes("not enough resources") ||

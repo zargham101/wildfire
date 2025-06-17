@@ -2,6 +2,7 @@ const axios = require('axios');
 const FirePrediction = require("../../model/allFeaturePrediction/index");
 const { s3 } = require("../../config/multerConfig");
 const Prediction = require("../../model/camModel/camModelSchema");
+const FireData = require("../../model/classifierModel/index");
 const fs = require("fs");
 const path = require("path");
 const {parse} = require("csv-parse/sync")
@@ -28,6 +29,15 @@ exports.processAndPredict = async (inputData, userId) => {
     return saved;
   } catch (err) {
     throw err;
+  }
+};
+
+exports.getAllFireData = async () => {
+  try {
+    const fireData = await FireData.find();  // This will fetch all documents
+    return fireData;
+  } catch (err) {
+    throw new Error('Error fetching fire data: ' + err.message);
   }
 };
 

@@ -77,3 +77,22 @@ exports.handleFireSize = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+exports.getAllFireData = async (req, res) => {
+  try {
+    const fireData = await fireService.getAllFireData();  
+
+    // Log fireData for debugging
+    console.log("Fetched Fire Data:", fireData);
+
+    // Filter out entries where lat or lon is undefined or null
+    const validFireData = fireData.filter((item) => {
+      const [lat, lon] = item.location.split(",");
+      return lat && lon && !isNaN(lat) && !isNaN(lon);
+    });
+
+    res.status(200).json(validFireData);  // Send only valid data
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching fire data: ' + err.message });
+  }
+};

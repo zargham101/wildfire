@@ -4,8 +4,8 @@ import PredictionHistoryTable from "./PredictionHistoryTable";
 import MapWithMarkers from "./MapWithMarkers";
 import FireResponseReport from "./FireResponseReport";
 import ClimaChainSlider from "./ClimaChainSlider";
-import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
-import Tooltip from "@mui/material/Tooltip";
+// import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
+// import Tooltip from "@mui/material/Tooltip";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import CombinedResults from "./CombinedResults";
@@ -14,11 +14,11 @@ import { getFireSeverity } from "../condition/resourceCalculator";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiaGFzc25haW5haG1hZGNoZWVtYSIsImEiOiJjbWF3cTV1ZnUwYWI1MmxzZ3R1eTl0dmhkIn0.jwuQcSkkMNQtAwMJCPRl6w";
 
-const markerData = [
-  { lat: 51.5, lon: -0.09 },
-  { lat: 51.51, lon: -0.1 },
-  { lat: 51.49, lon: -0.08 },
-];
+// const markerData = [
+//   { lat: 51.5, lon: -0.09 },
+//   { lat: 51.51, lon: -0.1 },
+//   { lat: 51.49, lon: -0.08 },
+// ];
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
     fire_location_latitude: "",
@@ -45,6 +45,7 @@ const PredictionHomePage = () => {
   const [showFireAlert, setShowFireAlert] = useState(false);
   const [fireSeverity, setFireSeverity] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+   const [markerData, setMarkerData] = useState([]);
 
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
@@ -135,45 +136,66 @@ const PredictionHomePage = () => {
   //   }
   // };
 
-  const fireTypeOptions = ["Ground", "Surface", "Crown"];
-  const firePositionOptions = [
-    "Bottom",
-    "Flat",
-    "Lower 1/3",
-    "Middle 1/3",
-    "Upper 1/3",
-  ];
-  const weatherOptions = [
-    "CB dry",
-    "CB wet",
-    "Clear",
-    "Cloudy",
-    "Rain showers",
-  ];
-  const fuelTypeOptions = [
-    "C-1 Spruce-Lichen Woodland",
-    "C-2 Boreal Spruce",
-    "C-3 Mature Jack or Lodgepole Pine",
-    "C-4 Immature Jack or Lodgepole Pine",
-    "S-1 Jack or Lodgepole Pine slash",
-    "S-2 White Spruce-Balsam slash",
-    "M-1 Boreal Mixedwood-Leafless",
-    "M-2 Boreal Mixedwood-Green",
-    "D-1 Leafless Aspen",
-    "O-1a Matted Grass",
-    "O-1b Standing Grass",
-  ];
-  const windDirectionOptions = [
-    "SW",
-    "S",
-    "W",
-    "E",
-    "NW",
-    "CLM",
-    "N",
-    "SE",
-    "NE",
-  ];
+  useEffect(() => {
+    const fetchMarkerData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5001/api/prediction/fire-data"); 
+        const data = response.data.map(item => {
+          const [lat, lon] = item.location.split(","); 
+          return {
+            lat: parseFloat(lat),
+            lon: parseFloat(lon),
+            data: item.data, // Store the associated data
+          };
+        });
+        setMarkerData(data);
+      } catch (error) {
+        console.error("Failed to fetch marker data", error);
+      }
+    };
+
+    fetchMarkerData();
+  }, []);
+
+  // const fireTypeOptions = ["Ground", "Surface", "Crown"];
+  // const firePositionOptions = [
+  //   "Bottom",
+  //   "Flat",
+  //   "Lower 1/3",
+  //   "Middle 1/3",
+  //   "Upper 1/3",
+  // ];
+  // const weatherOptions = [
+  //   "CB dry",
+  //   "CB wet",
+  //   "Clear",
+  //   "Cloudy",
+  //   "Rain showers",
+  // ];
+  // const fuelTypeOptions = [
+  //   "C-1 Spruce-Lichen Woodland",
+  //   "C-2 Boreal Spruce",
+  //   "C-3 Mature Jack or Lodgepole Pine",
+  //   "C-4 Immature Jack or Lodgepole Pine",
+  //   "S-1 Jack or Lodgepole Pine slash",
+  //   "S-2 White Spruce-Balsam slash",
+  //   "M-1 Boreal Mixedwood-Leafless",
+  //   "M-2 Boreal Mixedwood-Green",
+  //   "D-1 Leafless Aspen",
+  //   "O-1a Matted Grass",
+  //   "O-1b Standing Grass",
+  // ];
+  // const windDirectionOptions = [
+  //   "SW",
+  //   "S",
+  //   "W",
+  //   "E",
+  //   "NW",
+  //   "CLM",
+  //   "N",
+  //   "SE",
+  //   "NE",
+  // ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;

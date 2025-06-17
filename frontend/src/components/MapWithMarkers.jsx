@@ -1,21 +1,13 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMap,
-} from 'react-leaflet';
+import React, {useEffect, useRef} from 'react';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-draw/dist/leaflet.draw.css';
+import L from 'leaflet';
 import 'leaflet-draw';
-
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// ✅ Set correct paths for default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
@@ -32,9 +24,7 @@ const MapControls = ({ markerData, onAreaSelected }) => {
     map.addLayer(drawnItems);
 
     drawControlRef.current = new L.Control.Draw({
-      edit: {
-        featureGroup: drawnItems,
-      },
+      edit: { featureGroup: drawnItems },
       draw: {
         polygon: true,
         rectangle: true,

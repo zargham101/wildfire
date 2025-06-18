@@ -15,6 +15,7 @@ router.get("/my/fire/prediction", verifyToken, prepocessorController.fetchAll);
 router.post("/predict/cam/result", upload, verifyToken,prepocessorController.handleFirePrediction);
 router.post("/process-data", prepocessorController.handleFireSize);
 router.get("/fire-data", prepocessorController.getAllFireData);
+router.get("/fire-data-byId", prepocessorController.getFireDataById);
 
 
 module.exports = router;

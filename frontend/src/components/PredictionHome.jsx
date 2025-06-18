@@ -14,11 +14,6 @@ import { getFireSeverity } from "../condition/resourceCalculator";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiaGFzc25haW5haG1hZGNoZWVtYSIsImEiOiJjbWF3cTV1ZnUwYWI1MmxzZ3R1eTl0dmhkIn0.jwuQcSkkMNQtAwMJCPRl6w";
 
-// const markerData = [
-//   { lat: 51.5, lon: -0.09 },
-//   { lat: 51.51, lon: -0.1 },
-//   { lat: 51.49, lon: -0.08 },
-// ];
 const PredictionHomePage = () => {
   const [formData, setFormData] = useState({
     fire_location_latitude: "",
@@ -35,6 +30,7 @@ const PredictionHomePage = () => {
     createdAt: "",
   });
 
+  const [selectedMarkerId, setSelectedMarkerId] = useState(null);
   const [predictionResult, setPredictionResult] = useState(null);
   const [predictionId, setPredictionId] = useState(null);
   const [camPredictionResult, setCamPredictionResult] = useState(null);
@@ -140,14 +136,17 @@ const PredictionHomePage = () => {
     const fetchMarkerData = async () => {
       try {
         const response = await axios.get("http://localhost:5001/api/prediction/fire-data"); 
+        
         const data = response.data.map(item => {
           const [lat, lon] = item.location.split(","); 
           return {
+            _id: item._id,
             lat: parseFloat(lat),
             lon: parseFloat(lon),
             data: item.data, // Store the associated data
           };
         });
+        console.log("what is in data::",data)
         setMarkerData(data);
       } catch (error) {
         console.error("Failed to fetch marker data", error);
@@ -197,67 +196,67 @@ const PredictionHomePage = () => {
   //   "NE",
   // ];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
-  const handleCamPrediction = async () => {
-    if (!selectedLocation) {
-      setError({
-        ...error,
-        message: "Please select a location on the map first.",
-      });
-      return;
-    }
+  // const handleCamPrediction = async () => {
+  //   if (!selectedLocation) {
+  //     setError({
+  //       ...error,
+  //       message: "Please select a location on the map first.",
+  //     });
+  //     return;
+  //   }
 
-    setCamLoading(true);
-    setError({ message: "", field: "" });
+  //   setCamLoading(true);
+  //   setError({ message: "", field: "" });
 
-    try {
-      const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${selectedLocation.lng},${selectedLocation.lat},15/600x600?access_token=${mapboxgl.accessToken}`;
+  //   try {
+  //     const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${selectedLocation.lng},${selectedLocation.lat},15/600x600?access_token=${mapboxgl.accessToken}`;
 
-      const imageResponse = await fetch(staticImageUrl);
-      const imageBlob = await imageResponse.blob();
+  //     const imageResponse = await fetch(staticImageUrl);
+  //     const imageBlob = await imageResponse.blob();
 
-      const formData = new FormData();
-      const imageFile = new File([imageBlob], "map-image.jpg", {
-        type: "image/jpeg",
-      });
-      formData.append("image", imageFile);
+  //     const formData = new FormData();
+  //     const imageFile = new File([imageBlob], "map-image.jpg", {
+  //       type: "image/jpeg",
+  //     });
+  //     formData.append("image", imageFile);
 
-      formData.append("lng", selectedLocation.lng);
-      formData.append("lat", selectedLocation.lat);
+  //     formData.append("lng", selectedLocation.lng);
+  //     formData.append("lat", selectedLocation.lat);
 
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:5001/api/prediction/predict/cam/result",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     const token = localStorage.getItem("token");
+  //     const response = await axios.post(
+  //       "http://localhost:5001/api/prediction/predict/cam/result",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      setCamPredictionResult(response.data.data);
-    } catch (error) {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "Image prediction failed. Try again later.";
-      setError({
-        ...error,
-        message,
-      });
-    } finally {
-      setCamLoading(false);
-    }
-  };
+  //     setCamPredictionResult(response.data.data);
+  //   } catch (error) {
+  //     const message =
+  //       error.response?.data?.message ||
+  //       error.message ||
+  //       "Image prediction failed. Try again later.";
+  //     setError({
+  //       ...error,
+  //       message,
+  //     });
+  //   } finally {
+  //     setCamLoading(false);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -333,6 +332,35 @@ const PredictionHomePage = () => {
     console.log("Selected Points:", points);
   };
 
+  const handleMarkerClick = (id) => {
+    setSelectedMarkerId(id);
+    console.log("Selected Marker ID:", id);  // Debugging log to verify
+  };
+
+  const handlePredict = async () => {
+    if (!selectedMarkerId) {
+      setError({
+        message: "Please select a marker on the map first.",
+        field: "",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:5001/api/prediction/fire-data-byId`, {
+        params: { id: selectedMarkerId }  
+      });
+      console.log("Backend Response:", response.data);
+      setPredictionResult(response.data);
+    } catch (error) {
+      setError({
+        message: "Prediction failed. Please try again.",
+        field: "",
+      });
+      console.error("Error fetching prediction:", error.message);
+    }
+  };
+
   return (
     <div
       className="w-full"
@@ -399,8 +427,10 @@ const PredictionHomePage = () => {
         <div className="w-full mt-9 max-w-6xl flex flex-col lg:flex-row gap-8 z-0">
           <MapWithMarkers
             markerData={markerData}
+            onMarkerClick={handleMarkerClick}
             onAreaSelected={handleSelectedArea}
           />
+          <button onClick={handlePredict}>Predict</button>
         </div>
 
         {error.message && !error.field && (

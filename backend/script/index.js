@@ -11,7 +11,7 @@ await mongoose.connect(mongoURI, {
 });
 console.log('MongoDB Connected Successfully');
 
-fs.readFile("fire_tracks.json", "utf8", async (err, data) => {
+fs.readFile("fire_data_records.json", "utf8", async (err, data) => {
   if (err) {
     console.error("Error reading the file:", err);
     return;

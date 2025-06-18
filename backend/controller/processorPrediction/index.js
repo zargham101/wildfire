@@ -1,6 +1,7 @@
 const fireService = require("../../services/processorPrediction/index");
 const axios = require("axios");
 const {fetchFireCSV, parseFireCSV, processFireData} = require("./fireServices");
+const { response } = require("express");
 
 
 exports.predictFire = async (req, res) => {
@@ -81,11 +82,7 @@ exports.handleFireSize = async (req, res) => {
 exports.getAllFireData = async (req, res) => {
   try {
     const fireData = await fireService.getAllFireData();  
-
-    // Log fireData for debugging
-    console.log("Fetched Fire Data:", fireData);
-
-    // Filter out entries where lat or lon is undefined or null
+    
     const validFireData = fireData.filter((item) => {
       const [lat, lon] = item.location.split(",");
       return lat && lon && !isNaN(lat) && !isNaN(lon);
@@ -96,3 +93,25 @@ exports.getAllFireData = async (req, res) => {
     res.status(500).json({ error: 'Error fetching fire data: ' + err.message });
   }
 };
+
+exports.getFireDataById = async (req,res) => {
+  try{
+    const {id} = req.query;
+    console.log("id::",id);
+  const result = await fireService.getFireDataById(id);
+  if(!result){
+    return res.status(401).json({
+      message: "No fire data found"
+    })
+  }
+
+  return res.status(200).json({
+    message:"Fire data response",
+    response: result,
+  })
+  }catch(error){
+    console.log("error in controller::",error.message);
+    console.error("error in controller::",error.message);
+    return res.status(400).json(error.message)
+  }
+}

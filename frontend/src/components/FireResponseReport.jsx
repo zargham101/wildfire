@@ -68,7 +68,7 @@ const FireResponseReport = ({
     setSendingRequest(true);
     setError("");
 
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
 
     try {
       const payload = {
@@ -206,9 +206,9 @@ const FireResponseReport = ({
         </div>
 
         <div className="flex justify-center mt-8">
-        <button
-  onClick={handleDownloadReport}
-  className="
+          <button
+            onClick={handleDownloadReport}
+            className="
     w-[180px] py-2 rounded-md font-semibold
     bg-gradient-to-r from-red-600 to-red-800 text-white
     transition-transform duration-300 ease-in-out
@@ -217,56 +217,55 @@ const FireResponseReport = ({
     shadow-md hover:shadow-lg
     focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 focus:ring-offset-2
   "
->
-  Download Full Report
-</button>
-
-
+          >
+            Download Full Report
+          </button>
         </div>
 
         {/* Button to send resource request */}
         <div className="flex justify-center mt-8">
           <button
-  onClick={sendResourceRequest}
-  disabled={sendingRequest}
-  className={`
+            onClick={sendResourceRequest}
+            disabled={sendingRequest}
+            className={`
     w-[180px] py-2 rounded-md font-semibold text-white
     bg-gradient-to-r from-green-600 to-green-800
     disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed disabled:text-gray-200
     hover:from-green-700 hover:to-green-900
     transform transition-all duration-300 ease-in-out
-    ${sendingRequest ? 'cursor-wait scale-100' : 'hover:scale-105'}
+    ${sendingRequest ? "cursor-wait scale-100" : "hover:scale-105"}
     focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50
     shadow-md hover:shadow-lg
   `}
->
-  {sendingRequest ? (
-    <div className="flex items-center justify-center space-x-2">
-      <svg
-        className="animate-spin h-5 w-5 text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          className="opacity-25"
-          cx="12" cy="12" r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        />
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
-        />
-      </svg>
-      <span>Sending...</span>
-    </div>
-  ) : (
-    "Send Request to Admin"
-  )}
-</button>
-
+          >
+            {sendingRequest ? (
+              <div className="flex items-center justify-center space-x-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                  />
+                </svg>
+                <span>Sending...</span>
+              </div>
+            ) : (
+              "Send Request to Admin"
+            )}
+          </button>
         </div>
 
         {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}

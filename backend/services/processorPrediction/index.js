@@ -41,6 +41,29 @@ exports.getAllFireData = async () => {
   }
 };
 
+exports.getFireDataById = async (id) => {
+  try {
+    console.log("id::",id);
+    const response = await FireData.findById(id);
+    if(!response){
+      throw new Error("No fire data found");
+    }
+    console.log("response::",response);
+    const flaskServiceUrl = 'http://localhost:5002/predict'; 
+    const fireData = {
+      data: response.data,  // Make sure the structure is what Flask expects
+    };
+    const flaskResponse = await axios.post(flaskServiceUrl, fireData);
+    console.log("Response from Flask service:", flaskResponse.data);
+
+    return flaskResponse.data;
+  } catch (error) {
+    console.log("error::", error.message)
+    console.error("error::", error.message)
+    throw new Error("unable to find any data", error.message)
+  }
+}
+
 exports.getAllPredictions = async (userId) => {
   try {
     const predictions = await FirePrediction.find({ userId }).sort({

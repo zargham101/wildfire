@@ -1,12 +1,12 @@
-import React, {useEffect, useRef} from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import 'leaflet-draw';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import React, { useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import "leaflet-draw";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -62,13 +62,13 @@ const MapControls = ({ markerData, onAreaSelected }) => {
   return null;
 };
 
-const MapWithMarkers = ({ markerData, onAreaSelected }) => {
+const MapWithMarkers = ({ markerData, onAreaSelected, onMarkerClick }) => {
   return (
     <MapContainer
       center={[51.505, -0.09]}
       zoom={5}
       scrollWheelZoom={true}
-      style={{ height: '600px', width: '100%' }}
+      style={{ height: "600px", width: "100%" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -76,7 +76,13 @@ const MapWithMarkers = ({ markerData, onAreaSelected }) => {
       />
       <MarkerClusterGroup>
         {markerData.map((pos, idx) => (
-          <Marker key={idx} position={[pos.lat, pos.lon]} />
+          <Marker
+            key={idx}
+            position={[pos.lat, pos.lon]}
+            eventHandlers={{
+              click: () => onMarkerClick(pos._id),
+            }}
+          />
         ))}
       </MarkerClusterGroup>
       <MapControls markerData={markerData} onAreaSelected={onAreaSelected} />

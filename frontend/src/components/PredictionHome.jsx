@@ -351,7 +351,8 @@ const PredictionHomePage = () => {
         params: { id: selectedMarkerId }  
       });
       console.log("Backend Response:", response.data);
-      setPredictionResult(response.data);
+      const numericalPrediction = response.data.response.prediction[0];
+      setPredictionResult(numericalPrediction);
     } catch (error) {
       setError({
         message: "Prediction failed. Please try again.",

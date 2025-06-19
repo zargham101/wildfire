@@ -1,32 +1,37 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { calculateResources } from "../condition/resourceCalculator";
+// Make sure this path is correct if calculateResources is in a different file
+import { calculateResources, getFireSeverity } from "../condition/resourceCalculator";
 import axios from "axios";
 
 const FireResponseReport = ({
   fireSize,
-  windSpeed,
-  humidity,
-  predictionDate,
-  predictionId,
-  userId,
-  latitude,
-  longitude,
+  predictionDate, // Still needed for PDF
+  predictionId,   // Still needed for sendResourceRequest
+  userId,         // Still needed for sendResourceRequest
+  latitude,       // Still needed for sendResourceRequest
+  longitude,      // Still needed for sendResourceRequest
 }) => {
   const [showAlert, setShowAlert] = useState(true);
   const [error, setError] = useState("");
   const [sendingRequest, setSendingRequest] = useState(false);
 
-  if (fireSize === null) return null;
+  // This check is important: if fireSize is null (initial state), don't render.
+  if (fireSize === null || typeof fireSize !== 'number') return null;
 
+  // Now, calculateResources only needs fireSize.
+  // windSpeed and humidity are NOT passed directly for the report calculation within this component.
+  // If they are still needed for the resource calculation logic, they must be part of your `calculateResources`
+  // and derived from the `PredictionHomePage`'s `selectedMarker.originalData.data`
+  // and passed to THIS component.
   const {
     fireSeverity,
     initialResources,
     longTermResources,
     specialAdjustments,
     inspectorsNeeded,
-  } = calculateResources(fireSize, windSpeed, humidity);
+  } = calculateResources(fireSize); // Call without windSpeed, humidity
 
   const handleDownloadReport = () => {
     const doc = new jsPDF();
@@ -68,6 +73,13 @@ const FireResponseReport = ({
     setSendingRequest(true);
     setError("");
 
+    // These values MUST be passed as props if used here
+    if (!predictionId || !userId || !latitude || !longitude) {
+        setError("Missing critical data for resource request. Please ensure a marker is selected.");
+        setSendingRequest(false);
+        return;
+    }
+
     const token = localStorage.getItem("token");
 
     try {
@@ -105,6 +117,7 @@ const FireResponseReport = ({
       }
     } catch (err) {
       setError("Error sending the request. Please try again.");
+      console.error("Error sending resource request:", err);
     } finally {
       setSendingRequest(false);
     }
@@ -222,7 +235,6 @@ const FireResponseReport = ({
           </button>
         </div>
 
-        {/* Button to send resource request */}
         <div className="flex justify-center mt-8">
           <button
             onClick={sendResourceRequest}

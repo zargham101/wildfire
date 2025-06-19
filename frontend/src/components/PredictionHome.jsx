@@ -475,15 +475,15 @@ const PredictionHomePage = () => {
           <div className="absolute right-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
         </div>
 
-        <div className="w-full mt-9 max-w-6xl flex flex-col lg:flex-row gap-8 z-0">
+        <div className="w-full mt-9 max-w-6xl flex flex-col gap-8 z-0">
           <MapWithMarkers
             markerData={markerData}
             onMarkerClick={handleMarkerClick}
-            // onAreaSelected={handleSelectedArea} 
+            // onAreaSelected={handleSelectedArea}
           />
           <button
             onClick={handlePredict}
-            className="mt-4 w-full lg:w-auto py-2 px-6 bg-red-500 text-white border-b-4 border-transparent hover:bg-white hover:text-black hover:border-red-500 transition-colors duration-300"
+            className="mt-4 w-full py-2 px-6 bg-red-500 text-white border-b-4 border-transparent hover:bg-white hover:text-black hover:border-red-500 transition-colors duration-300"
           >
             Predict
           </button>

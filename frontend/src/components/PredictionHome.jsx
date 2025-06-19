@@ -41,7 +41,7 @@ const PredictionHomePage = () => {
   const [showFireAlert, setShowFireAlert] = useState(false);
   const [fireSeverity, setFireSeverity] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-   const [markerData, setMarkerData] = useState([]);
+  const [markerData, setMarkerData] = useState([]);
 
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
@@ -135,10 +135,12 @@ const PredictionHomePage = () => {
   useEffect(() => {
     const fetchMarkerData = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/api/prediction/fire-data"); 
-        
-        const data = response.data.map(item => {
-          const [lat, lon] = item.location.split(","); 
+        const response = await axios.get(
+          "http://localhost:5001/api/prediction/fire-data"
+        );
+
+        const data = response.data.map((item) => {
+          const [lat, lon] = item.location.split(",");
           return {
             _id: item._id,
             lat: parseFloat(lat),
@@ -146,7 +148,7 @@ const PredictionHomePage = () => {
             data: item.data, // Store the associated data
           };
         });
-        console.log("what is in data::",data)
+        console.log("what is in data::", data);
         setMarkerData(data);
       } catch (error) {
         console.error("Failed to fetch marker data", error);
@@ -334,7 +336,7 @@ const PredictionHomePage = () => {
 
   const handleMarkerClick = (id) => {
     setSelectedMarkerId(id);
-    console.log("Selected Marker ID:", id);  // Debugging log to verify
+    console.log("Selected Marker ID:", id); // Debugging log to verify
   };
 
   const handlePredict = async () => {
@@ -347,18 +349,68 @@ const PredictionHomePage = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5001/api/prediction/fire-data-byId`, {
-        params: { id: selectedMarkerId }  
-      });
-      console.log("Backend Response:", response.data);
+      setLoading(true);
+      setError({ message: "", field: "" });
+
+      const response = await axios.get(
+        `http://localhost:5001/api/prediction/fire-data-byId`,
+        {
+          params: { id: selectedMarkerId },
+        }
+      );
+
       const numericalPrediction = response.data.response.prediction[0];
       setPredictionResult(numericalPrediction);
+      const selectedMarker = markerData.find(
+        (marker) => marker._id === selectedMarkerId
+      );
+
+      if (selectedMarker && selectedMarker.originalData) {
+        const originalFireData = selectedMarker.originalData;
+        const lastDataEntry =
+          originalFireData.data[originalFireData.data.length - 1]; // Last data entry
+
+        setPredictionId(originalFireData._id);
+        setCreatedAt(originalFireData.createdAt);
+        setUserID(originalFireData.userId || null);
+        setFormData((prev) => ({
+          ...prev,
+          fire_location_latitude: parseFloat(selectedMarker.lat),
+          fire_location_longitude: parseFloat(selectedMarker.lon),
+          wind_speed: lastDataEntry?.ws || "", // Still store this if CombinedResults uses it
+          relative_humidity: lastDataEntry?.rh || "", // Still store this if CombinedResults uses it
+        }));
+
+        const severity = getFireSeverity(numericalPrediction); // Use the utility function for the alert banner
+        setFireSeverity(severity);
+      } else {
+        console.warn(
+          "Could not find original data for selected marker ID:",
+          selectedMarkerId
+        );
+        setPredictionId(null);
+        setCreatedAt("");
+        setUserID(null);
+        setFormData((prev) => ({
+          ...prev,
+          fire_location_latitude: "",
+          fire_location_longitude: "",
+          wind_speed: "",
+          relative_humidity: "",
+        }));
+        setFireSeverity("");
+      }
+
+      setShowFireAlert(true);
+      setTimeout(() => setShowFireAlert(false), 5000);
     } catch (error) {
       setError({
         message: "Prediction failed. Please try again.",
         field: "",
       });
       console.error("Error fetching prediction:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -418,10 +470,8 @@ const PredictionHomePage = () => {
             Predict Wildfire
           </p>
 
-          {/* Left circle */}
           <div className="absolute left-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
 
-          {/* Right circle */}
           <div className="absolute right-4 w-4 h-4 rounded-full bg-white shadow-lg border-2 border-red-700 transition-transform hover:scale-125"></div>
         </div>
 
@@ -429,7 +479,7 @@ const PredictionHomePage = () => {
           <MapWithMarkers
             markerData={markerData}
             onMarkerClick={handleMarkerClick}
-            onAreaSelected={handleSelectedArea}
+            // onAreaSelected={handleSelectedArea} // Commented out as it's not currently used
           />
           <button onClick={handlePredict}>Predict</button>
         </div>
@@ -438,10 +488,10 @@ const PredictionHomePage = () => {
           <div className="mt-4 text-red-600 font-medium">{error.message}</div>
         )}
 
-        {(predictionResult || camPredictionResult) && (
+        {(predictionResult !== null || camPredictionResult) && ( // Ensure it's not null, as 0 is a valid prediction
           <div className="w-full p-10 mt-8">
             <CombinedResults
-              formData={formData}
+              formData={formData} // This now has lat/lon/wind/humidity from the selected marker
               predictionResult={predictionResult}
               camPredictionResult={camPredictionResult}
               createdAt={createdAt}
@@ -451,14 +501,12 @@ const PredictionHomePage = () => {
 
         <div className="w-full  mt-6">
           <FireResponseReport
-            fireSize={predictionResult}
-            windSpeed={formData.wind_speed}
-            humidity={formData.relative_humidity}
-            predictionDate={createdAt}
-            predictionId={predictionId}
-            latitude={formData.fire_location_latitude}
-            longitude={formData.fire_location_longitude}
-            userId={userId}
+            fireSize={predictionResult} // Pass the numerical prediction
+            predictionDate={createdAt} // Pass the timestamp from DB
+            predictionId={predictionId} // Pass the DB _id
+            latitude={formData.fire_location_latitude} // Pass the latitude from formData
+            longitude={formData.fire_location_longitude} // Pass the longitude from formData
+            userId={userId} // Pass the userId if available
           />
         </div>
 

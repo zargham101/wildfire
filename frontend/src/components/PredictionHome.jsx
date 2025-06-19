@@ -479,9 +479,14 @@ const PredictionHomePage = () => {
           <MapWithMarkers
             markerData={markerData}
             onMarkerClick={handleMarkerClick}
-            // onAreaSelected={handleSelectedArea} // Commented out as it's not currently used
+            // onAreaSelected={handleSelectedArea} 
           />
-          <button onClick={handlePredict}>Predict</button>
+          <button
+            onClick={handlePredict}
+            className="mt-4 w-full lg:w-auto py-2 px-6 bg-red-500 text-white border-b-4 border-transparent hover:bg-white hover:text-black hover:border-red-500 transition-colors duration-300"
+          >
+            Predict
+          </button>
         </div>
 
         {error.message && !error.field && (

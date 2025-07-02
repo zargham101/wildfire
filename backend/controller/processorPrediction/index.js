@@ -155,6 +155,7 @@ exports.handleFireSize = async (req, res) => {
 
 
 //Helpers
+
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -465,8 +466,6 @@ const processClusterTimeSeries = async (cluster) => {
   };
 };
 
-
-
 exports.getAllFireData = async (req,res) => {
   try {
     const today = new Date();
@@ -488,7 +487,7 @@ exports.getAllFireData = async (req,res) => {
     const clusters = clusterFires(allFires);
     
     const fireData = [];
-    const processedClusters = clusters.slice(0, 20); 
+    const processedClusters = clusters.slice(0, 2); 
     
     for (const cluster of processedClusters) {
       try {
@@ -511,7 +510,6 @@ exports.getAllFireData = async (req,res) => {
     const validFireData = fireData.filter(f => f.location && f.data.length > 0);
     res.status(200).json(validFireData);
   } catch (err) {
-    console.log('Error in getAllFireData:', err.message);
     throw new Error('Error fetching fire data: ' + err.message);
   }
 };
@@ -519,21 +517,26 @@ exports.getAllFireData = async (req,res) => {
 exports.getFireDataById = async (req,res) => {
   try{
     const {id} = req.query;
-    console.log("id::",id);
+    
   const result = await fireService.getFireDataById(id);
-  console.log(result)
   if(!result){
     return res.status(401).json({
       message: "No fire data found"
     })
   }
+  const userId = req.user?.id;
+  const savedPrediction = await fireService.savePredictionData(
+    userId,
+    result,
+    id
+  );
 
   return res.status(200).json({
     message:"Fire data response",
     response: result,
+    savedPrediction: savedPrediction
   })
   }catch(error){
-    console.log("error in controller::",error);
     console.error("error in controller::",error.message);
     return res.status(400).json(error.message)
   }

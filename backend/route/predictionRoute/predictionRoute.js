@@ -1,6 +1,7 @@
 const express = require("express");
 const controller = require("../../controller/predictionController/index");
 const verifyToken = require("../../middleware/verifyToken");
+const authMiddleware = require("../../middleware/auth");
 const prepocessorController = require("../../controller/processorPrediction/index")
 const {upload} = require("../../config/multerConfig")
 
@@ -15,7 +16,7 @@ router.get("/my/fire/prediction", verifyToken, prepocessorController.fetchAll);
 router.post("/predict/cam/result", upload, verifyToken,prepocessorController.handleFirePrediction);
 router.post("/process-data", prepocessorController.handleFireSize);
 router.get("/fire-data", prepocessorController.getAllFireData);
-router.get("/fire-data-byId", prepocessorController.getFireDataById);
+router.get("/fire-data-byId", authMiddleware, prepocessorController.getFireDataById);
 
 
 module.exports = router;

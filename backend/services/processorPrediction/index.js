@@ -7,7 +7,8 @@ const fs = require("fs");
 const path = require("path");
 const {parse} = require("csv-parse/sync")
 const {fetchWeatherApi} = require("openmeteo");
-const {Buffer} = require("buffer")
+const {Buffer} = require("buffer");
+const allFeaturePrediction = require('../../model/allFeaturePrediction/index');
 
 exports.processAndPredict = async (inputData, userId) => {
   try {
@@ -43,26 +44,42 @@ exports.getAllFireData = async () => {
 
 exports.getFireDataById = async (id) => {
   try {
-    console.log("id::",id);
     const response = await FireData.findById(id);
     if(!response){
       throw new Error("No fire data found");
     }
-    console.log("response::",response);
     const flaskServiceUrl = 'http://localhost:5002/predict'; 
     const fireData = {
       data: response.data,  // Make sure the structure is what Flask expects
     };
     const flaskResponse = await axios.post(flaskServiceUrl, fireData);
-    console.log("Response from Flask service:", flaskResponse.data);
 
     return flaskResponse.data;
   } catch (error) {
-    console.log("error::", error.message)
     console.error("error::", error.message)
     throw new Error("unable to find any data", error.message)
   }
 }
+
+exports.savePredictionData = async (userId, fireData, fireDataId) => {
+  try {
+    const response = await FireData.findById(fireDataId);
+    if (!response) {
+      throw new Error("No fire data found with the provided ID");
+    }
+    const newPrediction = await allFeaturePrediction.create({
+      userId,
+      fireData: response,  // Assuming response.data contains the necessary data
+      prediction: fireData.prediction, 
+      fireDataId,
+    });
+
+    return newPrediction;
+  } catch (error) {
+    console.error("Error saving prediction:", error.message);
+    throw new Error("Unable to save prediction", error.message);
+  }
+};
 
 exports.getAllPredictions = async (userId) => {
   try {

@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const fireDataSchema = new mongoose.Schema(
   {
+    userId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
     location: {
       type: String,
       required: true,

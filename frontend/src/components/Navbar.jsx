@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
 import UserProfileDropdown from "./UserProfileDropdown";
+import PredictionHistoryTable from "./PredictionHistoryTable"; // Import the PredictionHistoryTable component
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -17,6 +18,7 @@ const Navbar = () => {
     { label: "Prediction", path: "/predictionHomePage" },
     { label: "Detection", path: "/predict/cam/result" },
     { label: "Visualization", path: "/feature-visualization" },
+    { label: "Prediction History", path: "/predictionHistory" },
   ];
 
   const isActive = (path) => location.pathname === path;

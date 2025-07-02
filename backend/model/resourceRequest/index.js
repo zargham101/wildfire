@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const ResourceRequestSchema = new mongoose.Schema({
   predictionId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "AllFeaturesPredictionSchema",
+    ref: "NewPrediction",
     required: true
   },
   userId: {

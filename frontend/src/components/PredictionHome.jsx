@@ -38,7 +38,8 @@ const PredictionHomePage = () => {
   const mapContainer = useRef(null);
 
 
-
+useEffect(() => {
+}, [createdAt]);
 
   useEffect(() => {
     const fetchMarkerData = async () => {
@@ -82,8 +83,8 @@ const PredictionHomePage = () => {
     setSelectedMarkerId(id);
   };
 
-  useEffect(() => {
-}, [createdAt]);
+  
+
   const handlePredict = async () => {
     if (!selectedMarkerId) {
       setError({
@@ -107,44 +108,27 @@ const PredictionHomePage = () => {
         }
       );
 
+      console.log("Prediction Response:", response.data.savedPrediction.userId);
       const location = response.data.savedPrediction.fireData.location;
       const data = response.data.savedPrediction.fireData.data[0];
-      const date = response.data.savedPrediction.createdAt;
+      const dateFromAPI = response.data.savedPrediction.createdAt;
       setTemp(data.tmax);
       setHumidity(data.rh);
       setWindSpeed(data.ws);
-      setCreatedAt(date);
+      setCreatedAt(dateFromAPI);
+      setPredictionId(response.data.savedPrediction._id)
+      setUserID(response.data.savedPrediction.userId);
+
       const [lat, lon] = location.split(',');
       setLatitude(parseFloat(lat));
       setLongitude(parseFloat(lon));
+
       const numericalPrediction = response.data.response.prediction[0];
       setPredictionResult(numericalPrediction);
+
       const selectedMarker = markerData.find(
         (marker) => marker._id === selectedMarkerId
       );
-
-      if (selectedMarker && selectedMarker.originalData) {
-        const originalFireData = selectedMarker.originalData;
-        const lastDataEntry =
-          originalFireData.data[originalFireData.data.length - 1]; // Last data entry
-
-        setPredictionId(originalFireData._id);
-        setCreatedAt(originalFireData.createdAt);
-        setUserID(originalFireData.userId || null);
-
-
-        const severity = getFireSeverity(numericalPrediction); // Use the utility function for the alert banner
-        setFireSeverity(severity);
-      } else {
-        console.warn(
-          "Could not find original data for selected marker ID:",
-          selectedMarkerId
-        );
-        setPredictionId(null);
-        setCreatedAt("");
-        setUserID(null);
-        setFireSeverity("");
-      }
 
       setShowFireAlert(true);
       setTimeout(() => setShowFireAlert(false), 5000);

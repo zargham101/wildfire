@@ -70,6 +70,8 @@ const FireResponseReport = ({
     setError("");
 
     // These values MUST be passed as props if used here
+    console.log("Sending resource request with:",predictionId,userId, latitude, longitude);
+
     if (!predictionId || !userId || !latitude || !longitude) {
         setError("Missing critical data for resource request. Please ensure a marker is selected.");
         setSendingRequest(false);
@@ -93,6 +95,7 @@ const FireResponseReport = ({
           heavyEquipment: longTermResources.heavyEquipment,
         },
       };
+      console.log("Payload for resource request:", payload);
 
       // Make an API call to send the request
       const response = await axios.post(

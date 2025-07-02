@@ -4,14 +4,8 @@ const {
   deductResources,
 } = require("../../services/agencyResource/agencyResourceService");
 
-async function createRequest(
-  predictionId,
-  userId,
-  resources,
-  location,
-  message,
-  assignedAgency
-) {
+async function createRequest(predictionId, userId, resources, location, message, assignedAgency) {
+  console.log("service me kia hai :",predictionId, userId, resources, location, message, assignedAgency)
   const request = new ResourceRequest({
     predictionId,
     userId,
@@ -29,6 +23,7 @@ async function getRequestsByUser() {
     .populate("assignedAgency", "name email")
     .populate("userId", "name email");
 
+  console.log("request in service", request);
   return request;
 }
 

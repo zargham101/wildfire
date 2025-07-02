@@ -1,45 +1,39 @@
 const resourceRequestService = require("../../services/resourceRequest/resourceRequestService");
-const { calculateResources } = require("../../utils/resourceCalulator");
 const AllFeaturePredicionSchema = require("../../model/allFeaturePrediction/index");
 
 async function createRequest(req, res) {
   try {
-    const { predictionId, message, assignedAgency } = req.body; // Get assignedAgency from the body
-
+    const { predictionId, message, assignedAgency,latitude, longitude, requiredResources} = req.body;
     const userId = req.user._id;
 
     const prediction = await AllFeaturePredicionSchema.findById(predictionId);
     if (!prediction) {
       return res.status(404).json({ message: "Prediction not found" });
     }
-
-    const resources = calculateResources(
-      prediction.input.temperature,
-      prediction.input.wind_speed,
-      prediction.input.relative_humidity
-    );
+    const { firefighters, firetrucks, helicopters, commanders, heavyEquipment } = requiredResources;
 
     // Create request with assignedAgency
     const request = await resourceRequestService.createRequest(
       predictionId,
       userId,
       {
-        firefighters: resources.initialResources.firefighters,
-        firetrucks: resources.initialResources.firetrucks,
-        helicopters: resources.initialResources.helicopters,
-        commanders: resources.initialResources.commanders,
-        heavyEquipment: resources.longTermResources.heavyEquipment,
+        firefighters,
+        firetrucks,
+        helicopters,
+        commanders,
+        heavyEquipment
       },
       {
-        latitude: prediction.input.fire_location_latitude,
-        longitude: prediction.input.fire_location_longitude,
+        latitude,
+        longitude
       },
       message,
-      assignedAgency // Pass the assignedAgency field here
+      assignedAgency 
     );
 
     res.status(201).json(request);
   } catch (error) {
+    console.error("Error creating resource request:", error.message);
     res.status(500).json({ message: error.message });
   }
 }

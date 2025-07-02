@@ -123,6 +123,22 @@ const PredictionHistoryTable = () => {
       .trim();
   };
 
+  const extractFirstDataPoint = (pred) => {
+   
+    const firstDataPoint = pred && pred.fireData && pred.fireData.data[0];
+  
+
+    if (!firstDataPoint) return {};
+
+    return {
+      temperature: firstDataPoint.tmax,
+      humidity: firstDataPoint.rh,
+      windSpeed: firstDataPoint.ws,
+      vaporPressure: firstDataPoint.vpd,
+      wildfireSize: pred.prediction[0],
+    };
+  };
+
   return (
     <div className="w-full px-6 py-10 bg-gray-50 min-h-screen">
       <h2 className="text-3xl font-extrabold font-serif text-red-700 mb-8 text-center tracking-wide drop-shadow-md">
@@ -167,44 +183,46 @@ const PredictionHistoryTable = () => {
           <tbody>
             {filteredPredictions.length > 0 ? (
               (showAll ? filteredPredictions : filteredPredictions.slice(0, 5)).map(
-                (pred, index) => (
-                  <tr
-                    key={index}
-                    className="transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg even:bg-red-50 odd:bg-white cursor-pointer"
-                    style={{ animation: `fadeInUp 0.5s ease forwards`, animationDelay: `${index * 0.1}s` }}
-                  >
-                    <td className="px-8 py-5 text-sm text-gray-900 whitespace-pre-wrap">
-                      <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                        {pred.input &&
-                          Object.entries(pred.input)
-                            .filter(([key]) => key !== "_id")
-                            .map(([key, value], idx) => {
-                              let displayValue = value;
-                              if (typeof value === "object" && value !== null) {
-                                const innerKey = Object.keys(value)[0];
-                                displayValue = value[innerKey];
-                              }
-                              return (
-                                <div key={idx} className="flex justify-between font-mono text-sm">
-                                  <span className="font-semibold text-red-700">
-                                    {formatFieldName(key)}:
-                                  </span>
-                                  <span className="text-gray-800">{displayValue}</span>
-                                </div>
-                              );
-                            })}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-center font-bold text-red-600 text-lg">
-                      {typeof pred.prediction === "number"
-                        ? pred.prediction.toFixed(6)
-                        : "N/A"}
-                    </td>
-                    <td className="px-6 py-5 text-center font-medium text-red-700 text-lg">
-                      {new Date(pred.createdAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                )
+                (pred, index) => {
+                  const { temperature, humidity, windSpeed, vaporPressure, wildfireSize } =
+                    extractFirstDataPoint(pred);
+                  return (
+                    <tr
+                      key={index}
+                      className="transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg even:bg-red-50 odd:bg-white cursor-pointer"
+                      style={{ animation: `fadeInUp 0.5s ease forwards`, animationDelay: `${index * 0.1}s` }}
+                    >
+                      <td className="px-8 py-5 text-sm text-gray-900 whitespace-pre-wrap">
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                          <div className="flex justify-between font-mono text-sm">
+                            <span className="font-semibold text-red-700">Temperature:</span>
+                            <span className="text-gray-800">{temperature}°C</span>
+                          </div>
+                          <div className="flex justify-between font-mono text-sm">
+                            <span className="font-semibold text-red-700">Humidity:</span>
+                            <span className="text-gray-800">{humidity}%</span>
+                          </div>
+                          <div className="flex justify-between font-mono text-sm">
+                            <span className="font-semibold text-red-700">Wind Speed:</span>
+                            <span className="text-gray-800">{windSpeed} km/h</span>
+                          </div>
+                          <div className="flex justify-between font-mono text-sm">
+                            <span className="font-semibold text-red-700">Vapor Pressure:</span>
+                            <span className="text-gray-800">{vaporPressure}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 text-center font-bold text-red-600 text-lg">
+                        {wildfireSize !== undefined && wildfireSize !== null
+                          ? wildfireSize.toFixed(2) // Ensure the value is valid before calling `toFixed()`
+                          : "N/A"}
+                      </td>
+                      <td className="px-6 py-5 text-center font-medium text-red-700 text-lg">
+                        {new Date(pred.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  );
+                }
               )
             ) : (
               <tr>

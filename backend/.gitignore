@@ -2,7 +2,7 @@
 
 .env
 
-backend/python_service/venv/
+backend/python_service/new_venv/
 backend/wildfireModel/*.h5
 backend/wildfireModel/*.pkl
 

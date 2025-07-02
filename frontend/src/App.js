@@ -10,6 +10,7 @@ import AboutUs from "./components/AboutUs";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ReserPassword";
 import PredictionHomePage from "./components/PredictionHome";
+import PredictionHistoryTable from "./components/PredictionHistoryTable";
 import UserProfile from "./components/UserProfile";
 import FeatureVisualizationPage from "./components/FeaturedVisualization";
 import NewsDetail from "./components/NewsDetail";
@@ -49,6 +50,7 @@ function App() {
         <Route path="/news/:id" element={<NewsDetail news={news} />} />
         <Route path="/instructions/:type" element={<InstructionPage />} />
         <Route path="/predict/cam/result" element={<FirePredictionUpload />} />
+        <Route path="/predictionHistory" element={<PredictionHistoryTable />} />
       </Routes>
       <Footer />
     </>

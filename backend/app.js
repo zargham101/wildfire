@@ -4,6 +4,7 @@ const passport = require("passport");
 const connectDb = require ('./db/db')
 const routes = require('./route/index')
 const session = require("express-session");
+const morgan = require("morgan");
 require('dotenv').config();
 
 const passportConfig = require("./config/passport");
@@ -24,6 +25,7 @@ app.use(session({
 //passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(morgan('tiny'));
 
 connectDb();
 

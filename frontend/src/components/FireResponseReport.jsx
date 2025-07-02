@@ -7,11 +7,11 @@ import axios from "axios";
 
 const FireResponseReport = ({
   fireSize,
-  predictionDate, // Still needed for PDF
-  predictionId,   // Still needed for sendResourceRequest
-  userId,         // Still needed for sendResourceRequest
-  latitude,       // Still needed for sendResourceRequest
-  longitude,      // Still needed for sendResourceRequest
+  predictionDate, 
+  predictionId,   
+  userId,         
+  latitude,       
+  longitude,      
 }) => {
   const [showAlert, setShowAlert] = useState(true);
   const [error, setError] = useState("");
@@ -20,11 +20,7 @@ const FireResponseReport = ({
   // This check is important: if fireSize is null (initial state), don't render.
   if (fireSize === null || typeof fireSize !== 'number') return null;
 
-  // Now, calculateResources only needs fireSize.
-  // windSpeed and humidity are NOT passed directly for the report calculation within this component.
-  // If they are still needed for the resource calculation logic, they must be part of your `calculateResources`
-  // and derived from the `PredictionHomePage`'s `selectedMarker.originalData.data`
-  // and passed to THIS component.
+  
   const {
     fireSeverity,
     initialResources,

@@ -15,11 +15,13 @@ export default function AgencyDashboard() {
     fetchIncomingRequests();
   }, [token]);
 
+
   const fetchAgencyResources = async () => {
     try {
       const res = await axios.get(`${baseUrl}/agencies/me/resources`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("Agency Resources Response:", res.data); // Debugging line
       setAgencyResources(res.data);
     } catch (err) {
       console.error("Error fetching agency resources:", err);
@@ -36,13 +38,71 @@ export default function AgencyDashboard() {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
+      console.log("Incoming requests:", data); // Debugging line
       setIncomingRequests(data);
     } catch (err) {
       console.error("Error fetching resource requests:", err);
     }
   };
 
+
+  const checkResourceAvailability = (requiredResources, availableResources, isLocked) => {
+    // If the agency is locked, treat the resources as unavailable
+    if (isLocked) {
+      return true;
+    }
+
+    let unavailable = false;
+
+    // Check for each resource type if the required amount exceeds the available amount
+    if (requiredResources.firefighters > availableResources.firefighters) {
+      unavailable = true;
+    }
+    if (requiredResources.firetrucks > availableResources.firetrucks) {
+      unavailable = true;
+    }
+    if (requiredResources.helicopters > availableResources.helicopters) {
+      unavailable = true;
+    }
+    if (requiredResources.commanders > availableResources.commanders) {
+      unavailable = true;
+    }
+
+    // Check if all required heavy equipment is available
+    if (
+      requiredResources.heavyEquipment &&
+      !requiredResources.heavyEquipment.every((equipment) =>
+        availableResources.heavyEquipment.includes(equipment)
+      )
+    ) {
+      unavailable = true;
+    }
+
+    return unavailable;
+  };
+
+
   const handleRespond = async (requestId, status) => {
+    const request = incomingRequests.find((req) => req._id === requestId);
+    const requiredResources = request.requiredResources;
+    const availableResources = agencyResources.currentResources;
+    const isLocked = agencyResources.locked; // Get the locked status
+
+    console.log("Available Resources:", availableResources);
+    console.log("Required Resources:", requiredResources);
+
+    const isUnavailable = checkResourceAvailability(
+      requiredResources,
+      availableResources,
+      isLocked // Pass the locked status
+    );
+
+    console.log("Resources availability check:", isUnavailable);
+
+    if (isUnavailable) {
+      status = "rejected"; // Change status if resources are unavailable
+    }
+
     const input = await Swal.fire({
       title: `Are you sure you want to ${status} this request?`,
       input: "text",
@@ -78,6 +138,7 @@ export default function AgencyDashboard() {
       Swal.fire("Error", message, "error");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -124,13 +185,12 @@ export default function AgencyDashboard() {
               return (
                 <div
                   key={req._id}
-                  className={`border rounded p-4 shadow-sm transition duration-200 ${
-                    req.status === "completed"
-                      ? "bg-green-50 border-green-200"
-                      : req.status === "rejected" || isUnavailable
+                  className={`border rounded p-4 shadow-sm transition duration-200 ${req.status === "completed"
+                    ? "bg-green-50 border-green-200"
+                    : req.status === "rejected" || isUnavailable
                       ? "bg-red-50 border-red-200"
                       : "bg-white"
-                  }`}
+                    }`}
                 >
                   <div className="mb-2">
                     <strong>User:</strong> {req.userId?.name || "Unknown"}
@@ -139,21 +199,20 @@ export default function AgencyDashboard() {
                   <div className="mb-2">
                     <strong>Status:</strong>{" "}
                     <span
-                      className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                        req.status === "completed"
-                          ? "bg-green-100 text-green-700"
-                          : req.status === "rejected" || isUnavailable
+                      className={`text-xs font-semibold px-2 py-1 rounded-full ${req.status === "completed"
+                        ? "bg-green-100 text-green-700"
+                        : req.status === "rejected" || isUnavailable
                           ? "bg-red-100 text-red-700"
                           : "bg-yellow-100 text-yellow-700"
-                      }`}
+                        }`}
                     >
                       {req.status === "completed"
                         ? "✔️ Accepted"
                         : req.status === "rejected"
-                        ? "❌ Rejected"
-                        : isUnavailable
-                        ? "❌ Unavailable – Not enough resources"
-                        : "⏳ Pending"}
+                          ? "❌ Rejected"
+                          : isUnavailable
+                            ? "❌ Unavailable – Not enough resources"
+                            : "⏳ Pending"}
                     </span>
                   </div>
 

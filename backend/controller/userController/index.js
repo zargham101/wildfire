@@ -177,6 +177,7 @@ const userController = {
   getUsers: async (req, res) => {
     try {
       const { role, page = 1, limit = 10 } = req.query;
+      console.log("role::",role);
 
       const usersData = await userService.getUsers({ role, page, limit });
 

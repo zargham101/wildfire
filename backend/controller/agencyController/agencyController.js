@@ -99,11 +99,13 @@ async function populateAllAgencyResources(req, res) {
 
 async function getMyResources(req, res) {
   try {
-    console.log("ID::",req.user._id);
+    
     const agencyId = req.user._id;
+    console.log("agencyId::",agencyId);
     
     const resources = await agencyResourcesService.getAgencyDetails(agencyId);
 
+    console.log("resources::",resources);
     if (!resources) {
       return res.status(404).json({ message: 'No resources found for this agency' });
     }

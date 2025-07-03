@@ -14,9 +14,11 @@ export const useAdminData = ({ category, page, limit, token }) => {
     if (userNameMap[id]) return userNameMap[id];
 
     try {
-      const res = await axios.get(`http://localhost:5001/api/user/user-details/${id}`, {
+        console.log("id::",id);
+      const res = await axios.get(`http://localhost:5001/api/user/user-details/${id._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("response::",res);
       const name = res.data.name;
       setUserNameMap((prev) => ({ ...prev, [id]: name }));
       return name;
@@ -44,9 +46,7 @@ export const useAdminData = ({ category, page, limit, token }) => {
             axios.get('http://localhost:5001/api/agency/resource-requests', {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get('http://localhost:5001/api/user/user-role?role=agency', {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
+            axios.get('http://localhost:5001/api/user/user-role?role=agency'),
           ]);
 
           const enrichedData = await Promise.all(

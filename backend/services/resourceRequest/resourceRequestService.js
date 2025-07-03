@@ -23,7 +23,6 @@ async function getRequestsByUser() {
     .populate("assignedAgency", "name email")
     .populate("userId", "name email");
 
-  console.log("request in service", request);
   return request;
 }
 

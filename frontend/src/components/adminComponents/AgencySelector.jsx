@@ -60,29 +60,53 @@ export const AgencySelector = ({
             <div
               key={agency._id}
               onClick={() => setSelectedAgency(agency)}
-              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+              className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${
                 selectedAgency?._id === agency._id
-                  ? 'border-blue-500 bg-blue-50'
+                  ? 'border-blue-500 bg-blue-50 shadow-md'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <div className="font-medium">{agency.name}</div>
+              <div className="font-medium text-gray-900">{agency.name}</div>
               <div className="text-sm text-gray-600">{agency.email}</div>
             </div>
           ))}
         </div>
 
         {agencyResources && (
-          <div className="border-t pt-4">
-            <h3 className="font-medium text-lg mb-3">Available Resources</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><span className="font-medium">Firefighters:</span> {agencyResources.currentResources.firefighters}</div>
-              <div><span className="font-medium">Firetrucks:</span> {agencyResources.currentResources.firetrucks}</div>
-              <div><span className="font-medium">Helicopters:</span> {agencyResources.currentResources.helicopters}</div>
-              <div><span className="font-medium">Commanders:</span> {agencyResources.currentResources.commanders}</div>
-              <div className="col-span-2">
-                <span className="font-medium">Heavy Equipment:</span> {agencyResources.heavyEquipment?.join(', ') || 'None'}
+          <div className="border-t pt-6">
+            <h3 className="font-medium text-lg mb-4 text-gray-900">Available Resources</h3>
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="font-medium">Firefighters:</span> 
+                  <span className="text-blue-600 font-bold">{agencyResources.currentResources.firefighters}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="font-medium">Firetrucks:</span> 
+                  <span className="text-green-600 font-bold">{agencyResources.currentResources.firetrucks}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <span className="font-medium">Helicopters:</span> 
+                  <span className="text-purple-600 font-bold">{agencyResources.currentResources.helicopters}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                  <span className="font-medium">Commanders:</span> 
+                  <span className="text-orange-600 font-bold">{agencyResources.currentResources.commanders}</span>
+                </div>
               </div>
+              {agencyResources.heavyEquipment && agencyResources.heavyEquipment.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span className="font-medium">Heavy Equipment:</span> 
+                    <span className="text-red-600 font-bold">{agencyResources.heavyEquipment.join(', ')}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -91,13 +115,13 @@ export const AgencySelector = ({
           <button
             onClick={handleSubmit}
             disabled={!selectedAgency || isSubmitting}
-            className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-xl hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
           >
             {isSubmitting ? 'Sending...' : 'Send Request'}
           </button>
           <button
             onClick={onClose}
-            className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+            className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-xl hover:bg-gray-200 transition-colors font-medium"
           >
             Cancel
           </button>

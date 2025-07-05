@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -146,12 +146,37 @@ export default function AdminDashboard() {
   const formatLabel = (label) =>
     label.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str) => str.toUpperCase());
 
+  // Custom loading component with floating elements
+  const CustomLoading = () => (
+    <div className="flex items-center justify-center h-64">
+      <div className="relative">
+        {/* Main spinner */}
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+        
+        {/* Floating dots */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          </div>
+        </div>
+        
+        {/* Pulsing ring */}
+        <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border-b-2 border-blue-400 opacity-20"></div>
+        
+        {/* Rotating outer ring */}
+        <div className="absolute -inset-2 animate-spin rounded-full border-2 border-transparent border-t-blue-300 opacity-30" style={{ animationDuration: '3s' }}></div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className={`min-h-screen ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen pt-16 ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
       {/* Mobile sidebar overlay */}
       {isSidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)}>
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
         </div>
       )}
 
@@ -172,24 +197,35 @@ export default function AdminDashboard() {
         {/* Main content */}
         <main className="flex-1 lg:ml-0 min-h-screen">
           {/* Header */}
-          <header className={`${isDarkTheme ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm border-b px-4 py-4 lg:px-8`}>
+          <header className={`sticky top-16 z-30 ${
+            isDarkTheme ? 'bg-gray-800/95 border-gray-700' : 'bg-white/95 border-gray-200'
+          } backdrop-blur-sm shadow-sm border-b px-4 py-6 lg:px-8`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className={`lg:hidden p-2 rounded-lg transition-colors ${
+                  className={`lg:hidden p-3 rounded-xl transition-colors ${
                     isDarkTheme ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                   }`}
                 >
-                  <Menu size={24} />
+                  {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
-                <h1 className={`text-2xl font-bold capitalize ${
-                  isDarkTheme ? 'text-white' : 'text-gray-900'
-                }`}>
-                  {selectedCategory.replace('-', ' ')}
-                </h1>
+                <div>
+                  <h1 className={`text-3xl font-bold capitalize ${
+                    isDarkTheme ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {selectedCategory.replace('-', ' ')}
+                  </h1>
+                  <p className={`text-sm mt-1 ${
+                    isDarkTheme ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                    Manage and monitor {selectedCategory.replace('-', ' ').toLowerCase()}
+                  </p>
+                </div>
               </div>
-              <div className="text-sm text-gray-500">
+              <div className={`text-sm px-4 py-2 rounded-xl ${
+                isDarkTheme ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+              }`}>
                 Page {page}
               </div>
             </div>
@@ -206,9 +242,7 @@ export default function AdminDashboard() {
             )}
 
             {loading ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              </div>
+              <CustomLoading />
             ) : (
               <>
                 <DataTable
@@ -221,35 +255,37 @@ export default function AdminDashboard() {
                   isDarkTheme={isDarkTheme}
                 />
 
-                {/* Pagination */}
+                {/* Enhanced Pagination */}
                 <div className="flex items-center justify-between mt-8">
                   <button
                     disabled={page === 1}
                     onClick={() => setPage((p) => p - 1)}
-                    className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`flex items-center gap-3 px-6 py-3 border-2 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium ${
                       isDarkTheme 
-                        ? 'border-gray-600 hover:bg-gray-700 text-white' 
-                        : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                    }`}
+                        ? 'border-gray-600 hover:bg-gray-700 text-white hover:border-gray-500' 
+                        : 'border-gray-300 hover:bg-gray-50 text-gray-700 hover:border-gray-400'
+                    } ${page === 1 ? '' : 'hover:shadow-md transform hover:scale-105'}`}
                   >
                     <ChevronLeft size={20} />
                     Previous
                   </button>
                   
-                  <span className={`px-4 py-2 rounded-lg font-medium ${
-                    isDarkTheme 
-                      ? 'bg-blue-900 text-blue-200' 
-                      : 'bg-blue-50 text-blue-700'
-                  }`}>
-                    Page {page}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-6 py-3 rounded-xl font-medium ${
+                      isDarkTheme 
+                        ? 'bg-blue-900 text-blue-200 border-2 border-blue-700' 
+                        : 'bg-blue-50 text-blue-700 border-2 border-blue-200'
+                    }`}>
+                      Page {page}
+                    </span>
+                  </div>
                   
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                    className={`flex items-center gap-3 px-6 py-3 border-2 rounded-xl transition-all duration-200 font-medium hover:shadow-md transform hover:scale-105 ${
                       isDarkTheme 
-                        ? 'border-gray-600 hover:bg-gray-700 text-white' 
-                        : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                        ? 'border-gray-600 hover:bg-gray-700 text-white hover:border-gray-500' 
+                        : 'border-gray-300 hover:bg-gray-50 text-gray-700 hover:border-gray-400'
                     }`}
                   >
                     Next
@@ -288,25 +324,26 @@ export default function AdminDashboard() {
         maxWidth="max-w-4xl"
       >
         {viewModal.data && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {Object.entries(viewModal.data).map(([key, value]) => {
               if (['_id', '__v', 'password'].includes(key)) return null;
               return (
-                <div key={key} className="border-b pb-3">
-                  <dt className="font-medium text-gray-700">{formatLabel(key)}</dt>
-                  <dd className="mt-1 text-gray-900">
+                <div key={key} className="border-b border-gray-100 pb-4">
+                  <dt className="font-medium text-gray-700 mb-2">{formatLabel(key)}</dt>
+                  <dd className="text-gray-900">
                     {(key.includes('imageUrl') || key.includes('camImageUrl')) && value ? (
-                      <img src={String(value)} alt={key} className="w-48 h-auto rounded-lg" />
+                      <img src={String(value)} alt={key} className="w-48 h-auto rounded-xl shadow-md" />
                     ) : typeof value === 'object' && value !== null ? (
-                      <div className="space-y-1 text-sm bg-gray-50 p-3 rounded">
+                      <div className="space-y-1 text-sm bg-gray-50 p-4 rounded-xl">
                         {Object.entries(value).map(([k, v]) => (
-                          <div key={k}>
-                            <span className="font-medium">{formatLabel(k)}:</span> {String(v)}
+                          <div key={k} className="flex gap-2">
+                            <span className="font-medium text-gray-600">{formatLabel(k)}:</span> 
+                            <span className="text-gray-900">{String(v)}</span>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      String(value)
+                      <span className="text-gray-900">{String(value)}</span>
                     )}
                   </dd>
                 </div>

@@ -1,4 +1,7 @@
 const User = require("../../model/user/index");
+const Prediction = require("../../model/camModel/camModelSchema");
+const NewPrediction = require("../../model/allFeaturePrediction/index");
+const resourece = require("../../model/resourceRequest/index");
 const PendingUser = require("../../model/user/pendingUser");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -191,7 +194,11 @@ const userService = {
     try {
       const user = await User.findById(userId).select("-password");
       if (!user) throw new Error("User not found");
-      return user;
+      const predictions = await Prediction.find({ userId })
+      const newPredictions = await NewPrediction.find({ userId });
+      const resources = await resourece.find({ userId });
+      
+      return {user, predictions, newPredictions,resources };
     } catch (error) {
       throw error;
     }
@@ -244,13 +251,15 @@ const userService = {
       throw error       
     }
   },
-  updateUser: async (userId, { name, email, password }) => {
+  updateUser: async (userId, { name, email },image) => {
     try {
       let updateData = {};
+      
 
       if (name) updateData.name = name;
       if (email) updateData.email = email;
-      if (password) updateData.password = await bcrypt.hash(password, 10);
+      // if (password) updateData.password = await bcrypt.hash(password, 10);
+      if (image) updateData.image = image;
 
       const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
         new: true,
@@ -263,6 +272,7 @@ const userService = {
         updatedUser,
       };
     } catch (error) {
+      console.error("Error in updateUser service:", error.message);
       throw error;
     }
   },

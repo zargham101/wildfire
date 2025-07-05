@@ -17,7 +17,7 @@ router.get('/profile', authMiddleware, userController.getProfile);
 router.get('/all-users', userController.getAllUsers);
 router.get('/user-role', userController.getUsers);
 router.get('/user-details/:id',userController.getUserById);
-router.patch('/update', authValidation(validation.updateUserValidation),authMiddleware, userController.updateUser);
+router.patch('/update', upload, authMiddleware, userController.updateUser);
 router.delete('/delete', authMiddleware, userController.deleteUser);
 router.post('/forgot-password',authValidation(validation.forgotPasswordValidation),userController.forgotPassword);
 router.post('/reset-password', authValidation(validation.resetPasswordValidation),userController.resetPassword);

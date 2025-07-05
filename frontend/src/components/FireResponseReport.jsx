@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-// Make sure this path is correct if calculateResources is in a different file
+import Swal from 'sweetalert2';
 import { calculateResources, getFireSeverity } from "../condition/resourceCalculator";
 import axios from "axios";
 
 const FireResponseReport = ({
   fireSize,
-  predictionDate, 
-  predictionId,   
-  userId,         
-  latitude,       
-  longitude,      
+  predictionDate,
+  predictionId,
+  userId,
+  latitude,
+  longitude,
 }) => {
   const [showAlert, setShowAlert] = useState(true);
   const [error, setError] = useState("");
@@ -20,7 +20,7 @@ const FireResponseReport = ({
   // This check is important: if fireSize is null (initial state), don't render.
   if (fireSize === null || typeof fireSize !== 'number') return null;
 
-  
+
   const {
     fireSeverity,
     initialResources,
@@ -70,12 +70,12 @@ const FireResponseReport = ({
     setError("");
 
     // These values MUST be passed as props if used here
-    console.log("Sending resource request with:",predictionId,userId, latitude, longitude);
+    console.log("Sending resource request with:", predictionId, userId, latitude, longitude);
 
     if (!predictionId || !userId || !latitude || !longitude) {
-        setError("Missing critical data for resource request. Please ensure a marker is selected.");
-        setSendingRequest(false);
-        return;
+      setError("Missing critical data for resource request. Please ensure a marker is selected.");
+      setSendingRequest(false);
+      return;
     }
 
     const token = localStorage.getItem("token");
@@ -110,7 +110,12 @@ const FireResponseReport = ({
       );
 
       if (response.status === 201) {
-        alert("Resource request sent successfully!");
+        Swal.fire({
+          title: 'Success!',
+          text: 'Resource request sent successfully!',
+          icon: 'success',
+          confirmButtonColor: '#22c55e'
+        });
       } else {
         setError("Failed to send request. Please try again.");
       }
@@ -127,15 +132,14 @@ const FireResponseReport = ({
       {showAlert && (
         <div
           className={`text-center mb-8 p-4 rounded-md font-semibold shadow-lg
-          ${
-            fireSeverity === "Very Small"
+          ${fireSeverity === "Very Small"
               ? "bg-green-100 text-green-700"
               : fireSeverity === "Small"
-              ? "bg-yellow-100 text-yellow-700"
-              : fireSeverity === "Moderate"
-              ? "bg-orange-100 text-orange-700"
-              : "bg-red-100 text-red-700"
-          }`}
+                ? "bg-yellow-100 text-yellow-700"
+                : fireSeverity === "Moderate"
+                  ? "bg-orange-100 text-orange-700"
+                  : "bg-red-100 text-red-700"
+            }`}
         >
           ALERT: {fireSeverity} Fire Detected!
         </div>

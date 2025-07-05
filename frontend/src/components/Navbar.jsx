@@ -105,7 +105,8 @@ const Navbar = () => {
           {[
             { label: "Home", path: "/" }, 
             { label: "About Us", path: "/aboutus" }, 
-            { label: "Contact Us", path: "/contactus" }
+            { label: "Contact Us", path: "/contactus" },
+            { label: "NEWS", path: "/news" }
           ].map(({ label, path }) => (
             <li key={path}>
               <Link

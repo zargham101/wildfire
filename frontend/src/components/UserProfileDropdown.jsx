@@ -53,6 +53,16 @@ const UserProfileDropdown = ({ user, handleLogout }) => {
                 </Link>
               </li>
             )}
+            {user.role === "agency" && (
+              <li>
+                <Link
+                  to="/agency"
+                  className="block px-[70px] py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Dashboard
+                </Link>
+              </li>
+            )}
             <li>
               <button
                 onClick={handleLogout}
